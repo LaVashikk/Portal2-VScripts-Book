@@ -1,0 +1,41 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 0.3: Operators - The Tools of Logic</h2>
+<p>Variables store information, but <strong>operators</strong> are the tools that let you work with that information. They are the verbs of our programming language.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Arithmetic & Assignment Operators</h3>
+<p>These are for doing math and assigning values. A common mistake is confusing <code>=</code> (assignment) with <code>==</code> (comparison).</p>
+<ul class="list-disc list-inside">
+    <li><code>score = 10</code> is a <strong>command</strong>: "Set the <code>score</code> variable to 10."</li>
+    <li><code>score == 10</code> is a <strong>question</strong>: "Is the <code>score</code> variable equal to 10?"</li>
+</ul>
+<h4 class="text-xl font-bold mt-6 mb-2">Comparison Operators</h4>
+<p>These operators ask a question and always result in a <code>true</code> or <code>false</code> value.</p>
+<pre><code class="language-squirrel">// Example Comparisons
+local score = 100
+local requiredScore = 150
+local cubes = 2
+
+local isScoreEnough = (score >= requiredScore) // isScoreEnough is now false
+local areCubesCorrect = (cubes == 2) // areCubesCorrect is now true
+local isNotEnough = (score != requiredScore) // isNotEnough is now true
+</code></pre>
+<h4 class="text-xl font-bold mt-6 mb-2">Logical Operators</h4>
+<p>These are the most powerful operators. They let you combine multiple <code>true</code>/<code>false</code> conditions to make complex decisions.</p>
+<ul class="list-disc list-inside">
+    <li><strong><code>&&</code> (AND):</strong> Returns <code>true</code> only if the conditions on <strong>both sides</strong> are true.</li>
+    <li><strong><code>||</code> (OR):</strong> Returns <code>true</code> if <strong>at least one</strong> of the conditions is true.</li>
+    <li><strong><code>!</code> (NOT):</strong> Inverts a boolean value. It turns <code>true</code> into <code>false</code>, and <code>false</code> into <code>true</code>.</li>
+</ul>
+<pre><code class="language-squirrel">local cubeIsOnButton = true
+local laserIsDisabled = false
+
+// AND Example: The bridge will only extend if BOTH conditions are met.
+if (cubeIsOnButton && laserIsDisabled)
+{
+// This will NOT run, because laserIsDisabled is false.
+}
+
+// OR Example: The alert will sound if EITHER condition is met.
+if (!cubeIsOnButton || !laserIsDisabled)
+{
+// This WILL run, because !laserIsDisabled is true.
+}
+</code></pre>

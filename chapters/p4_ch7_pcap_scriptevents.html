@@ -1,0 +1,23 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.7: Decoupling Logic - The ScriptEvents Module</h2>
+<p>As your puzzles get complex, you might have many scripts that need to communicate. <code>ScriptEvents</code> allows scripts to send out general announcements ("The puzzle has been solved!") without needing to know who is listening. Other scripts can then "listen" for these announcements and react. This keeps your code clean and modular.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Publisher Script (e.g., on the final button)</h3>
+<pre><code class="language-squirrel">// Define a new event for our game.
+PCaptureGameEvents.PuzzleSolved <- VGameEvent("puzzle_solved_event")
+
+function OnPressed()
+{
+// Announce that the puzzle has been solved.
+local player = GetPlayerEx()
+EventListener.Notify("puzzle_solved_event", player)
+}</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Subscriber Script (e.g., on a confetti-launcher)</h3>
+<pre><code class="language-squirrel">// Find the event we want to listen to and add an action.
+local solveEvent = EventListener.GetEvent("puzzle_solved_event")
+if (solveEvent)
+{
+// This function will run whenever the event is Notified.
+solveEvent.AddAction(function(event, data) {
+    printl("Puzzle solved by " + data.GetName() + "! Launching confetti!")
+    self.Fire("Launch", "", 0)
+})
+}</code></pre>

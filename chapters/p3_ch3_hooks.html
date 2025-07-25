@@ -1,0 +1,24 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 3.3: Hooks & Think Functions (with Example)</h2>
+<p><strong>Input Hooks</strong> are an incredibly powerful feature. If an entity's script has a function named <code>Input<InputName></code>, that function will run whenever the entity receives that input. If the function <code>return false</code>, the original input is cancelled!</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Example: A door that requires 3 button presses to unlock.</h3>
+<p>Entity: a <code>prop_door_rotating</code> named "secure_door". Script attached to the door:</p>
+<pre><code class="language-squirrel">// Create a counter in the door's scope.
+unlockPresses <- 3
+
+// This is an Input Hook for the "Unlock" input.
+function InputUnlock()
+{
+    unlockPresses-- // Decrement the counter
+    printl("Unlock signal received. " + unlockPresses + " more required.")
+    
+    if (unlockPresses <= 0)
+    {
+        printl("Door unlocked!")
+        return true // Allow the original "Unlock" input to happen.
+    }
+    else
+    {
+        // We still need more presses.
+        return false // CANCEL the original "Unlock" input. The door will not unlock.
+    }
+}</code></pre>

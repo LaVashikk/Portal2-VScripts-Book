@@ -1,0 +1,25 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 3.1: Navigating 3D Space - Vectors</h2>
+<p>Portal 2 is a 3D game. To work with positions, directions, and rotations, we use a special data type called a <strong>Vector</strong>.</p>
+<p>A Vector is simply a container for three <strong>Float</strong> numbers: X, Y, and Z.</p>
+<pre><code class="language-squirrel">// Create a vector representing a position in the map.
+local position = Vector(128, 256, -64)
+
+// Access the individual components
+printl("X coordinate: " + position.x) // Prints 128</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Vector Math</h3>
+<p>You can perform math operations directly on vectors. This is incredibly useful for calculating new positions.</p>
+<ul class="list-disc list-inside">
+    <li><strong>Addition/Subtraction:</strong> Adds or subtracts each component. <code>Vector(10, 20, 30) + Vector(1, 2, 3)</code> results in <code>Vector(11, 22, 33)</code>.</li>
+    <li><strong>Multiplication/Division by a number:</strong> Scales the vector. <code>Vector(10, 20, 30) * 2</code> results in <code>Vector(20, 40, 60)</code>.</li>
+</ul>
+<pre><code class="language-squirrel">// Example: Moving a Cube
+local cube = Entities.FindByName(null, "my_cube")
+local startPos = cube.GetOrigin()
+local offset = Vector(0, 0, 100) // We want to move it up by 100 units.
+local endPos = startPos + offset
+cube.SetOrigin(endPos)</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Useful Vector Methods</h3>
+<ul class="list-disc list-inside">
+    <li><code>.Length()</code>: Returns the length of the vector (its distance from <code>Vector(0,0,0)</code>).</li>
+    <li><code>(vec1 - vec2).Length()</code>: A common trick to get the <strong>distance between two points</strong>.</li>
+</ul>

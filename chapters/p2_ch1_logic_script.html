@@ -1,0 +1,24 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 2.1: The <code>logic_script</code> Entity & Scope</h2>
+<p>The simplest way to run a script file is with a <code>logic_script</code> entity. This is an entity you place in your map using the Hammer editor.</p>
+<p>When the map loads, the engine will find your <code>logic_script</code> and automatically run the code inside its specified script file. The code runs from top to bottom, one time. This is great for setting things up when the map starts.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Scope Visualization</h3>
+<p>Each <code>logic_script</code> (and each entity script) gets its own unique table, or <strong>scope</strong>, inside the main Root Table. This is important: it means variables created in one script are not automatically visible to another.</p>
+<div class="flowchart not-prose my-8 p-4 border rounded-lg">
+    <div class="flow-node">[Root Table (Global Scope)]</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-branch">
+        <div class="flow-path">
+            <div class="flow-arrow"></div>
+            <div class="flow-node">[Scope for logic_script_A]
+                <br><span class="text-sm text-gray-500">puzzle_A_counter <- 0</span>
+            </div>
+        </div>
+        <div class="flow-path">
+            <div class="flow-arrow"></div>
+            <div class="flow-node">[Scope for logic_script_B]
+                <br><span class="text-sm text-gray-500">puzzle_B_state <- "inactive"</span>
+            </div>
+        </div>
+    </div>
+    <p class="mt-4 text-sm"><code>logic_script_A</code> cannot directly see <code>puzzle_B_state</code>. It would need to use global variables (<code>::</code>) or other advanced methods to communicate.</p>
+</div>

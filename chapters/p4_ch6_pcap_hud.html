@@ -1,0 +1,27 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.6: Communicating with the Player - The HUD Module</h2>
+<p>PCapture-Lib lets you easily display text and hints on the player's screen (the Heads-Up Display, or HUD).</p>
+<ul class="list-disc list-inside">
+    <li><code>HUD.ScreenText</code>: Creates text anywhere on the screen.</li>
+    <li><code>HUD.HintInstructor</code>: Creates an in-world hint that can point to an entity.</li>
+</ul>
+<p>Both use a "builder pattern," allowing you to chain settings together.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Example: Welcome message and button hint.</h3>
+<pre><code class="language-squirrel">function OnPostSpawn()
+{
+// Display text at the center of the screen (0.5x, 0.5y) for 5 seconds.
+HUD.ScreenText(Vector(0.5, 0.5, 0), "Welcome to Test Chamber X", 5)
+    .SetColor("0 255 255") // Make it cyan
+    .SetFadeIn(0.5)
+    .SetFadeOut(0.5)
+    .Enable() // This final command displays it.
+    
+local button = entLib.FindByName("start_button")
+if (button)
+{
+    // Create a hint that will stay for a very long time.
+    HUD.HintInstructor("Press the button to begin", 9999)
+        .SetPositioning(0, button) // 0 = at the entity's position
+        .SetColor("255 255 0") // Make it yellow
+        .Enable()
+}
+}</code></pre>

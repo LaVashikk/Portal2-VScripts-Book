@@ -1,0 +1,17 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 2.3: Running Code with Entity I/O</h2>
+<p>Your scripts don't have to just run once. You can trigger code to run at any time using the game's built-in <strong>Input/Output (I/O)</strong> system.</p>
+<p>All entities have these special VScript <strong>Inputs</strong>:</p>
+<ul class="list-disc list-inside">
+    <li><strong><code>RunScriptCode</code></strong>: Executes a single line of Squirrel code.</li>
+    <li><strong><code>CallScriptFunction</code></strong>: Looks for a function by name within the entity's script and runs it.</li>
+</ul>
+<h3 class="text-2xl font-bold mt-8 mb-4">Example</h3>
+<p>Imagine a button (<code>func_button</code>) and a door (<code>prop_dynamic</code>). The door has a script attached to it called <code>door_logic.nut</code>.</p>
+<p><strong><code>door_logic.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// Define a function inside the door's script scope.
+function OpenTheDoor()
+{
+printl("The OpenTheDoor function was called!")
+self.SetAnimation("open") // An example of what you might do.
+}</code></pre>
+<p><strong>In Hammer</strong>, you would create an output on the button's <code>OnPressed</code> event to target the door and call the input <code>CallScriptFunction</code> with a parameter of <code>OpenTheDoor</code>. When the player presses the button, the function in your script runs.</p>

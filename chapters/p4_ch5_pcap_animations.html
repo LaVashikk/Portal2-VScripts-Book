@@ -1,0 +1,19 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.5: Creating Visuals - The Animations Module</h2>
+<p>Want to make an object smoothly fade out, change color, or move from one point to another? The <code>Animations</code> module handles this for you, calculating all the intermediate steps to create a fluid animation.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Example: A fading, color-changing platform.</h3>
+<p>This script is on a <code>trigger_multiple</code>. When the player steps on it, a platform turns red and then fades out.</p>
+<pre><code class="language-squirrel">function OnStartTouch()
+{
+local platform = entLib.FindByName("fade_platform")
+if (platform)
+{
+    // Animate the color from its current color to solid red over 1 second.
+    animate.ColorTransition(platform, platform.GetColor(), "255 0 0", 1.0)
+    
+    // Animate the alpha (transparency) from full (255) to invisible (0) over 3 seconds.
+    // The animation will start after a 1-second delay.
+    local settings = { globalDelay = 1.0 }
+    animate.AlphaTransition(platform, 255, 0, 3.0, settings)
+}
+}</code></pre>
+<p>This module also includes functions for animating position (<code>PositionTransitionByTime</code>, <code>PositionTransitionBySpeed</code>) and angles (<code>AnglesTransitionByTime</code>).</p>

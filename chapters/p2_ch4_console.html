@@ -1,0 +1,15 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 2.4: The Developer's Best Friend - The Console</h2>
+<p>The developer console is your most important tool for testing and debugging. You can run Squirrel code live in the game, allowing you to test small pieces of logic instantly without recompiling your map.</p>
+<p>The command is <code>script <code></code>.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Examples</h3>
+<p>Type these into the developer console while your map is running:</p>
+<pre><code class="language-squirrel">// Prints a message to the console.
+script printl("Hello from the console!")
+
+// Gets a handle to the player and prints their current X, Y, Z coordinates.
+script local p = GetPlayer(); printl(p.GetOrigin())
+
+// Finds an entity named "my_door" and fires its "Open" input.
+script local door = Entities.FindByName(null, "my_door"); door.Fire("Open", "", 0)
+</code></pre>
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg"><strong>Tip:</strong> The console treats the entire line as one command, so you cannot use semicolons <code>;</code> to separate statements. However, you can wrap statements in curly braces <code>{ }</code> to execute multiple commands in a sequence: <br><code>script { local p = GetPlayer() } { printl(p.GetOrigin()) }</code></p>

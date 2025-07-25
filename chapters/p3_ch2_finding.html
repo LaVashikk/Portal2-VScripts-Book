@@ -1,0 +1,16 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 3.2: Finding Entities (Advanced)</h2>
+<p>Beyond finding by name or class, you can also find entities based on their location.</p>
+<ul class="list-disc list-inside">
+    <li><code>Entities.FindByClassnameWithin(start_ent, classname, origin, radius)</code>: Finds all entities of a type within a certain radius of a point.</li>
+    <li><code>Entities.FindInSphere(start_ent, origin, radius)</code>: Finds <em>any</em> entity within a radius.</li>
+</ul>
+<h3 class="text-2xl font-bold mt-8 mb-4">Example: Activating nearby turrets.</h3>
+<pre><code class="language-squirrel">// This script is on an entity that will be our activation point
+local activationPoint = self.GetOrigin()
+local activationRadius = 512.0
+
+local turret = null
+while(turret = Entities.FindByClassnameWithin(turret, "npc_portal_turret_floor", activationPoint, activationRadius))
+{
+    turret.Fire("Enable", "", 0)
+}</code></pre>

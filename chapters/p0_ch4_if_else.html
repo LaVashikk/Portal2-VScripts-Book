@@ -1,0 +1,53 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 0.4: Making Decisions with <code>if</code>, <code>else if</code>, and <code>else</code></h2>
+<p>This is where your script comes alive. <strong>Control flow</strong> statements use the <code>true</code>/<code>false</code> results from your comparisons to direct the flow of your script's execution.</p>
+<pre><code class="language-squirrel">local cubesOnButtons = 1
+local requiredCubes = 2
+
+if (cubesOnButtons >= requiredCubes)
+{
+// This condition is false (1 is not >= 2). This block is SKIPPED.
+printl("Door Unlocked.")
+}
+else
+{
+// The script executes this block instead.
+printl("Door remains locked.")
+}</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Visualization: The Path of Logic</h3>
+<p>Think of your code's execution as a flow chart. <code>if/else</code> statements are the decision points.</p>
+<div class="flowchart not-prose my-8 p-4 border rounded-lg">
+    <div class="flow-node">[Start Script]</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node flow-decision"><span>Is energyLevel >= 90 ?</span></div>
+    <div class="flow-arrow"></div>
+    <div class="flow-branch">
+        <div class="flow-path">
+            <span class="flow-path-label">(False)</span>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-decision"><span>Is energyLevel >= 50 ?</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-branch">
+                <div class="flow-path">
+                    <span class="flow-path-label">(False)</span>
+                    <div class="flow-arrow"></div>
+                    <div class="flow-node">[Print "Bridge collapsed!"]</div>
+                </div>
+                <div class="flow-path">
+                    <span class="flow-path-label">(True)</span>
+                    <div class="flow-arrow"></div>
+                    <div class="flow-node">[Print "Bridge flickering."]</div>
+                </div>
+            </div>
+        </div>
+        <div class="flow-path">
+            <span class="flow-path-label">(True)</span>
+            <div class="flow-arrow"></div>
+            <div class="flow-node">[Print "Full power."]</div>
+        </div>
+    </div>
+    <div class="flex justify-center mt-4">
+        <div class="w-3/4"><div class="flow-join"></div></div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node">[End Script]</div>
+</div>

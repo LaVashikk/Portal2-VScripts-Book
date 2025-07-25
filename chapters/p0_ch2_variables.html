@@ -1,0 +1,22 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 0.2: Storing Information - Variables & Data Types</h2>
+<p>To create rules, we first need to be able to store and label information. Imagine you want to create a puzzle where a door only opens after three buttons are pressed. You need to keep track of how many buttons have been pressed.</p>
+<p>This is the job of a <strong>variable</strong>. A variable is a named container for a piece of data.</p>
+<p>In Squirrel, the most common way to create a temporary variable is with the <code>local</code> keyword, followed by a name, an equals sign (<code>=</code>), and the data you want to store.</p>
+<pre><code class="language-squirrel">// This creates a variable named 'buttonsPressed' and stores the number 0 in it.
+local buttonsPressed = 0
+
+// This creates a variable to store the name of the current test chamber.
+local chamberName = "Escape Route Alpha"
+
+// This variable stores whether the exit door is currently unlocked.
+local isDoorUnlocked = false</code></pre>
+<p>The text after a <code>//</code> is a <strong>comment</strong>. The engine ignores it completely. Use comments to leave notes for yourself and others explaining what your code does.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Fundamental Data Types</h3>
+<p>Variables can hold different <em>types</em> of data:</p>
+<ul class="list-disc list-inside space-y-2">
+    <li><strong>Integer:</strong> Any whole number, positive or negative (<code>-10</code>, <code>0</code>, <code>3</code>, <code>9999</code>).</li>
+    <li><strong>Float:</strong> Any number with a decimal point (<code>-0.5</code>, <code>3.14159</code>, <code>100.0</code>).</li>
+    <li><strong>String:</strong> A sequence of text characters, always enclosed in double quotes (<code>" "</code>).</li>
+    <li><strong>Bool (Boolean):</strong> Can only ever be one of two values: <code>true</code> or <code>false</code>.</li>
+    <li><strong>Null:</strong> A special type that represents "nothing" or "no value".</li>
+</ul>

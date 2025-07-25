@@ -1,0 +1,22 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.4: The Ultimate Tool - TracePlus</h2>
+<p><strong>Raycasting</strong> (or tracing) is the act of firing an invisible line from one point to another to see what it hits. PCapture-Lib's <code>TracePlus</code> module is a complete replacement for the limited built-in trace functions.</p>
+<p>Its crown jewel is <code>TracePlus.PortalBbox()</code>, a trace function that can <strong>travel through portals</strong>. This is impossible in vanilla VScript and opens up a new dimension of puzzle design.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Example: Portal-Aware Line of Sight</h3>
+<pre><code class="language-squirrel">local camera = entLib.FindByName("security_camera_01")
+local player = GetPlayerEx() // PCap helper to get the player
+
+if (camera && player)
+{
+local cameraPos = camera.EyePosition()
+local playerPos = player.EyePosition()
+
+// Perform a portal-aware trace from the camera to the player.
+local trace = TracePlus.PortalBbox(cameraPos, playerPos, camera)
+
+local hitEntity = trace.GetEntity()
+
+if (hitEntity && hitEntity.isEqually(player))
+{
+    printl("Camera can see the player!")
+}
+}</code></pre>

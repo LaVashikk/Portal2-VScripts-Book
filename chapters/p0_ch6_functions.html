@@ -1,0 +1,25 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 0.6: Organizing Code with Functions</h2>
+<p>A <strong>function</strong> is a named, reusable block of code that you can "call" whenever you want to run the code inside it. This makes your scripts clean, organized, and powerful.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Getting Information Back with <code>return</code></h3>
+<p>Functions can send a value back to the code that called them. This is called a <strong>return value</strong>.</p>
+<pre><code class="language-squirrel">// This function takes two numbers and returns their sum.
+function AddTwoNumbers(num1, num2)
+{
+local result = num1 + num2
+return result
+}
+
+// Call the function and store its output in a new variable.
+local totalScore = AddTwoNumbers(50, 25) // totalScore is now 75
+</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Functions as First-Class Objects</h3>
+<p>In Squirrel, functions are a data type, just like numbers and strings. This is a very powerful concept. It means you can store a function in a variable or table slot.</p>
+<pre><code class="language-squirrel">// Storing a function in a variable
+local sayHello = function() { printl("Hello!") }
+sayHello() // This calls the function.
+
+// Storing a function in a table
+local Actions = {}
+Actions.Action1 <- function() { printl("Action 1!") }
+Actions.Action1() // This also works.</code></pre>
+<p>The ability to treat functions as data is the foundation for many advanced scripting techniques you will learn later.</p>

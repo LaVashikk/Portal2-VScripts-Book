@@ -1,0 +1,18 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 2.2: Entity Scripts and <code>self</code></h2>
+<p>The real power of VScript comes from attaching scripts <em>directly to other entities</em>. Almost any entity in Hammer (a <code>prop_dynamic</code>, a <code>func_button</code>) can have a script attached to it via its <code>vscripts</code> keyvalue.</p>
+<p>If you have ten turrets, you can give each one the same script, and each will run its own independent version of that script.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4"><code>self</code>: The Most Important Variable</h3>
+<p>When a script is attached to an entity, VScript gives it a special variable named <code>self</code>.</p>
+<p><code>self</code> is a <strong>script handle</strong>. It's your script's connection to the entity it's attached to. It's how you tell the turret to fire, or the door to open.</p>
+<div class="flowchart not-prose my-8 p-4 border rounded-lg">
+    <div class="flow-node">[Door Entity in Map]</div>
+    <div class="flex justify-center items-center">
+        <div class="w-1/3 text-right pr-2"><code>self</code></div>
+        <div class="w-1/3"><div class="flow-arrow"></div></div>
+        <div class="w-1/3"></div>
+    </div>
+    <div class="flow-node">[Door's Script Scope]<br><span class="text-sm text-gray-500">function OpenTheDoor() {...}</span></div>
+</div>
+<pre><code class="language-squirrel">// Inside a script attached to a door (prop_dynamic).
+// 'self' here refers to THAT specific door.
+printl("This script is attached to the entity named: " + self.GetName())</code></pre>

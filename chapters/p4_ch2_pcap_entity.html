@@ -1,0 +1,19 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.2: Smarter Entities - entLib and pcapEntity</h2>
+<p>PCapture-Lib replaces the standard <code>Entities</code> object and script handles with its own, enhanced versions: <code>entLib</code> and <code>pcapEntity</code>.</p>
+<p>When you find an entity with <code>entLib.FindByName()</code>, you get back a powerful <code>pcapEntity</code> object which allows for much cleaner code through <strong>method chaining</strong>.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Vanilla VScript vs. PCapture-Lib</h3>
+<p><strong>Old Way:</strong></p>
+<pre><code class="language-squirrel">local door = Entities.FindByName(null, "mydoor")
+if (door)
+{
+EntFireByHandle(door, "SetColor", "255 0 0", 0, null, null)
+EntFireByHandle(door, "Kill", "", 5, null, null)
+}</code></pre>
+<p><strong>New Way:</strong></p>
+<pre><code class="language-squirrel">local door = entLib.FindByName("mydoor")
+if (door)
+{
+door.SetColor("255 0 0") // Much cleaner!
+    .Kill(5)             // Methods can be chained!
+}</code></pre>
+<p>Some <code>pcapEntity</code> highlights include <code>.SetAlpha()</code>, <code>.SetModelScale()</code>, <code>.Dissolve()</code>, and <code>.EmitSound()</code>.</p>

@@ -1,0 +1,25 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 1.2: Ordered Data - Arrays</h2>
+<p>An <strong>Array</strong> is a simple, ordered list, indexed by numbers starting from <code>0</code>.</p>
+<pre><code class="language-squirrel">// An array of test chamber names
+local chamberList = ["Chamber 01", "Chamber 02", "Chamber 03"]
+printl(chamberList[0]) // Prints "Chamber 01"</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Useful Array Methods</h3>
+<p>Arrays come with many built-in functions:</p>
+<ul class="list-disc list-inside space-y-2">
+    <li><code>.len()</code>: Returns the number of items in the array.</li>
+    <li><code>.append(value)</code>: Adds a new item to the very end of the array.</li>
+    <li><code>.remove(index)</code>: Removes the item at the specified index and shifts all following items down.</li>
+    <li><code>.find(value)</code>: Searches for a value and returns its index, or <code>null</code> if not found.</li>
+    <li><code>.map(function)</code>: Creates a new array by running a function on every element of the original.</li>
+    <li><code>.slice(start_index, [end_index])</code>: Creates a new, smaller array from a piece of the original.</li>
+</ul>
+<h3 class="text-2xl font-bold mt-8 mb-4">Looping Through Arrays: <code>foreach</code></h3>
+<p>The easiest way to go through every item in an array is the <code>foreach</code> loop.</p>
+<pre><code class="language-squirrel">local panelSequence = ["up", "down", "down", "up"]
+
+// 'idx' will be 0, 1, 2, 3
+// 'direction' will be "up", "down", "down", "up"
+foreach(idx, direction in panelSequence)
+{
+printl("Step " + idx + ": panel goes " + direction)
+}</code></pre>

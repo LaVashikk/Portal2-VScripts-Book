@@ -1,0 +1,17 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.3: Perfect Timing - The ActionScheduler</h2>
+<p>Standard VScript makes it difficult to schedule complex sequences of events. PCapture-Lib's <code>ActionScheduler</code> solves this with an easy-to-use system that allows for <strong>asynchronous actions</strong> using the <code>yield</code> keyword. <code>yield</code> tells your function to pause for a set amount of time without freezing the entire game.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">New Way (Simple and Readable)</h3>
+<pre><code class="language-squirrel">// Turn a light red, then green, then blue, with 1 second between each.
+ScheduleEvent.Add("LightSequence", function() {
+local light = entLib.FindByName("seq_light")
+
+light.SetColor("255 0 0")
+yield 1.0 // PAUSE the function for 1.0 seconds
+
+light.SetColor("0 255 0")
+yield 1.0 // PAUSE again
+
+light.SetColor("0 0 255")
+
+}, 0) // Start after 0 seconds delay.</code></pre>
+<p>This is a revolutionary feature for creating cinematic sequences, complex puzzle timings, or anything that needs to happen over a period of time.</p>
