@@ -14,8 +14,7 @@ Prism.languages.nut = Prism.languages.squirrel;
 document.addEventListener('DOMContentLoaded', () => {
 
     // =================================================================================
-    // THE BOOK DATA (METADATA AND QUIZZES)
-    // Content is now fetched from separate files.
+    // THE BOOK DATA
     // =================================================================================
     const bookData = [
         {
@@ -130,8 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let quizAnswers = {};
     const tocElement = document.getElementById('toc');
     const chapterContainer = document.getElementById('chapter-container');
-    const prevBtn = document.getElementById('prev-chapter-btn');
-    const nextBtn = document.getElementById('next-chapter-btn');
+    const prevArrow = document.getElementById('prev-chapter-arrow');
+    const nextArrow = document.getElementById('next-chapter-arrow');
     const themeSwitcher = document.getElementById('theme-switcher');
     const themeIconLight = document.getElementById('theme-icon-light');
     const themeIconDark = document.getElementById('theme-icon-dark');
@@ -139,10 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const quizContent = document.getElementById('quiz-content');
     const quizSubmitBtn = document.getElementById('quiz-submit-btn');
     const quizCloseBtn = document.getElementById('quiz-close-btn');
-    const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const mainContent = document.getElementById('main-content');
-
+    
     function buildTOC() {
         let currentPart = '';
         const tocHTML = bookData.map((chapter, index) => {
@@ -172,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 Prism.highlightAllUnder(chapterContainer);
                 updateUI();
                 // THE FIX: Scrolls the entire window, not just the content pane.
-                window.scrollTo({ top: 0 }); 
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             })
             .catch(error => {
                 chapterContainer.innerHTML = `<div class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><p class="font-bold">Error loading chapter content.</p><p>${error}</p></div>`;
@@ -181,13 +179,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateUI() {
-        prevBtn.disabled = currentChapterIndex === 0;
-        nextBtn.disabled = currentChapterIndex === bookData.length - 1;
+        // Update arrow visibility
+        currentChapterIndex === 0 ? prevArrow.classList.add('hidden') : prevArrow.classList.remove('hidden');
+        currentChapterIndex === bookData.length - 1 ? nextArrow.classList.add('hidden') : nextArrow.classList.remove('hidden');
 
+        // Update TOC active state
         document.querySelectorAll('#toc a').forEach(a => a.classList.remove('active'));
         const activeLink = document.querySelector(`#toc a[data-index="${currentChapterIndex}"]`);
         if (activeLink) activeLink.classList.add('active');
         
+        // Add quiz button if needed
         const chapterData = bookData[currentChapterIndex];
         const currentChapterElement = chapterContainer.querySelector(`#chapter-${chapterData.id}`);
 
@@ -198,10 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
             quizBtn.className = 'not-prose mt-12 w-full py-3 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors';
             currentChapterElement.appendChild(quizBtn);
             quizBtn.addEventListener('click', startQuiz);
-        }
-
-        if (window.innerWidth < 768) {
-            sidebar.classList.remove('open');
         }
     }
 
@@ -284,18 +281,28 @@ document.addEventListener('DOMContentLoaded', () => {
             loadChapter(parseInt(link.dataset.index));
         }
     });
-    prevBtn.addEventListener('click', () => { if (currentChapterIndex > 0) loadChapter(currentChapterIndex - 1); });
-    nextBtn.addEventListener('click', () => { if (currentChapterIndex < bookData.length - 1) loadChapter(currentChapterIndex + 1); });
+
+    prevArrow.addEventListener('click', (e) => { 
+        e.preventDefault();
+        if (currentChapterIndex > 0) loadChapter(currentChapterIndex - 1); 
+    });
+    nextArrow.addEventListener('click', (e) => { 
+        e.preventDefault();
+        if (currentChapterIndex < bookData.length - 1) loadChapter(currentChapterIndex + 1); 
+    });
+
     themeSwitcher.addEventListener('click', () => {
         const isDark = !document.documentElement.classList.contains('dark');
         localStorage.setItem('vscript-book-theme', isDark ? 'dark' : 'light');
         applyTheme(isDark);
     });
+
     quizCloseBtn.addEventListener('click', () => {
         quizModal.classList.add('hidden');
         document.body.style.overflow = '';
     });
     quizSubmitBtn.addEventListener('click', handleQuizSubmit);
+
     quizContent.addEventListener('click', (e) => {
         const option = e.target.closest('.quiz-option');
         if (option && !quizSubmitBtn.disabled) {
@@ -307,14 +314,10 @@ document.addEventListener('DOMContentLoaded', () => {
             option.classList.add('selected');
         }
     });
+
     sidebarToggle.addEventListener('click', (e) => {
         e.stopPropagation();
-        sidebar.classList.toggle('open');
-    });
-    document.addEventListener('click', (e) => {
-        if (window.innerWidth < 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== sidebarToggle) {
-            sidebar.classList.remove('open');
-        }
+        document.body.classList.toggle('sidebar-hidden');
     });
 
     // --- INITIALIZATION ---
