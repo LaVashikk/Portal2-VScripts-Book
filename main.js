@@ -126,7 +126,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // SITE LOGIC
     // =================================================================================
     let currentChapterIndex = 0;
-    let quizAnswers = {};
+    let currentQuizState = {};
+    let quizResults = {};
+
+    // --- NEW: Load results from localStorage on startup ---
+    const savedResults = localStorage.getItem('vscript-book-quiz-results');
+    if (savedResults) {
+        try {
+            quizResults = JSON.parse(savedResults);
+        } catch (e) {
+            console.error("Could not parse saved quiz results:", e);
+            quizResults = {}; // Reset to empty if data is corrupted
+        }
+    }
+
     const tocElement = document.getElementById('toc');
     const chapterContainer = document.getElementById('chapter-container');
     const prevArrow = document.getElementById('prev-chapter-arrow');
@@ -136,10 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeIconDark = document.getElementById('theme-icon-dark');
     const quizModal = document.getElementById('quiz-modal');
     const quizContent = document.getElementById('quiz-content');
-    const quizSubmitBtn = document.getElementById('quiz-submit-btn');
-    const quizCloseBtn = document.getElementById('quiz-close-btn');
+    const quizActionBtn = document.getElementById('quiz-action-btn');
+    const quizCloseXBtn = document.getElementById('quiz-close-x-btn');
+    const quizCounter = document.getElementById('quiz-counter');
     const sidebarToggle = document.getElementById('sidebar-toggle');
-    const mainContent = document.getElementById('main-content');
+    const whyFullscreenLink = document.getElementById('why-fullscreen-link');
+    const whyFullscreenText = document.getElementById('why-fullscreen-text');
     
     function buildTOC() {
         let currentPart = '';
@@ -169,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 chapterContainer.innerHTML = `<div id="chapter-${chapterData.id}" class="chapter-content">${html}</div>`;
                 Prism.highlightAllUnder(chapterContainer);
                 updateUI();
-                // THE FIX: Scrolls the entire window, not just the content pane.
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             })
             .catch(error => {
@@ -179,36 +193,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateUI() {
-        // Update arrow visibility
-        currentChapterIndex === 0 ? prevArrow.classList.add('hidden') : prevArrow.classList.remove('hidden');
-        currentChapterIndex === bookData.length - 1 ? nextArrow.classList.add('hidden') : nextArrow.classList.remove('hidden');
+        prevArrow.classList.toggle('hidden', currentChapterIndex === 0);
+        nextArrow.classList.toggle('hidden', currentChapterIndex === bookData.length - 1);
 
-        // Update TOC active state
         document.querySelectorAll('#toc a').forEach(a => a.classList.remove('active'));
         const activeLink = document.querySelector(`#toc a[data-index="${currentChapterIndex}"]`);
         if (activeLink) activeLink.classList.add('active');
         
-        // Add quiz button if needed
         const chapterData = bookData[currentChapterIndex];
         const currentChapterElement = chapterContainer.querySelector(`#chapter-${chapterData.id}`);
 
         if (chapterData.quiz && chapterData.quiz.length > 0 && currentChapterElement) {
-            const quizBtn = document.createElement('button');
-            quizBtn.id = 'start-quiz-btn';
-            quizBtn.textContent = 'Test Your Knowledge';
-            quizBtn.className = 'not-prose mt-12 w-full py-3 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors';
-            currentChapterElement.appendChild(quizBtn);
-            quizBtn.addEventListener('click', startQuiz);
+            let quizBtn = currentChapterElement.querySelector('#start-quiz-btn');
+            if (!quizBtn) {
+                quizBtn = document.createElement('button');
+                quizBtn.id = 'start-quiz-btn';
+                quizBtn.className = 'not-prose mt-12 w-full py-3 rounded-lg font-bold transition-colors';
+                currentChapterElement.appendChild(quizBtn);
+                quizBtn.addEventListener('click', startQuiz);
+            }
+            
+            const result = quizResults[chapterData.id];
+            if (result) {
+                quizBtn.textContent = `${result.passed ? 'Quiz Passed' : 'Quiz Failed - Retry'} (${result.score}/${result.total})`;
+                quizBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-green-600', 'hover:bg-green-700', 'bg-red-600', 'hover:bg-red-700');
+                if (result.passed) {
+                    quizBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
+                } else {
+                    quizBtn.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
+                }
+            } else {
+                quizBtn.textContent = 'Test Your Knowledge';
+                quizBtn.classList.remove('bg-green-600', 'hover:bg-green-700', 'bg-red-600', 'hover:bg-red-700');
+                quizBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'text-white');
+            }
         }
     }
 
     function startQuiz() {
         const chapter = bookData[currentChapterIndex];
-        quizAnswers = {};
-        
-        quizContent.innerHTML = chapter.quiz.map((q, qIndex) => `
-            <div class="quiz-question" data-qindex="${qIndex}">
-                <p class="font-semibold mb-3">${qIndex + 1}. ${q.question}</p>
+        currentQuizState = {
+            questionIndex: 0,
+            correctCount: 0,
+            answers: {}
+        };
+        quizModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        renderCurrentQuestion();
+    }
+
+    function closeQuiz() {
+        quizModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        updateUI(); // Refresh the button state on the main page
+    }
+
+    function renderCurrentQuestion() {
+        const chapter = bookData[currentChapterIndex];
+        const q = chapter.quiz[currentQuizState.questionIndex];
+        quizCounter.textContent = `Question ${currentQuizState.questionIndex + 1} / ${chapter.quiz.length}`;
+
+        quizContent.innerHTML = `
+            <div class="quiz-question" data-qindex="${currentQuizState.questionIndex}">
+                <p class="font-semibold mb-3">${q.question}</p>
                 <div class="space-y-2">
                     ${q.options.map((opt, oIndex) => `
                         <div class="quiz-option border-2 border-gray-300 dark:border-gray-600 p-3 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-all" data-oindex="${oIndex}">
@@ -218,44 +265,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="explanation mt-3 text-sm hidden p-3 rounded-md"></div>
             </div>
-        `).join('');
+        `;
         
-        quizModal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        quizSubmitBtn.classList.remove('hidden');
-        quizSubmitBtn.disabled = false;
+        quizActionBtn.textContent = "Check Answer";
+        quizActionBtn.disabled = true;
     }
 
-    function handleQuizSubmit() {
+    function handleQuizAction() {
+        const state = quizActionBtn.textContent;
         const chapter = bookData[currentChapterIndex];
-        chapter.quiz.forEach((q, qIndex) => {
-            const questionDiv = quizContent.querySelector(`.quiz-question[data-qindex="${qIndex}"]`);
-            const selectedOptionIndex = quizAnswers[qIndex];
+
+        if (state === "Check Answer") {
+            const q = chapter.quiz[currentQuizState.questionIndex];
+            const questionDiv = quizContent.querySelector(`.quiz-question[data-qindex="${currentQuizState.questionIndex}"]`);
+            const selectedOptionIndex = currentQuizState.answers[currentQuizState.questionIndex];
             const explanationDiv = questionDiv.querySelector('.explanation');
             
             questionDiv.querySelectorAll('.quiz-option').forEach(opt => opt.style.pointerEvents = 'none');
             
-            if (selectedOptionIndex !== undefined) {
-                const selectedOptionDiv = questionDiv.querySelector(`.quiz-option[data-oindex="${selectedOptionIndex}"]`);
-                if (selectedOptionIndex === q.answer) {
-                    selectedOptionDiv.classList.add('correct');
-                } else {
-                    selectedOptionDiv.classList.add('incorrect');
-                    const correctOptionDiv = questionDiv.querySelector(`.quiz-option[data-oindex="${q.answer}"]`);
-                    correctOptionDiv.classList.add('correct');
-                }
-            } else {
-                const correctOptionDiv = questionDiv.querySelector(`.quiz-option[data-oindex="${q.answer}"]`);
-                correctOptionDiv.classList.add('correct');
+            if (selectedOptionIndex === q.answer) {
+                currentQuizState.correctCount++;
             }
 
-            if(q.explanation) {
+            const selectedOptionDiv = questionDiv.querySelector(`.quiz-option[data-oindex="${selectedOptionIndex}"]`);
+            if (selectedOptionDiv && selectedOptionIndex !== q.answer) {
+                selectedOptionDiv.classList.add('incorrect');
+            }
+
+            const correctOptionDiv = questionDiv.querySelector(`.quiz-option[data-oindex="${q.answer}"]`);
+            correctOptionDiv.classList.add('correct');
+
+            if (q.explanation) {
                 explanationDiv.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
                 explanationDiv.classList.remove('hidden');
                 explanationDiv.classList.add('bg-gray-100', 'dark:bg-gray-800');
             }
-        });
-        quizSubmitBtn.disabled = true;
+
+            if (currentQuizState.questionIndex < chapter.quiz.length - 1) {
+                quizActionBtn.textContent = "Next Question";
+            } else {
+                quizActionBtn.textContent = "Finish";
+            }
+            quizActionBtn.disabled = false;
+
+        } else if (state === "Next Question") {
+            currentQuizState.questionIndex++;
+            renderCurrentQuestion();
+        } else if (state === "Finish") {
+            const chapterId = chapter.id;
+            const total = chapter.quiz.length;
+            const score = currentQuizState.correctCount;
+            quizResults[chapterId] = {
+                score: score,
+                total: total,
+                passed: (score / total) >= 0.5 // Pass if 50% or more are correct
+            };
+
+            // --- NEW: Save results to localStorage ---
+            try {
+                localStorage.setItem('vscript-book-quiz-results', JSON.stringify(quizResults));
+            } catch (e) {
+                console.error("Failed to save quiz results:", e);
+            }
+            
+            closeQuiz();
+        }
     }
 
     function applyTheme(isDark) {
@@ -297,27 +371,30 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme(isDark);
     });
 
-    quizCloseBtn.addEventListener('click', () => {
-        quizModal.classList.add('hidden');
-        document.body.style.overflow = '';
-    });
-    quizSubmitBtn.addEventListener('click', handleQuizSubmit);
+    quizCloseXBtn.addEventListener('click', closeQuiz);
+    quizActionBtn.addEventListener('click', handleQuizAction);
 
     quizContent.addEventListener('click', (e) => {
         const option = e.target.closest('.quiz-option');
-        if (option && !quizSubmitBtn.disabled) {
+        if (option && quizActionBtn.textContent === "Check Answer") {
             const questionDiv = option.closest('.quiz-question');
             const qIndex = parseInt(questionDiv.dataset.qindex);
             const oIndex = parseInt(option.dataset.oindex);
-            quizAnswers[qIndex] = oIndex;
+            currentQuizState.answers[qIndex] = oIndex;
             questionDiv.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
             option.classList.add('selected');
+            quizActionBtn.disabled = false;
         }
     });
 
     sidebarToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         document.body.classList.toggle('sidebar-hidden');
+    });
+    
+    whyFullscreenLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        whyFullscreenText.classList.toggle('hidden');
     });
 
     // --- INITIALIZATION ---

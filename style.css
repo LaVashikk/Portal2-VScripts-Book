@@ -59,7 +59,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* NEW: Top Bar */
+/* Top Bar */
 #top-bar {
     position: fixed;
     top: 0;
@@ -76,7 +76,7 @@ a:hover {
     transition: background-color 0.3s, border-color 0.3s;
 }
 
-/* NEW: Page Container to offset for fixed top bar */
+/* Page Container to offset for fixed top bar */
 #page-container {
     padding-top: 3.5rem;
 }
@@ -97,7 +97,7 @@ a:hover {
     margin-left: 18rem; /* 288px, width of sidebar */
 }
 
-/* NEW: State for hidden sidebar */
+/* State for hidden sidebar */
 body.sidebar-hidden #sidebar {
     transform: translateX(-100%);
 }
@@ -142,7 +142,7 @@ code[class*="language-"] {
      border-radius: 0.3em;
 }
 
-/* NEW: Arrow Navigation */
+/* Arrow Navigation */
 .nav-arrow {
     position: fixed;
     top: 50%;
@@ -160,28 +160,25 @@ code[class*="language-"] {
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     transition: all 0.2s ease-in-out, left 0.3s ease-in-out;
 }
-
-#prev-chapter-arrow {
-    left: calc(18rem + 1rem); /* sidebar width (18rem) + padding (1rem) */
-}
-#next-chapter-arrow { right: 1rem; } /* This one is fine as is */
-
 .nav-arrow:hover {
     background-color: var(--accent-color);
     color: white;
     border-color: var(--accent-color);
     text-decoration: none;
 }
-.nav-arrow.left-0 { left: 1rem; }
-.nav-arrow.right-0 { right: 1rem; }
-.nav-arrow.hidden { display: none; }
-@media (max-width: 1280px) { /* Hide arrows on smaller screens to avoid overlap */
-    .nav-arrow { display: none !important; }
+#prev-chapter-arrow {
+    left: calc(18rem + 1rem); /* sidebar width (18rem) + padding (1rem) */
 }
 body.sidebar-hidden #prev-chapter-arrow {
     left: 1rem;
 }
+#next-chapter-arrow { right: 1rem; }
+.nav-arrow.hidden { display: none; }
+@media (max-width: 1280px) { /* Hide arrows on smaller screens to avoid overlap */
+    .nav-arrow { display: none !important; }
+}
 
+/* Quiz Modal */
 #quiz-modal {
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(5px);
@@ -190,6 +187,10 @@ body.sidebar-hidden #prev-chapter-arrow {
 #quiz-container {
     background-color: var(--bg-color);
     color: var(--text-color);
+}
+#quiz-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
 }
 .quiz-option.selected {
     border-color: var(--accent-color);
@@ -202,6 +203,35 @@ body.sidebar-hidden #prev-chapter-arrow {
 .quiz-option.incorrect {
     border-color: #ef4444;
     background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* NEW: Styles for "Why fullscreen?" link and text */
+#why-fullscreen-container {
+    position: absolute;
+    bottom: -3rem;
+    right: 0;
+    text-align: right;
+}
+#why-fullscreen-link {
+    font-size: 0.875rem;
+    color: #9ca3af; /* gray-400 */
+    text-decoration: underline;
+    cursor: pointer;
+}
+html.dark #why-fullscreen-link {
+    color: #6b7280; /* gray-500 */
+}
+#why-fullscreen-text {
+    position: absolute;
+    bottom: 2rem;
+    right: 0;
+    width: 280px;
+    background-color: var(--sidebar-bg-dark);
+    color: var(--text-dark);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 details > summary {

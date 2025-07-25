@@ -23,8 +23,6 @@
             <button id="sidebar-toggle" class="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
-            <button class="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"></button> 
-            <!-- Search icon can be added here later -->
         </div>
         <div class="text-lg font-bold">
             The VScript Book
@@ -43,16 +41,17 @@
     </header>
     
     <!-- Floating Arrow Navigation -->
-    <a href="#" id="prev-chapter-arrow" class="nav-arrow left-0 hidden">
+    <a href="#" id="prev-chapter-arrow" class="nav-arrow hidden">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
     </a>
-    <a href="#" id="next-chapter-arrow" class="nav-arrow right-0 hidden">
+    <a href="#" id="next-chapter-arrow" class="nav-arrow hidden">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
     </a>
 
     <div id="page-container" class="flex flex-1">
         <!-- Sidebar -->
         <nav id="sidebar" class="w-72 flex-shrink-0 p-4 space-y-4 overflow-y-auto">
+            <h1 class="text-xl font-bold border-b pb-2 border-gray-300 dark:border-gray-600">The VScript Book</h1>
             <ul id="toc" class="space-y-1 text-sm"></ul>
         </nav>
 
@@ -66,15 +65,27 @@
 
     <!-- Quiz Modal -->
     <div id="quiz-modal" class="fixed inset-0 flex items-center justify-center p-4 hidden">
-        <div id="quiz-container" class="w-full max-w-3xl max-h-[90vh] rounded-lg shadow-2xl p-8 overflow-y-auto">
-            <h2 class="text-2xl font-bold mb-4">Comprehension Check</h2>
-            <p class="mb-6 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4 rounded-r-lg">
-                <strong>Recall, Don't Re-read:</strong> Please complete the quiz without re-reading the text. The goal is to test what you've retained.
-            </p>
-            <div id="quiz-content" class="space-y-8"></div>
-            <div class="mt-8 flex justify-between items-center">
-                <button id="quiz-submit-btn" class="px-6 py-2 rounded-md bg-green-500 text-white hover:bg-green-600">Submit Answers</button>
-                <button id="quiz-close-btn" class="px-6 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600">Close</button>
+        <div class="relative w-full max-w-3xl">
+            <div id="quiz-container" class="w-full max-h-[90vh] rounded-lg shadow-2xl p-8 flex flex-col">
+                <div class="flex-shrink-0 flex justify-between items-center mb-4">
+                    <h2 id="quiz-title" class="text-2xl font-bold">Comprehension Check</h2>
+                    <button id="quiz-close-x-btn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div id="quiz-content-wrapper" class="flex-1 overflow-y-auto pr-2">
+                    <div id="quiz-content" class="space-y-8"></div>
+                </div>
+                <div id="quiz-footer" class="flex-shrink-0 mt-8 flex justify-between items-center">
+                    <span id="quiz-counter" class="text-sm font-medium text-gray-500 dark:text-gray-400"></span>
+                    <button id="quiz-action-btn" class="px-6 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">Check Answer</button>
+                </div>
+            </div>
+            <div id="why-fullscreen-container">
+               <a href="#" id="why-fullscreen-link">Why is this quiz fullscreen?</a>
+               <div id="why-fullscreen-text" class="hidden">
+                    <strong>Recall, Don't Re-read:</strong> This quiz is designed to test what you've retained from the chapter without re-reading the text. Active recall is a powerful learning technique.
+               </div>
             </div>
         </div>
     </div>
