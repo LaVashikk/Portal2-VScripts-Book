@@ -129,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentQuizState = {};
     let quizResults = {};
 
-    // --- NEW: Load results from localStorage on startup ---
     const savedResults = localStorage.getItem('vscript-book-quiz-results');
     if (savedResults) {
         try {
@@ -183,6 +182,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(html => {
                 chapterContainer.innerHTML = `<div id="chapter-${chapterData.id}" class="chapter-content">${html}</div>`;
                 Prism.highlightAllUnder(chapterContainer);
+                
+                // Update URL and Title
+                history.pushState({index: index}, chapterData.title, '#' + chapterData.id);
+                document.title = `${chapterData.title} - The VScript Book`;
+
                 updateUI();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             })
@@ -321,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 passed: (score / total) >= 0.5 // Pass if 50% or more are correct
             };
 
-            // --- NEW: Save results to localStorage ---
             try {
                 localStorage.setItem('vscript-book-quiz-results', JSON.stringify(quizResults));
             } catch (e) {
@@ -399,7 +402,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIALIZATION ---
     buildTOC();
-    loadChapter(0);
+    
+    // --- Initial load from URL hash ---
+    const initialHash = window.location.hash.substring(1);
+    let initialChapterIndex = 0;
+    if (initialHash) {
+        const foundIndex = bookData.findIndex(chapter => chapter.id === initialHash);
+        if (foundIndex !== -1) {
+            initialChapterIndex = foundIndex;
+        }
+    }
+    loadChapter(initialChapterIndex);
+    
     const savedTheme = localStorage.getItem('vscript-book-theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     applyTheme(savedTheme === 'dark' || (!savedTheme && systemPrefersDark));
