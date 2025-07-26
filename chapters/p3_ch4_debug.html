@@ -1,0 +1,61 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 3.4: Debugging Your Scripts</h2>
+<p>You will write code, and that code will have bugs. This is a completely normal part of programming for everyone, from beginners to experts. A "bug" is just your script behaving in a way you didn't expect. The skill of a programmer is not in writing perfect code the first time, but in being a good detective—finding out *why* the code is misbehaving and fixing it. This process is called <strong>debugging</strong>.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Debugging 101: The <code>printl</code> Detective</h3>
+<p>The simplest and most powerful debugging tool you have is <code>printl()</code> ("print line"). The basic idea is to make your script report its status to the console as it runs. You can print out the value of variables at key moments to see if they are what you expect them to be.</p>
+
+<h4 class="text-xl font-bold mt-4 mb-2">Example: Finding the bug in our 3-press door.</h4>
+<p>Imagine your "3-press unlock" door isn't working. Why? Is the function not being called? Is the counter not going down? Let's add some `printl` statements to find out.</p>
+<pre><code class="language-squirrel">// In the door's script:
+unlockPresses <- 3
+
+function InputUnlock() {
+    // 1. Is this function even running?
+    printl("InputUnlock was called!")
+
+    // 2. What is the value of the counter BEFORE we change it?
+    printl("Before decrement, unlockPresses is: " + unlockPresses)
+    
+    unlockPresses-- // Decrement the counter
+    
+    // 3. What is the value AFTER we change it?
+    printl("After decrement, unlockPresses is: " + unlockPresses)
+    
+    if (unlockPresses <= 0) {
+        printl("Condition met! Door should unlock.")
+        return true
+    }
+    else {
+        printl("Condition NOT met. Door should remain locked.")
+        return false
+    }
+}</code></pre>
+<p>By watching the console output each time you press the button, you can trace the logic step-by-step and see exactly where things are going wrong. This method solves 90% of common scripting bugs.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Live Testing: The Developer Console</h3>
+<p>The developer console is your live laboratory. You can run Squirrel code directly in the game using the <code>script &lt;code&gt;</code> command. This is perfect for instantly testing a single line of logic without having to recompile your map.</p>
+<h4 class="text-xl font-bold mt-4 mb-2">Examples</h4>
+<p>Type these into the developer console while your map is running:</p>
+<pre><code class="language-squirrel">// Prints a message to the console.
+script printl("Hello from the console!")
+
+// Gets a handle to the player and prints their current X, Y, Z coordinates.
+script p <- GetPlayer()
+script printl(p.GetOrigin())
+
+// Finds an entity named "my_door" and fires its "Open" input.
+script { door <- Entities.FindByName(null, "my_door") } { EntFireByHandle(door, "Open", "", 0, null, null) }
+</code></pre>
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg"><strong>Tip:</strong> The console treats the entire line as one command, so you cannot use semicolons <code>;</code> to separate statements. However, you can wrap statements in curly braces <code>{ }</code> to execute multiple commands in a sequence: <br><code>script { p <- GetPlayer() } { printl(p.GetOrigin()) }</code></p>
+<br>
+<p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><strong>Warning:</strong> Do not use <code>local</code> to declare variables you want to use in a later command. To create a persistent variable from the console, you must use <code>&lt;-</code>. Be aware that this creates the variable in the <strong>global scope</strong> (the root table).<br><code>script p &lt;- GetPlayer()</code> is the same as writing <code>script ::p &lt;- GetPlayer()</code>.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Advanced: The Real-Time Debugger</h3>
+<p>What if you could pause time inside your script? That's what a full-fledged debugger lets you do. For really complex scenarios, like when you're creating a large library of code or tracking down a very tricky bug, you can connect the game directly to your code editor.</p>
+<p>This is made possible by a Visual Studio Code extension called <a href="https://marketplace.visualstudio.com/items?itemName=LionDoge.vscript-debug" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">VScript Debugger</a>. It allows you to:</p>
+<ul class="list-disc list-inside space-y-2">
+    <li><strong>Set Breakpoints:</strong> Mark a line in your code to make the game freeze the moment it's executed.</li>
+    <li><strong>Step Through Code:</strong> Execute your paused script one line at a time, watching the effects in-game.</li>
+    <li><strong>Inspect Variables:</strong> When paused, you can see the current value of every variable in your script's memory.</li>
+</ul>
+<p>This is an advanced technique and can be a bit unstable with Portal 2's older VScript engine. However, for creating truly complex logic like that found in PCapture-Lib, it is an invaluable tool. The setup generally involves installing the extension, running the <code>script_debug</code> command in the game console, and then "attaching" your code editor to the game.</p>

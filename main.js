@@ -49,7 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'functions-first-class', part: 'Part 0: The Language of Logic', title: 'Organizing with Functions', file: 'chapters/p0_ch6_functions.html'
+            id: 'functions-first-class', part: 'Part 0: The Language of Logic', title: 'Organizing with Functions', file: 'chapters/p0_ch6_functions.html',
+            quiz: [
+                { question: "Which keyword is used to send a value back from a function to the code that called it?", options: [ "<code>output</code>", "<code>send</code>", "<code>return</code>", "<code>yield</code>" ], answer: 2, explanation: "`return` is the correct keyword. It immediately stops the function and sends the specified value back." },
+                { question: "Given the function below, what will be printed to the console?<br><pre><code class='language-squirrel'>function Greet(name) { printl(\"Welcome, \" + name) }\nGreet(\"Chell\")</code></pre>", options: ["Welcome, name", "Welcome, Chell", "An error will occur.", "Greet(\"Chell\")"], answer: 1, explanation: "The string \"Chell\" is passed as an argument and assigned to the 'name' parameter inside the function, which is then used by the `printl` command." },
+                { question: "A function is stored in a table like this: <code>MyActions.OpenDoor <- function() { ... }</code>. How do you correctly call this function?", options: ["<code>call MyActions.OpenDoor</code>", "<code>MyActions.OpenDoor()</code>", "<code>run MyActions.OpenDoor()</code>", "<code>MyActions.OpenDoor</code>"], answer: 1, explanation: "To execute or 'call' a function, you use its full name followed by parentheses `()`, even if it's stored inside a table." }
+            ]
         },
         {
             id: 'squirrel-tables', part: 'Part 1: Learning the Dialect', title: 'The Heart of Squirrel: Tables', file: 'chapters/p1_ch1_tables.html',
@@ -62,10 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'squirrel-arrays', part: 'Part 1: Learning the Dialect', title: 'Ordered Data: Arrays', file: 'chapters/p1_ch2_arrays.html'
         },
         {
-            id: 'squirrel-scope', part: 'Part 1: Learning the Dialect', title: 'Scope & The Root Table', file: 'chapters/p1_ch3_scope.html'
+            id: 'connecting-logic-script', part: 'Part 2: Connecting to the World', title: 'The `logic_script` Entity', file: 'chapters/p2_ch1_logic_script.html'
         },
         {
-            id: 'connecting-logic-script', part: 'Part 2: Connecting to the World', title: 'The logic_script Entity', file: 'chapters/p2_ch1_logic_script.html'
+            id: 'connecting-scope', part: 'Part 2: Connecting to the World', title: 'Understanding Scope', file: 'chapters/p2_ch1b_scope.html',
+            quiz: [
+                { question: "Script 'a.nut' runs `myVar <- 10`. Script 'b.nut' runs `myVar <- 20`. Afterwards, what is the value of `myVar` inside script 'a.nut'?", options: ["10", "20", "null", "It will cause an error."], answer: 0, explanation: "Each script has its own separate scope. Changing `myVar` in script 'b.nut' does not affect the completely separate variable with the same name in script 'a.nut'." },
+                { question: "Script 'a.nut' runs `::globalStatus <- \"Active\"`. Script 'b.nut' then runs `printl(::globalStatus)`. What will be printed?", options: ["null", "\"Active\"", "An error will occur.", "globalStatus"], answer: 1, explanation: "The `::` operator places the variable in the global root table, which is a shared space. Script 'b.nut' can correctly access it using the same `::` operator." }
+            ]
         },
         {
             id: 'connecting-entity-scripts', part: 'Part 2: Connecting to the World', title: 'Entity Scripts & `self`', file: 'chapters/p2_ch2_entity_scripts.html'
@@ -78,9 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'connecting-console', part: 'Part 2: Connecting to the World', title: 'The Debug Console', file: 'chapters/p2_ch4_console.html'
-        },
-        {
             id: 'interacting-vectors', part: 'Part 3: Becoming a Creator', title: 'Navigating 3D Space: Vectors', file: 'chapters/p3_ch1_vectors.html'
         },
         {
@@ -89,8 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'interacting-hooks-example', part: 'Part 3: Becoming a Creator', title: 'Hooks & Think Functions', file: 'chapters/p3_ch3_hooks.html',
             quiz: [
+                { question: "What is the primary purpose of a Think function in VScript?", options: ["To run code in response to a specific player input.", "To run code repeatedly at a regular interval.", "To run code only once when the map starts.", "To stop an entity from moving."], answer: 1, explanation: "Think functions are designed for continuous or periodic checks and actions, like a security camera constantly watching an area or a hazard damaging a player over time." },
+                { question: "Inside a Think function named `MyThink`, how do you make it run again in exactly 0.5 seconds?", options: ["<code>self.ThinkNext(0.5)</code>", "<code>yield 0.5</code>", "<code>return 0.5</code>", "<code>return false</code>"], answer: 2, explanation: "Returning a positive float value from a Think function tells the engine to schedule the next think for that many seconds in the future. `yield` is for PCapture-Lib's scheduler, and returning `false` or a negative number would disable the think." },
                 { question: "You have a door with an Input Hook called <code>InputLock</code>. What must this function do to PREVENT the door from locking?", options: ["<code>return true</code>", "<code>return null</code>", "<code>return false</code>", "Nothing, the function just needs to exist."], answer: 2, explanation: "Returning `false` from an Input Hook function tells the engine to cancel the original input, effectively blocking it." }
             ]
+        },
+        {
+            id: 'connecting-console', part: 'Part 3: Becoming a Creator', title: 'The Debugging', file: 'chapters/p3_ch4_debug.html'
         },
         {
             id: 'pcap-intro', part: 'Part 4: Advanced Techniques', title: 'Intro to PCapture-Lib', file: 'chapters/p4_ch1_pcap_intro.html'

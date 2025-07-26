@@ -9,9 +9,8 @@
 <p>Imagine a button (<code>func_button</code>) and a door (<code>prop_dynamic</code>). The door has a script attached to it called <code>door_logic.nut</code>.</p>
 <p><strong><code>door_logic.nut</code>:</strong></p>
 <pre><code class="language-squirrel">// Define a function inside the door's script scope.
-function OpenTheDoor()
-{
-printl("The OpenTheDoor function was called!")
-self.SetAnimation("open") // An example of what you might do.
+function OpenTheDoor() {
+    printl("The OpenTheDoor function was called!")
+    self.SetAnimation("open") // An example of what you might do.
 }</code></pre>
 <p><strong>In Hammer</strong>, you would create an output on the button's <code>OnPressed</code> event to target the door and call the input <code>CallScriptFunction</code> with a parameter of <code>OpenTheDoor</code>. When the player presses the button, the function in your script runs.</p>

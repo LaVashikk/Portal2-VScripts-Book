@@ -1,10 +1,11 @@
 <h2 class="text-3xl font-bold mb-4">Chapter 0.5: Repeating Actions with Loops</h2>
 <p>Sometimes you need to repeat an action multiple times. Imagine you want to spawn 5 explosive barrels. You could write:</p>
-<pre><code class="language-squirrel">SpawnBarrel()
-SpawnBarrel()
-SpawnBarrel()
-SpawnBarrel()
-SpawnBarrel()</code></pre>
+<pre><code class="language-squirrel">printl("Spawning green barrel number 1")
+printl("Spawning green barrel number 2")
+printl("Spawning green barrel number 3")
+printl("Spawning green barrel number 4")
+...
+</code></pre>
 <p>This is repetitive and inefficient. What if you needed to spawn 100? This is where <strong>loops</strong> are essential.</p>
 <h3 class="text-2xl font-bold mt-8 mb-4">The <code>for</code> Loop</h3>
 <p>A <code>for</code> loop is perfect when you know exactly how many times you want to repeat an action. It has three parts in its parentheses, separated by semicolons:</p>
@@ -13,11 +14,10 @@ SpawnBarrel()</code></pre>
     <li><strong>Condition:</strong> The loop continues as long as this question is <code>true</code> (<code>i < 5</code>). It's checked before each repetition.</li>
     <li><strong>Incrementer:</strong> An action to perform after each repetition (<code>i++</code>, which is shorthand for <code>i = i + 1</code>).</li>
 </ol>
-<pre><code class="language-squirrel">// This loop will run 5 times.
-for (local i = 0; i < 5; i++)
-{
-// The code inside these curly braces is the "loop body".
-printl("Spawning barrel number " + i)
+<pre><code class="language-squirrel">// This loop will run 100 times.
+for (local i = 0; i < 100; i++) {
+    // The code inside these curly braces is the "loop body".
+    printl("Spawning green barrel number " + i)
 }
 printl("All barrels spawned.")</code></pre>
 <p><strong>Output:</strong></p>
@@ -26,25 +26,24 @@ Spawning barrel number 1
 Spawning barrel number 2
 Spawning barrel number 3
 Spawning barrel number 4
+Spawning barrel number ...
 All barrels spawned.</code></pre>
-<p>Notice the counter <code>i</code> starts at 0 and goes up to 4. When <code>i</code> becomes 5, the condition <code>5 < 5</code> is <code>false</code>, and the loop stops.</p>
+<p>Notice the counter <code>i</code> starts at 0 and goes up to 99. When <code>i</code> becomes 100, the condition <code>100 < 100</code> is <code>false</code>, and the loop stops.</p>
 <h3 class="text-2xl font-bold mt-8 mb-4">The <code>while</code> Loop</h3>
 <p>A <code>while</code> loop is used when you don't know how many repetitions you need. It repeats as long as a condition remains <code>true</code>. This is great for actions that depend on player behavior or game state.</p>
 <pre><code class="language-squirrel">local playerIsInPoisonGoo = true
 local playerHealth = 100
 
 // This loop will continue as long as the player is in the goo.
-while (playerIsInPoisonGoo == true)
-{
-playerHealth -= 5 // Damage the player
-printl("Player health is now: " + playerHealth)
-
-// In a real game, another piece of code would set playerIsInPoisonGoo to false.
-// For this example, let's just stop it manually after some damage.
-if (playerHealth <= 70)
-{
-    playerIsInPoisonGoo = false
-}
+while (playerIsInPoisonGoo == true) {
+    playerHealth -= 0.1 // Damage the player
+    printl("Player health is now: " + playerHealth)
+    
+    // In a real game, another piece of code would set playerIsInPoisonGoo to false.
+    // For this example, let's just stop it manually after some damage.
+    if (playerHealth <= 70) {
+        playerIsInPoisonGoo = false
+    }
 }
 printl("Player has escaped the goo!")</code></pre>
-<p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><strong>Beware of infinite loops!</strong> If the condition in a <code>while</code> loop <em>never</em> becomes false, the script will get stuck repeating forever, crashing your game.</p>
+<p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><strong>Beware of infinite loops!</strong> If the condition in a <code>while</code> loop <em>never</em> becomes false, it will freeze the script's execution, leading to a potential game hang or crash.</p>

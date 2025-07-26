@@ -3,15 +3,13 @@
 <pre><code class="language-squirrel">local cubesOnButtons = 1
 local requiredCubes = 2
 
-if (cubesOnButtons >= requiredCubes)
-{
-// This condition is false (1 is not >= 2). This block is SKIPPED.
-printl("Door Unlocked.")
+if (cubesOnButtons >= requiredCubes) {
+    // This condition is false (1 is not >= 2). This block is SKIPPED.
+    printl("Door Unlocked.")
 }
-else
-{
-// The script executes this block instead.
-printl("Door remains locked.")
+else {
+    // The script executes this block instead.
+    printl("Door remains locked.")
 }</code></pre>
 <h3 class="text-2xl font-bold mt-8 mb-4">Visualization: The Path of Logic</h3>
 <p>Think of your code's execution as a flow chart. <code>if/else</code> statements are the decision points.</p>

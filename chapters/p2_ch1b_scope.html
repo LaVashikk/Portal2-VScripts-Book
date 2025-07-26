@@ -1,0 +1,83 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 2.1b: Understanding Scope</h2>
+<p>Where your variables and functions "live" is called their <strong>scope</strong>. This is one of the most important concepts in programming, as it determines what parts of your code can see and interact with other parts.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Every Script is Its Own Sandbox</h3>
+<p>By default, each script runs in complete isolation from every other script. If you have two <code>logic_script</code> entities, they have no idea that the other exists. Each script gets its own unique table, or <strong>scope</strong>, where its variables are stored. Changing a variable in one script's scope will not affect a variable with the same name in another script's scope.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Practical Example: Scope Isolation</h4>
+<p>Imagine you have two <code>logic_script</code> entities in your map:</p>
+<ol class="list-decimal list-inside">
+    <li><code>logic_script_A</code> has its "VScript File" property set to <code>puzzle_a.nut</code>.</li>
+    <li><code>logic_script_B</code> has its "VScript File" property set to <code>puzzle_b.nut</code>.</li>
+</ol>
+
+<p><strong><code>puzzle_a.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// This creates a variable named 'puzzleCounter' inside script A's scope.
+puzzleCounter <- 10
+printl("[Puzzle A] My counter is: " + puzzleCounter) // Will print 10
+
+// Let's change our counter.
+puzzleCounter = 11
+printl("[Puzzle A] I changed my counter to: " + puzzleCounter) // Will print 11
+</code></pre>
+
+<p><strong><code>puzzle_b.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// This creates a COMPLETELY SEPARATE variable, also named 'puzzleCounter',
+// inside script B's scope.
+puzzleCounter <- 99
+printl("[Puzzle B] My counter is: " + puzzleCounter) // Will print 99
+</code></pre>
+
+<p>When you run the map, you will see this in the console:</p>
+<pre><code class="language-nohighlight">[Puzzle A] My counter is: 10
+[Puzzle A] I changed my counter to: 11
+[Puzzle B] My counter is: 99</code></pre>
+<p>Notice how changing <code>puzzleCounter</code> in Script A had **zero effect** on the variable in Script B. They are in separate sandboxes.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Solution: The Global Scope (Root Table)</h3>
+<p>So how do we make scripts talk to each other? We need a shared, public space. This space is called the <strong>global scope</strong> or the <strong>root table</strong>. Think of it as a public bulletin board where any script can post a message for any other script to see.</p>
+<p>You can explicitly access this global "bulletin board" using the special <code>::</code> operator.</p>
+
+<div class="flowchart not-prose my-8 p-4 border rounded-lg">
+    <div class="flow-node">[Root Table (Global Scope)]</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-branch">
+        <div class="flow-path">
+            <div class="flow-arrow"></div>
+            <div class="flow-node">[Scope for logic_script_A]
+                <br><span class="text-sm text-gray-500">puzzle_A_counter <- 0</span>
+            </div>
+        </div>
+        <div class="flow-path">
+            <div class="flow-arrow"></div>
+            <div class="flow-node">[Scope for logic_script_B]
+                <br><span class="text-sm text-gray-500">puzzle_B_state <- "inactive"</span>
+            </div>
+        </div>
+    </div>
+    <p class="mt-4 text-sm"><code>logic_script_A</code> cannot directly see <code>puzzle_B_state</code>. It would need to use the global scope to communicate.</p>
+</div>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Practical Example: Communication</h4>
+<p>Let's modify our scripts to communicate.</p>
+<p><strong><code>sender_script.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// The :: operator tells Squirrel to put this variable on the global root table.
+::sharedCode <- 481516
+printl("[Sender] I have posted the shared code.")
+</code></pre>
+
+<p><strong><code>receiver_script.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// The :: operator tells Squirrel to LOOK for this variable on the global root table.
+local theCode = ::sharedCode
+printl("[Receiver] I have received the code: " + theCode) // Will print 481516
+</code></pre>
+<p>Now, the scripts can share data! The "Sender" posts the information to the global scope, and the "Receiver" reads it.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">How <code>::</code> Works: Syntactic Sugar</h3>
+<p>The <code>::</code> operator is just a convenient shortcut, or "syntactic sugar". The long, formal way to access the root table is with a built-in function called <code>getroottable()</code>. The following two lines do the exact same thing:</p>
+<pre><code class="language-squirrel">// The short, easy way (syntactic sugar)
+::myGlobalVar <- 100
+
+// The long, explicit way
+getroottable()["myGlobalVar"] <- 100</code></pre>
+
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg"><strong>Best Practice:</strong> Global scope is powerful, but use it carefully. If too many scripts are changing global variables, it can become very confusing to track where data is coming from. <strong>Always prefer local variables and entity scripts.</strong> Only use the global scope (<code>::</code>) when you have a clear reason for different systems to communicate across the entire map.</p>

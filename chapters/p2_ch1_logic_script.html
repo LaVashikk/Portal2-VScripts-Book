@@ -1,24 +1,32 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 2.1: The <code>logic_script</code> Entity & Scope</h2>
-<p>The simplest way to run a script file is with a <code>logic_script</code> entity. This is an entity you place in your map using the Hammer editor.</p>
-<p>When the map loads, the engine will find your <code>logic_script</code> and automatically run the code inside its specified script file. The code runs from top to bottom, one time. This is great for setting things up when the map starts.</p>
-<h3 class="text-2xl font-bold mt-8 mb-4">Scope Visualization</h3>
-<p>Each <code>logic_script</code> (and each entity script) gets its own unique table, or <strong>scope</strong>, inside the main Root Table. This is important: it means variables created in one script are not automatically visible to another.</p>
-<div class="flowchart not-prose my-8 p-4 border rounded-lg">
-    <div class="flow-node">[Root Table (Global Scope)]</div>
-    <div class="flow-arrow"></div>
-    <div class="flow-branch">
-        <div class="flow-path">
-            <div class="flow-arrow"></div>
-            <div class="flow-node">[Scope for logic_script_A]
-                <br><span class="text-sm text-gray-500">puzzle_A_counter <- 0</span>
-            </div>
-        </div>
-        <div class="flow-path">
-            <div class="flow-arrow"></div>
-            <div class="flow-node">[Scope for logic_script_B]
-                <br><span class="text-sm text-gray-500">puzzle_B_state <- "inactive"</span>
-            </div>
-        </div>
-    </div>
-    <p class="mt-4 text-sm"><code>logic_script_A</code> cannot directly see <code>puzzle_B_state</code>. It would need to use global variables (<code>::</code>) or other advanced methods to communicate.</p>
-</div>
+<h2 class="text-3xl font-bold mb-4">Chapter 2.1: The <code>logic_script</code> Entity</h2>
+<p>The simplest way to run a script file is with a <code>logic_script</code> entity. This is a special entity you place in your map that has no physical presence; its only job is to run code.</p>
+<p>When the map loads, the engine will find your <code>logic_script</code> and automatically run the code inside its specified script file (from top to bottom, one time). This makes it perfect for setting up map-wide logic, preparing puzzles, or starting timers when the level begins.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">A Pre-made List of Contacts: The <code>EntityGroup</code></h3>
+<p>A very powerful feature of the <code>logic_script</code> is its ability to be pre-loaded with handles to other entities. Think of it like giving your script a phonebook of important contacts it might need to call.</p>
+<p>In Hammer, you'll see keyvalues named `EntityGroup00`, `EntityGroup01`, and so on. By filling these with the targetnames of other entities in your map, you make them instantly available to your script inside a special <strong>Array</strong> called `EntityGroup`.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Example: Opening a set of doors at map start.</h4>
+<p><strong>In Hammer:</strong></p>
+<ul class="list-disc list-inside">
+    <li>Create a <code>logic_script</code>.</li>
+    <li>Set its "VScript File" property to <code>door_manager.nut</code>.</li>
+    <li>Set its "EntityGroup00" property to <code>exit_door_01</code>.</li>
+    <li>Set its "EntityGroup01" property to <code>exit_door_02</code>.</li>
+</ul>
+
+<p><strong>In <code>door_manager.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// This script runs as soon as the logic_script spawns.
+printl("Door Manager Script is now running!")
+
+// The 'EntityGroup' array was automatically created for us
+// because we filled it out in Hammer.
+// EntityGroup[0] now holds a handle to "exit_door_01".
+// EntityGroup[1] now holds a handle to "exit_door_02".
+
+// We can loop through this pre-made list to control all the doors.
+foreach(index, doorEnt in EntityGroup) {
+    printl("Opening door #" + index)
+    EntFireByHandle(doorEnt, "Open", "", 0, null, null)
+}
+</code></pre>
+<p>This is much more efficient than writing separate <code>Entities.FindByName()</code> calls for every single door.</p>

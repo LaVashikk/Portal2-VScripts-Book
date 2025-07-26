@@ -18,8 +18,42 @@ local startPos = cube.GetOrigin()
 local offset = Vector(0, 0, 100) // We want to move it up by 100 units.
 local endPos = startPos + offset
 cube.SetOrigin(endPos)</code></pre>
-<h3 class="text-2xl font-bold mt-8 mb-4">Useful Vector Methods</h3>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">More Than Just Position: Angles</h3>
+<p>Vectors are also used to represent an entity's rotation in 3D space. When used for angles, the components have special meanings:</p>
 <ul class="list-disc list-inside">
-    <li><code>.Length()</code>: Returns the length of the vector (its distance from <code>Vector(0,0,0)</code>).</li>
-    <li><code>(vec1 - vec2).Length()</code>: A common trick to get the <strong>distance between two points</strong>.</li>
+    <li><strong>X:</strong> Pitch (tilting up and down)</li>
+    <li><strong>Y:</strong> Yaw (turning left and right)</li>
+    <li><strong>Z:</strong> Roll (tilting side to side)</li>
 </ul>
+<pre><code class="language-squirrel">// Example: Rotating a Turret
+local turret = Entities.FindByName(null, "turret_01")
+local currentAngles = turret.GetAngles()
+
+// We want to make the turret face 90 degrees to its right.
+local rotation = Vector(0, 90, 0) // 90 degrees on the Yaw axis
+local newAngles = currentAngles + rotation
+
+// The SetAngles function needs three separate numbers, not one Vector object.
+turret.SetAngles(newAngles.x, newAngles.y, newAngles.z)
+</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Useful Vector Methods</h3>
+<p>Vectors have built-in functions that make common calculations easy.</p>
+<ul class="list-disc list-inside">
+    <li><code>.Length()</code>: Returns the length of the vector (its distance from the world's center at <code>Vector(0,0,0)</code>).</li>
+    <li><code>(vec1 - vec2).Length()</code>: A common and very useful trick to get the <strong>distance between two points</strong>.</li>
+</ul>
+<pre><code class="language-squirrel">// Example: Check if the player is close enough to a button
+local player = GetPlayer()
+local button = Entities.FindByName(null, "the_button")
+
+local playerPos = player.GetOrigin()
+local buttonPos = button.GetOrigin()
+
+local distance = (playerPos - buttonPos).Length()
+
+if (distance < 100) { // 100 is our activation range
+    printl("Player is in range!")
+}
+</code></pre>

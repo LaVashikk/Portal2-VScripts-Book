@@ -1,24 +1,52 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 3.3: Hooks & Think Functions (with Example)</h2>
-<p><strong>Input Hooks</strong> are an incredibly powerful feature. If an entity's script has a function named <code>Input<InputName></code>, that function will run whenever the entity receives that input. If the function <code>return false</code>, the original input is cancelled!</p>
-<h3 class="text-2xl font-bold mt-8 mb-4">Example: A door that requires 3 button presses to unlock.</h3>
+<h2 class="text-3xl font-bold mb-4">Chapter 3.3: Hooks & Think Functions</h2>
+<p>While running code via I/O is useful, VScript offers more direct and powerful ways to make entities "come alive." These are Hooks and Think Functions, which allow your scripts to run automatically based on game events or at regular time intervals.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">Input Hooks</h3>
+<p><strong>Input Hooks</strong> are an incredibly powerful feature. If an entity's script has a function named <code>Input&lt;InputName&gt;</code>, that function will run whenever the entity receives that input. If the function <code>return false</code>, the original input is cancelled!</p>
+<h4 class="text-xl font-bold mt-4 mb-2">Example: A door that requires 3 button presses to unlock.</h4>
 <p>Entity: a <code>prop_door_rotating</code> named "secure_door". Script attached to the door:</p>
 <pre><code class="language-squirrel">// Create a counter in the door's scope.
 unlockPresses <- 3
 
 // This is an Input Hook for the "Unlock" input.
-function InputUnlock()
-{
+function InputUnlock() {
     unlockPresses-- // Decrement the counter
     printl("Unlock signal received. " + unlockPresses + " more required.")
     
-    if (unlockPresses <= 0)
-    {
+    if (unlockPresses <= 0) {
         printl("Door unlocked!")
         return true // Allow the original "Unlock" input to happen.
     }
-    else
-    {
+    else {
         // We still need more presses.
         return false // CANCEL the original "Unlock" input. The door will not unlock.
     }
+}</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Think Functions</h3>
+<p>A <strong>Think Function</strong> is a function that you can make an entity run repeatedly, like a heartbeat. This is essential for any logic that needs to constantly check something—for example, a security camera constantly watching for a player, or poison goo that needs to damage a player every second they stand in it.</p>
+<p>You assign a Think Function in Hammer by setting the entity's <code>thinkfunction</code> keyvalue to the name of the function in its script. By default, the function will run every 0.1 seconds.</p>
+<p>To change the time until the next "think," you simply <code>return</code> a number (a float) from the function. This number is the delay in seconds. Returning a negative number will stop the think function from running again.</p>
+<h4 class="text-xl font-bold mt-4 mb-2">Example: A security camera that follows the player.</h4>
+<p>Entity: A <code>prop_dynamic</code> with a camera model, with its <code>thinkfunction</code> keyvalue set to `FollowPlayer`.</p>
+<pre><code class="language-squirrel">// This function will run automatically every time the camera "thinks".
+function FollowPlayer() {
+    local player = GetPlayer() // Get a handle to the player.
+    if (!player) {
+        return 1.0 // If no player, wait a full second and check again.
+    }
+
+    local selfPos = self.GetOrigin()
+    local playerPos = player.GetOrigin()
+
+    // Calculate the direction from the camera to the player.
+    local directionVector = playerPos - selfPos
+
+    // Convert that direction vector into aiming angles (pitch, yaw, roll).
+    local newAngles = VectorToAngles(directionVector)
+
+    // Set the camera's angles to look at the player.
+    self.SetAngles(newAngles.x, newAngles.y, newAngles.z)
+
+    // Tell the game to run this function again in 0.05 seconds for smooth tracking.
+    return 0.05
 }</code></pre>

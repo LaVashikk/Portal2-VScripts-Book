@@ -7,12 +7,24 @@
 <div class="flowchart not-prose my-8 p-4 border rounded-lg">
     <div class="flow-node">[Door Entity in Map]</div>
     <div class="flex justify-center items-center">
-        <div class="w-1/3 text-right pr-2"><code>self</code></div>
+        <div class="w-1/3 text-right"><code>self</code></div>
         <div class="w-1/3"><div class="flow-arrow"></div></div>
         <div class="w-1/3"></div>
     </div>
     <div class="flow-node">[Door's Script Scope]<br><span class="text-sm text-gray-500">function OpenTheDoor() {...}</span></div>
 </div>
-<pre><code class="language-squirrel">// Inside a script attached to a door (prop_dynamic).
-// 'self' here refers to THAT specific door.
-printl("This script is attached to the entity named: " + self.GetName())</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Using <code>self</code> to Act</h3>
+<p>You use <code>self</code> to call methods (functions) that affect the entity. Think of it as telling the entity to do something to itself.</p>
+<pre><code class="language-squirrel">// This script is attached to a cube (prop_dynamic).
+// It defines a function that can be called to change the cube's color.
+
+function TurnRed() {
+    // 'self' here refers to THIS specific cube.
+    // We call the SetColor method on it to change its render color.
+    EntFireByHandle(self, "Color", "255 0 0", 0. null, null) // Sets color to Red
+    printl(self.GetName() + " is now red!")
+}
+
+// To use this, you would create an output from another entity (like a button)
+// targeting this cube, and use the "RunScriptCode" input with the parameter "TurnRed()".
+</code></pre>

@@ -14,17 +14,18 @@ core.isMoron = false // He's in charge now!
 <p>Using <code>=</code> on a key that doesn't exist will cause a script error. This is a feature, not a bug—it helps you catch typos!</p>
 <h3 class="text-2xl font-bold mt-8 mb-4">The <code>in</code> Operator</h3>
 <p>How do you safely check if a key exists in a table before you try to access it? With the <code>in</code> operator.</p>
- <pre><code class="language-squirrel">local glados = { name = "GLaDOS", neurotoxinLevel = 100 }
-
-if ("neurotoxinLevel" in glados)
-{
-printl("Neurotoxin is present.")
+ <pre><code class="language-squirrel">local glados = { 
+    name = "GLaDOS", 
+    neurotoxinLevel = 100 
 }
 
-if ("moralityCore" in glados)
-{
-// This is false, so the block is skipped.
-printl("Morality core is present.")
+if ("neurotoxinLevel" in glados) {
+    printl("Neurotoxin is present.")
+}
+
+if ("moralityCore" in glados) {
+    // This is false, so the block is skipped.
+    printl("Morality core is present.")
 }
 </code></pre>
 <h3 class="text-2xl font-bold mt-8 mb-4">More Table Methods</h3>
