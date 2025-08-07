@@ -1,12 +1,14 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 3.1: Navigating 3D Space - Vectors</h2>
-<p>Portal 2 is a 3D game. To work with positions, directions, and rotations, we use a special data type called a <strong>Vector</strong>.</p>
-<p>A Vector is simply a container for three <strong>Float</strong> numbers: X, Y, and Z.</p>
+<h2 class="text-3xl font-bold mb-4">Chapter 3.1: Math and Vectors</h2>
+<p>Portal 2 is a 3D game built on physics and geometry. To manipulate anything in this world, from aiming a turret to calculating the distance to a button, you'll need to use math. VScript provides two core mathematical tools: the <strong>Vector</strong> data type and a built-in <strong>Math Library</strong>.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Vectors: Navigating 3D Space</h3>
+<p>A <strong>Vector</strong> is a container for three <strong>Float</strong> numbers: X, Y, and Z. It's the primary tool for working with positions, directions, and angles.</p>
 <pre><code class="language-squirrel">// Create a vector representing a position in the map.
 local position = Vector(128, 256, -64)
 
 // Access the individual components
 printl("X coordinate: " + position.x) // Prints 128</code></pre>
-<h3 class="text-2xl font-bold mt-8 mb-4">Vector Math</h3>
+<h4 class="text-xl font-bold mt-6 mb-2">Vector Math</h4>
 <p>You can perform math operations directly on vectors. This is incredibly useful for calculating new positions.</p>
 <ul class="list-disc list-inside">
     <li><strong>Addition/Subtraction:</strong> Adds or subtracts each component. <code>Vector(10, 20, 30) + Vector(1, 2, 3)</code> results in <code>Vector(11, 22, 33)</code>.</li>
@@ -56,4 +58,39 @@ local distance = (playerPos - buttonPos).Length()
 if (distance < 100) { // 100 is our activation range
     printl("Player is in range!")
 }
+</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Global Math Library</h3>
+<p>Squirrel provides a set of standard mathematical functions that are always available. You don't need to include any special libraries to use them.</p>
+<h4 class="text-xl font-bold mt-6 mb-2">Rounding & Absolute Value</h4>
+<ul class="list-disc list-inside">
+    <li><code>floor(x)</code>: Rounds a number <strong>down</strong> to the nearest whole number. <code>floor(3.9)</code> is <code>3.0</code>.</li>
+    <li><code>ceil(x)</code>: Rounds a number <strong>up</strong> to the nearest whole number. <code>ceil(3.1)</code> is <code>4.0</code>.</li>
+    <li><code>abs(x)</code>: Returns the absolute (non-negative) value. <code>abs(-5)</code> is <code>5</code>.</li>
+</ul>
+<h4 class="text-xl font-bold mt-6 mb-2">Exponents & Logarithms</h4>
+<ul class="list-disc list-inside">
+    <li><code>sqrt(x)</code>: Returns the square root of a number.</li>
+    <li><code>pow(base, exponent)</code>: Returns the `base` raised to the power of `exponent`. <code>pow(2, 3)</code> is <code>8</code>.</li>
+    <li><code>log(x)</code>: Returns the natural logarithm of x.</li>
+</ul>
+<h4 class="text-xl font-bold mt-6 mb-2">Trigonometry</h4>
+<p>These functions are essential for working with angles and rotations. They all work with angles in <strong>radians</strong>, not degrees!</p>
+<ul class="list-disc list-inside">
+    <li><code>sin(rad)</code>, <code>cos(rad)</code>, <code>tan(rad)</code>: Standard trigonometric functions.</li>
+    <li><code>asin(x)</code>, <code>acos(x)</code>, <code>atan(x)</code>: Inverse trigonometric functions.</li>
+    <li><code>atan2(y, x)</code>: A very useful function that returns the angle in radians between the positive X-axis and the point (x, y).</li>
+</ul>
+<h4 class="text-xl font-bold mt-6 mb-2">Random Numbers</h4>
+<p>To add unpredictability to your maps, you can use random number generators.</p>
+<ul class="list-disc list-inside">
+    <li><code>rand()</code>: Returns a random integer between 0 and 32767.</li>
+    <li><code>srand(seed)</code>: "Seeds" the random number generator. If you always use the same seed, `rand()` will always produce the same sequence of numbers. Use `Time()` to get a different seed each time the map loads.</li>
+</ul>
+<pre><code class="language-squirrel">// Seed the generator once at the start of your script.
+srand(Time())
+
+// Get a random number between 0 and 100.
+local randomNumber = rand() % 101
+printl("My random number is: " + randomNumber)
 </code></pre>
