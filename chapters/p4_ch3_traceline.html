@@ -1,0 +1,60 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.3: Seeing the World with <code>TraceLine</code></h2>
+<p>How does a script know if there's a wall between a security camera and a player? How does it know where exactly a player is looking? The answer is <strong>raycasting</strong>. A raycast is like an invisible, instantaneous laser beam that you can fire from one point to another to see what it hits.</p>
+<p>The standard VScript function for this is <code>TraceLine(start_vector, end_vector, entity_to_ignore)</code>.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Understanding the Result: The Fraction</h3>
+<p>This is the most confusing part for beginners. <code>TraceLine</code> does <strong>not</strong> return the position it hit. Instead, it returns a <strong>fraction</strong> (a float between 0.0 and 1.0).</p>
+<ul class="list-disc list-inside">
+    <li>A fraction of <strong>1.0</strong> means the trace did NOT hit anything. It reached its end point successfully.</li>
+    <li>A fraction <strong>less than 1.0</strong> means the trace hit something. The value represents how far along the line the hit occurred. For example, <code>0.5</code> means it hit exactly halfway.</li>
+</ul>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Getting the Hit Position</h3>
+<p>To get the actual coordinates of the hit, you need to do a little bit of vector math:</p>
+<pre><code class="language-squirrel">local startPos = Vector(0, 0, 0)
+local endPos = Vector(100, 0, 0)
+local ignoreEnt = null // We don't want to ignore anything.
+
+local traceFraction = TraceLine(startPos, endPos, ignoreEnt)
+
+if (traceFraction < 1.0) {
+    // The trace hit something! Let's find out where.
+    local direction = endPos - startPos
+    local hitPos = startPos + (direction * traceFraction)
+    printl("Trace hit a wall at: " + hitPos)
+} else {
+    printl("The path is clear!")
+}
+</code></pre>
+<p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><strong>Critical Limitation:</strong> The standard <code>TraceLine</code> function can <strong>only</strong> detect collisions with world geometry (walls, floors, ceilings). It completely ignores dynamic props, players, cubes, and all other entities. This makes it useful for checking line of sight to a location, but not for seeing if an entity is in the way.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Practical Example: A Security Beam</h3>
+<p>Let's create a security beam between two points. If the player walks through, the beam is broken.</p>
+<p><strong>In Hammer:</strong> Create two <code>info_target</code> entities named `beam_start` and `beam_end`.</p>
+<p><strong>In your <code>logic_script</code>:</strong></p>
+<pre><code class="language-squirrel">// This think function will check the beam's status continuously.
+function CheckSecurityBeam() {
+    local startEnt = Entities.FindByName(null, "beam_start")
+    local endEnt = Entities.FindByName(null, "beam_end")
+
+    if (startEnt && endEnt) {
+        local startPos = startEnt.GetOrigin()
+        local endPos = endEnt.GetOrigin()
+
+        // Get the player to ignore them in the trace.
+        local player = GetPlayer() 
+
+        local fraction = TraceLine(startPos, endPos, player)
+
+        if (fraction < 1.0) {
+            printl("SECURITY BEAM BLOCKED BY A WALL!")
+        } else {
+            // The beam is not blocked by a wall, but is the player in the way?
+            // This is where TraceLine fails. We would need more advanced techniques
+            // to check for entities blocking the path.
+        }
+    }
+    return 0.1 // Check again in 0.1 seconds.
+}
+</code></pre>
+<p>This example highlights both the usefulness and the limitations of <code>TraceLine</code>. You've now reached the edge of what's possible with the standard VScript API, and are ready to learn about libraries that expand these capabilities.</p>

@@ -1,0 +1,47 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.2: Reusable Code - Libraries &amp; <code>IncludeScript</code></h2>
+<p>What if you write a really useful function, like one that finds the closest turret to the player, and you want to use it in ten different scripts? You shouldn't copy and paste the code ten times. That's a maintenance nightmare! Instead, you create a <strong>library</strong>.</p>
+<p>A library is just a <code>.nut</code> file that contains a collection of reusable functions. You can then "import" this library into any other script that needs it.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Step 1: Create the Library File</h3>
+<p>Let's create a file named <code>my_utility_library.nut</code>. We'll put it in the same <code>vscripts</code> folder.</p>
+<p><strong><code>my_utility_library.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// A library of useful functions. We'll store them in a global table
+// so they don't conflict with other scripts' variables.
+::MyUtils <- {}
+
+function MyUtils::FindClosestTurret(fromPosition) {
+    local closestTurret = null
+    local closestDist = 99999 // Start with a very large number
+
+    local turret = null
+    while(turret = Entities.FindByClassname(turret, "npc_portal_turret_floor")) {
+        local dist = (fromPosition - turret.GetOrigin()).Length()
+        if (dist < closestDist) {
+            closestDist = dist
+            closestTurret = turret
+        }
+    }
+    return closestTurret
+}
+</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Step 2: Include the Library</h3>
+<p>Now, in any other script where you need this function, you can import your library using <code>DoIncludeScript</code>. This command executes the library script, making its functions available.</p>
+<p><strong><code>main_puzzle_script.nut</code>:</strong></p>
+<pre><code class="language-squirrel">// This command runs the library file. The second parameter, getroottable(),
+// tells it to run the script in the global scope. This is almost always what you want.
+DoIncludeScript("my_utility_library.nut", getroottable())
+
+printl("Main script starting...")
+
+local player = GetPlayer()
+if (player) {
+    // Now we can use the function from our library!
+    local nearestTurret = MyUtils.FindClosestTurret(player.GetOrigin())
+    
+    if (nearestTurret) {
+        printl("The closest turret is: " + nearestTurret.GetName())
+    }
+}
+</code></pre>
+<p>By building your own libraries, you can dramatically speed up your workflow and keep your main script files focused on the unique logic for that specific entity, rather than rewriting the same helper functions over and over.</p>

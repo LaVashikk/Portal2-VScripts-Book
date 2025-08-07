@@ -1,0 +1,41 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.4: Hacking the Engine: Creative Problem-Solving</h2>
+<p>You've learned the rules of Squirrel and the standard VScript API. You can find entities, make them move, and manage complex logic. But what happens when you want to do something the engine wasn't explicitly designed for? How do you pass a unique color and an ID to an entity instance directly from Hammer?</p>
+<p>Welcome to the world of engine hacking. To create something new and revolutionary, you must learn to think creatively and use the engine's quirks to your advantage.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Problem: Passing Custom Instance Parameters</h3>
+<p>Imagine you have a single script, <code>portal_logic.nut</code>, that you want to use on two different portals. One portal should be blue (color "0 100 255") and have an ID of 1. The other should be orange (color "255 100 0") and have an ID of 2. How do you tell each entity's script what its unique parameters are directly from the map editor?</p>
+<p>You can't add new keyvalues to entities in Hammer. You could use `EntityGroup` on a `logic_script`, but that's clumsy for passing simple data like this.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">A Clever Hack: Abusing the "Model" Keyvalue</h3>
+<p>Many point entities (like <code>logic_script</code> or <code>info_target</code>) have a "Model" keyvalue. However, since they are invisible points, they don't actually use this value to display anything. This means the "Model" field is a free, empty text box we can use to pass data into our script!</p>
+<p>The strategy is to pack all our data into a single string, using a special character like a pipe `|` as a separator.</p>
+<p><strong>In Hammer (on your scripted entity):</strong></p>
+<pre><code class="language-plaintext">// We are using the "Model" field to store our custom data.
+"model" "1|0 100 255|true" 
+// This could mean: ID=1, Color="0 100 255", Ghosting=true
+</code></pre>
+
+<p><strong>In your VScript (e.g., <code>portal_logic.nut</code>):</strong></p>
+<p>On the script side, we read this string, split it apart, and use the data.</p>
+<pre><code class="language-squirrel">// This code runs at the top of the entity script.
+local paramString = self.GetModelName() // Reads the string from the "Model" keyvalue
+local params = split(paramString, "|") // Splits the string into an array
+
+// Now we can parse our parameters
+local portalID = params[0].tointeger()
+local portalColor = params[1] // This is already a string
+local withGhosting = (params[2] == "true") // Convert the string "true" to a boolean
+
+printl("Portal #" + portalID + " initialized with color " + portalColor)
+if (withGhosting) {
+    printl("Ghosting effect is enabled for this portal.")
+}
+</code></pre>
+<p>With this one simple hack, you've created a way to make your scripts highly reusable and configurable directly from the map editor, a feature that doesn't exist by default.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Mindset of a Creator</h3>
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+This way of thinking is the key to true mastery. The engine gives you a set of tools, but it's up to you to discover how to use them in ways the original developers never imagined.
+<br><br>
+The number of such "hacks" is limitless. They can involve not just scripts, but clever manipulation of materials (which can be edited from scripts), particle systems, or soundscapes. While a deep dive into those systems is outside the scope of this book, the core principle remains: understand the rules of a system so you can creatively bend them.
+</p>

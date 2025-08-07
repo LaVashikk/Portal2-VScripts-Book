@@ -1,0 +1,59 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.1: Organizing Code with Tables</h2>
+<p>As your scripts grow, you'll find yourself with many related variables and functions. Keeping them organized is key to writing clean, bug-free code. The best way to do this in Squirrel is to group them together inside a <strong>table</strong>, effectively creating your own custom "object".</p>
+<p>This pattern is useful for managing the state and behaviors of a complex entity, like a turret, all in one place.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">From Chaos to Order</h3>
+<pre><code class="language-squirrel">// Disorganized script on a turret entity:
+isActivated <- false
+ammoCount <- 100
+target <- null
+function AcquireTarget() { /*...*/ }
+function FireAtTarget() { /*...*/ }
+
+// Organized approach using a table:
+Turret <- {
+    isActivated = false,
+    ammoCount = 100,
+    target = null,
+    function AcquireTarget() { /*...*/ },
+    function FireAtTarget() { /*...*/ }
+}
+</code></pre>
+<p>This is much cleaner! But it introduces a new, very important concept: <strong>scope isolation</strong>.</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">The Scope Problem: <code>self</code> vs. <code>this</code></h3>
+<p>When you call a function that's inside a table (like <code>Turret.AcquireTarget()</code>), a special variable called <code>this</code> is created. Inside that function, <code>this</code> refers to the table the function lives in (the <code>Turret</code> table).</p>
+<p>The problem? The function inside the table has no idea what <code>self</code> (the entity handle) is! It lives in a different scope.</p>
+<pre><code class="language-squirrel">// In the entity's main scope...
+function InputEnable() {
+    // This will FAIL. The AcquireTarget function doesn't know what 'self' is.
+    Turret.AcquireTarget()
+}
+
+// Our organized table
+Turret <- {
+    function AcquireTarget() {
+        // ERROR: The variable 'self' does not exist in this scope!
+        local myPos = self.GetOrigin() 
+    }
+}
+</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Solution: Passing <code>self</code> as a Parameter</h3>
+<p>The solution is simple: if a function needs access to the entity, you must pass <code>self</code> to it as a parameter.</p>
+<pre><code class="language-squirrel">// In the entity's main scope...
+function InputEnable() {
+    // We pass 'self' (the entity handle) into the function.
+    Turret.AcquireTarget(self)
+}
+
+// Our organized table
+Turret <- {
+    // The function now accepts the entity handle as a parameter.
+    function AcquireTarget(turretEntity) {
+        // Now it works! We use the passed-in handle.
+        local myPos = turretEntity.GetOrigin()
+        printl("Acquiring target from position: " + myPos)
+    }
+}
+</code></pre>
+<p>This pattern of grouping logic into tables and passing <code>self</code> is fundamental to writing organized, large-scale VScripts.</p>
+<p class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg"><strong>What about Classes?</strong> Squirrel has a <code>class</code> keyword which is a more formal way to create these kinds of objects. They behave very similarly to tables but have stricter rules and concepts like inheritance. For most VScripting needs, using tables as objects is simpler and more flexible... For someone :p</p>
