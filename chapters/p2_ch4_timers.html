@@ -1,0 +1,43 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 2.4: Controlling Time with Delays</h2>
+<p>By default, your code runs instantly from top to bottom. But what if you need an action to happen in the future? This is essential for creating timed puzzles and scripted sequences.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Standard Tool: Delayed <code>EntFire</code></h3>
+<p>The built-in VScript function <code>EntFireByHandle</code> has an optional parameter for delay. This allows you to schedule any entity input to fire after a specified number of seconds.</p>
+<pre><code class="language-squirrel">// This script is attached to a floor button.
+// It opens a door when pressed, and closes it 5 seconds later.
+
+function OnButtonPressed() {
+    local door = Entities.FindByName(null, "chamber_door")
+    if (door) {
+        printl("Opening door...")
+        // Fire the "Open" input with no delay (0.0).
+        EntFireByHandle(door, "Open", "", 0.0, self, self)
+        
+        printl("Scheduling door to close in 5 seconds...")
+        // Fire the "Close" input with a 5.0 second delay.
+        EntFireByHandle(door, "Close", "", 5.0, self, self)
+    }
+}
+</code></pre>
+<p>This is simple and effective for one-off delays. However, creating a sequence of events with pauses can become clumsy.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Creating Sequences</h3>
+<p>To create a sequence, you must manually calculate the total delay for each step.</p>
+<pre><code class="language-squirrel">// A function to run a light sequence.
+function RunLightSequence() {
+    printl("Sequence started...")
+    
+    // Step 1: Turn on light 1 immediately.
+    EntFire("light_1", "TurnOn", "", 0.0)
+
+    // Step 2: Turn on light 2 after 1 second.
+    EntFire("light_2", "TurnOn", "", 1.0)
+
+    // Step 3: Turn on light 3 after another second (total delay is 2.0).
+    EntFire("light_3", "TurnOn", "", 2.0)
+    
+    // Step 4: Turn all lights off after 2.5 more seconds (total delay is 4.5).
+    EntFire("light_*", "TurnOff", "", 4.5)
+}
+</code></pre>
+<p>As you can see, managing the delays manually can be confusing and prone to errors. For more complex timing, you will later learn about advanced techniques that make this process much cleaner.</p>

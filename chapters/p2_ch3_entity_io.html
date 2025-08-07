@@ -2,8 +2,8 @@
 <p>Your scripts don't have to just run once. You can trigger code to run at any time using the game's built-in <strong>Input/Output (I/O)</strong> system.</p>
 <p>All entities have these special VScript <strong>Inputs</strong>:</p>
 <ul class="list-disc list-inside">
-    <li><strong><code>RunScriptCode</code></strong>: Executes a single line of Squirrel code.</li>
-    <li><strong><code>CallScriptFunction</code></strong>: Looks for a function by name within the entity's script and runs it.</li>
+    <li><strong><code>CallScriptFunction</code></strong>: Looks for a function by name within the entity's script and runs it. Best for calling pre-defined functions without arguments.</li>
+    <li><strong><code>RunScriptCode</code></strong>: Executes its parameter as a single line of Squirrel code. Best for simple commands or for calling functions that need arguments.</li>
 </ul>
 <h3 class="text-2xl font-bold mt-8 mb-4">Example</h3>
 <p>Imagine a button (<code>func_button</code>) and a door (<code>prop_dynamic</code>). The door has a script attached to it called <code>door_logic.nut</code>.</p>
@@ -12,5 +12,45 @@
 function OpenTheDoor() {
     printl("The OpenTheDoor function was called!")
     self.SetAnimation("open") // An example of what you might do.
-}</code></pre>
-<p><strong>In Hammer</strong>, you would create an output on the button's <code>OnPressed</code> event to target the door and call the input <code>CallScriptFunction</code> with a parameter of <code>OpenTheDoor</code>. When the player presses the button, the function in your script runs.</p>
+}
+
+function SetMessage(text) {
+    printl("The door received a message: " + text)
+}
+</code></pre>
+<p><strong>In Hammer</strong>, you would create an output on the button's <code>OnPressed</code> event. You have two options:</p>
+<ol class="list-decimal list-inside">
+    <li>Target the door and use the input <code>CallScriptFunction</code> with a parameter of <code>OpenTheDoor</code>. This is clean and simple.</li>
+    <li>Target the door and use the input <code>RunScriptCode</code> with a parameter of <code>SetMessage("You pressed the button!")</code>. This allows you to pass data directly into a function.</li>
+</ol>
+<p>When the player presses the button, the corresponding function in your script runs.</p>
+
+<br>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Actors: <code>self</code>, <code>activator</code>, and <code>caller</code></h3>
+<p>When code is run via the I/O system, VScript provides special variables that tell you *who* is involved in the action.</p>
+<ul class="list-disc list-inside space-y-2">
+    <li><strong><code>self</code></strong>: The entity whose script is currently running. In the example above, `self` is the door.</li>
+    <li><strong><code>activator</code></strong>: The entity that initiated the entire chain of events. This is most often the player.</li>
+    <li><strong><code>caller</code></strong>: The entity that fired the *specific input* that triggered your script.</li>
+</ul>
+
+<h4 class="text-xl font-bold mt-4 mb-2">Visualizing the Chain</h4>
+<p>Imagine this setup: A player presses a **button**. The button targets a **trigger**. The trigger targets a **door** running a script function.</p>
+<div class="flowchart not-prose my-8 p-4 border rounded-lg text-center">
+    <div class="flow-node">[Player]</div>
+    <div class="flow-arrow-labeled"><span>Presses</span></div>
+    <div class="flow-node">[Button]</div>
+    <div class="flow-arrow-labeled"><span>Fires output to</span></div>
+    <div class="flow-node">[Trigger]</div>
+    <div class="flow-arrow-labeled"><span>Fires output to</span></div>
+    <div class="flow-node">[Door with Script]</div>
+</div>
+<pre><code class="language-squirrel">// Inside the door's script function
+function AnalyzeSignal() {
+    printl("I am the door: " + self.GetName()) // self is the door
+    printl("The signal came from: " + caller.GetClassname()) // caller is the trigger
+    printl("This was all started by: " + activator.GetClassname()) // activator is the player
+}
+</code></pre>
+<p>Understanding this chain is vital for creating logic that correctly identifies who or what is interacting with your scripted entities.</p>
