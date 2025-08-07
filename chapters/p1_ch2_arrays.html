@@ -9,7 +9,6 @@ printl(chamberList[0]) // Prints "Chamber 01"</code></pre>
     <li><code>.len()</code>: Returns the number of items in the array.</li>
     <li><code>.append(value)</code>: Adds a new item to the very end of the array.</li>
     <li><code>.remove(index)</code>: Removes the item at the specified index and shifts all following items down.</li>
-    <li><code>.find(value)</code>: Searches for a value and returns its index, or <code>null</code> if not found.</li>
     <li><code>.map(function)</code>: Creates a new array by running a function on every element of the original.</li>
     <li><code>.slice(start_index, [end_index])</code>: Creates a new, smaller array from a piece of the original.</li>
 </ul>
@@ -22,3 +21,7 @@ printl(chamberList[0]) // Prints "Chamber 01"</code></pre>
 foreach(idx, direction in panelSequence) {
     printl("Step " + idx + ": panel goes " + direction)
 }</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Arrays are Just Special Tables</h3>
+<p class="p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg">
+    <strong>Deep Dive:</strong> Under the hood, an Array in Squirrel is simply a Table where the keys are automatically assigned as integers (0, 1, 2, and so on). This is why you can access elements with <code>myArray[0]</code> and why they share some methods like <code>.len()</code>. Understanding this relationship helps demystify how Squirrel handles data.
+</p>

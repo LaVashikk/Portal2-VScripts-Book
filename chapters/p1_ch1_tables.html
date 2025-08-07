@@ -3,7 +3,7 @@
 <pre><code class="language-squirrel">// Create a table to hold data about a personality core.
 local core = {}
 
-// Use '<-' to CREATE new key-value pairs (slots).
+// Use '<-' to CREATE new key-value pairs (slots) using "dot notation".
 core.name <- "Wheatley"
 core.color <- "Blue"
 core.isMoron <- true
@@ -12,7 +12,17 @@ core.isMoron <- true
 core.isMoron = false // He's in charge now!
 </code></pre>
 <p>Using <code>=</code> on a key that doesn't exist will cause a script error. This is a feature, not a bug—it helps you catch typos!</p>
-<h3 class="text-2xl font-bold mt-8 mb-4">The <code>in</code> Operator</h3>
+<h3 class="text-2xl font-bold mt-8 mb-4">Accessing Keys with Bracket Notation</h3>
+<p>Dot notation (<code>core.name</code>) is a clean shortcut, but it only works for keys that are simple text strings without spaces. For keys that are numbers, variables, or strings with special characters, you must use <strong>bracket notation</strong>.</p>
+<pre><code class="language-squirrel">local testData = {}
+testData["first name"] <- "Doug" // String with a space requires brackets
+testData[1] <- "This key is a number"
+local keyVar = "status"
+testData[keyVar] <- "Operational" // Using a variable as a key
+
+printl(testData[1]) // Prints "This key is a number"
+</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Checking for Keys with <code>in</code></h3>
 <p>How do you safely check if a key exists in a table before you try to access it? With the <code>in</code> operator.</p>
  <pre><code class="language-squirrel">local glados = { 
     name = "GLaDOS", 
@@ -27,6 +37,17 @@ if ("moralityCore" in glados) {
     // This is false, so the block is skipped.
     printl("Morality core is present.")
 }
+</code></pre>
+<h3 class="text-2xl font-bold mt-8 mb-4">Looping Through Tables</h3>
+<p>Just like with arrays, you can use a <code>foreach</code> loop to go through every key-value pair in a table. Note that the order is not guaranteed.</p>
+<pre><code class="language-squirrel">// Using the 'glados' table from the previous example
+foreach (key, value in glados) {
+    printl("GLaDOS's " + key + " is " + value)
+}
+
+// Console Output:
+// GLaDOS's name is GLaDOS
+// GLaDOS's neurotoxinLevel is 100
 </code></pre>
 <h3 class="text-2xl font-bold mt-8 mb-4">More Table Methods</h3>
 <p>Tables have a few built-in helper functions:</p>
