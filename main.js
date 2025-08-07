@@ -213,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tocElement = document.getElementById('toc');
     const chapterContainer = document.getElementById('chapter-container');
+    const mainContent = document.getElementById('main-content');
     const prevArrow = document.getElementById('prev-chapter-arrow');
     const nextArrow = document.getElementById('next-chapter-arrow');
     const themeSwitcher = document.getElementById('theme-switcher');
@@ -261,21 +262,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 updateUI();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+                renderBottomNavigation(); // Render bottom nav links
             })
             .catch(error => {
                 chapterContainer.innerHTML = `<div class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><p class="font-bold">Error loading chapter content.</p><p>${error}</p></div>`;
                 updateUI();
             });
     }
+
+    // Function to render bottom navigation links
+    function renderBottomNavigation() {
+        const navContainer = document.getElementById('chapter-nav-bottom');
+        if (!navContainer) return;
+
+        navContainer.innerHTML = ''; // Clear previous links
+
+        const prevChapter = currentChapterIndex > 0 ? bookData[currentChapterIndex - 1] : null;
+        const nextChapter = currentChapterIndex < bookData.length - 1 ? bookData[currentChapterIndex + 1] : null;
+
+        let prevLinkHTML = '<div></div>'; // Placeholder to keep justify-between working
+        if (prevChapter) {
+            prevLinkHTML = `<a href="#" data-index="${currentChapterIndex - 1}" class="chapter-nav-link text-left">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Previous</span>
+                                <span class="block font-semibold">${prevChapter.title}</span>
+                            </a>`;
+        }
+
+        let nextLinkHTML = '<div></div>'; // Placeholder
+        if (nextChapter) {
+            nextLinkHTML = `<a href="#" data-index="${currentChapterIndex + 1}" class="chapter-nav-link text-right">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Next</span>
+                                <span class="block font-semibold">${nextChapter.title}</span>
+                            </a>`;
+        }
+
+        navContainer.innerHTML = prevLinkHTML + nextLinkHTML;
+    }
     
     function updateUI() {
+        // Floating arrows for desktop
         prevArrow.classList.toggle('hidden', currentChapterIndex === 0);
         nextArrow.classList.toggle('hidden', currentChapterIndex === bookData.length - 1);
 
+        // Active state in Table of Contents
         document.querySelectorAll('#toc a').forEach(a => a.classList.remove('active'));
         const activeLink = document.querySelector(`#toc a[data-index="${currentChapterIndex}"]`);
         if (activeLink) activeLink.classList.add('active');
         
+        // Quiz button logic
         const chapterData = bookData[currentChapterIndex];
         const currentChapterElement = chapterContainer.querySelector(`#chapter-${chapterData.id}`);
 
@@ -427,6 +461,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const link = e.target.closest('a');
         if (link && link.dataset.index) {
+            loadChapter(parseInt(link.dataset.index));
+        }
+    });
+
+    // ADDED: Event delegation for bottom navigation links
+    mainContent.addEventListener('click', (e) => {
+        const link = e.target.closest('.chapter-nav-link');
+        if (link && link.dataset.index) {
+            e.preventDefault();
             loadChapter(parseInt(link.dataset.index));
         }
     });

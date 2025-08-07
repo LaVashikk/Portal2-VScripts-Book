@@ -131,6 +131,9 @@ pre[class*="language-"] {
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     font-family: 'Fira Code', monospace;
+    /* Ensure code blocks can scroll horizontally on mobile */
+    overflow-x: auto;
+    white-space: pre;
 }
 code[class*="language-"] {
     font-family: 'Fira Code', monospace;
@@ -174,9 +177,25 @@ body.sidebar-hidden #prev-chapter-arrow {
 }
 #next-chapter-arrow { right: 1rem; }
 .nav-arrow.hidden { display: none; }
-@media (max-width: 1280px) { /* Hide arrows on smaller screens to avoid overlap */
+
+/* Hide floating arrows on tablets and smaller screens, replaced by bottom nav */
+@media (max-width: 1280px) {
     .nav-arrow { display: none !important; }
 }
+
+/* Bottom chapter navigation */
+.chapter-nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    max-width: 48%;
+}
+.chapter-nav-link:hover {
+    border-color: var(--accent-color);
+    text-decoration: none;
+}
+
 
 /* Quiz Modal */
 #quiz-modal {
@@ -205,7 +224,7 @@ body.sidebar-hidden #prev-chapter-arrow {
     background-color: rgba(239, 68, 68, 0.1);
 }
 
-/* NEW: Styles for "Why fullscreen?" link and text */
+/* MODIFIED: Styles for "Why fullscreen?" link and text for responsiveness */
 #why-fullscreen-container {
     position: absolute;
     bottom: -3rem;
@@ -225,7 +244,9 @@ html.dark #why-fullscreen-link {
     position: absolute;
     bottom: 2rem;
     right: 0;
-    width: 280px;
+    /* MODIFIED: Make width responsive */
+    width: 90vw;
+    max-width: 280px; 
     background-color: var(--sidebar-bg-dark);
     color: var(--text-dark);
     padding: 0.75rem;
