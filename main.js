@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'welcome', part: 'Welcome', title: 'Introduction', file: 'chapters/welcome.html'
         },
         {
-            id: 'what-is-a-script', part: 'Part 0: The Language of Logic', title: 'What is a Script?', file: 'chapters/p0_ch1_what_is_a_script.html'
+            id: 'what-is-a-script', part: 'Part 0: The Language of Logic', title: 'What is a Script?', file: 'chapters/chapter0/ch01_what_is_a_script.html'
         },
         {
-            id: 'variables-data-types', part: 'Part 0: The Language of Logic', title: 'Variables & Data Types', file: 'chapters/p0_ch2_variables.html',
+            id: 'variables-data-types', part: 'Part 0: The Language of Logic', title: 'Variables & Data Types', file: 'chapters/chapter0/ch02_variables.html',
             quiz: [
                 { question: "You want to create a variable to track the time remaining in a puzzle, starting at 90.5 seconds. Which line of code is correct?", options: [ "<code>local timeRemaining = 90.5</code>", "<code>local time_remaining = \"90.5\"</code>", "<code>var timeRemaining = 90.5</code>", "<code>local time = 90,5</code>" ], answer: 0, explanation: "This correctly uses the `local` keyword and a float value. Option B is a string, C uses an invalid keyword for Squirrel, and D uses a comma instead of a decimal point." },
                 { question: "A script contains the line <code>local turretIsActive = true;</code>. What data type is <code>turretIsActive</code>?", options: ["String", "Integer", "Float", "Bool"], answer: 3, explanation: "The value `true` is one of the two possible Boolean values (`true` or `false`), making the data type Bool." },
@@ -32,24 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'operators', part: 'Part 0: The Language of Logic', title: 'Operators', file: 'chapters/p0_ch3_operators.html',
+            id: 'operators', part: 'Part 0: The Language of Logic', title: 'Operators', file: 'chapters/chapter0/ch03_operators.html',
              quiz: [
                 { question: "Given <code>local powerActive = true;</code> and <code>local waterIsToxic = true;</code>, what is the result of the expression <code>powerActive == true && waterIsToxic == false</code>?", options: ["<code>true</code>", "<code>false</code>", "<code>null</code>", "It will cause an error."], answer: 1, explanation: "For `&&` (AND) to be true, both sides must be true. Since `waterIsToxic == false` is false, the entire expression becomes false." },
                 { question: "A door should open if the player presses a button (<code>buttonPressed</code> is <code>true</code>) OR if the player has a keycard (<code>hasKeycard</code> is <code>true</code>). Which <code>if</code> statement correctly represents this logic?", options: ["<code>if (buttonPressed && hasKeycard)</code>", "<code>if (buttonPressed || hasKeycard)</code>", "<code>if (!buttonPressed)</code>", "<code>if (buttonPressed != hasKeycard)</code>"], answer: 1, explanation: "The `||` (OR) operator is the correct choice for a condition that should be met if one *or* the other (or both) are true." }
             ]
         },
         {
-            id: 'if-else-viz', part: 'Part 0: The Language of Logic', title: 'Making Decisions', file: 'chapters/p0_ch4_if_else.html'
+            id: 'if-else-viz', part: 'Part 0: The Language of Logic', title: 'Making Decisions', file: 'chapters/chapter0/ch04_if_else.html'
         },
         {
-            id: 'loops-detailed', part: 'Part 0: The Language of Logic', title: 'Repeating with Loops', file: 'chapters/p0_ch5_loops.html',
+            id: 'loops-detailed', part: 'Part 0: The Language of Logic', title: 'Repeating with Loops', file: 'chapters/chapter0/ch05_loops.html',
             quiz: [
                 { question: "How many times will the message \"Testing...\" be printed by this loop? <br><code>for (local i = 1; i <= 3; i++) { printl(\"Testing...\") }</code>", options: ["2 times", "3 times", "4 times", "It will loop forever."], answer: 1, explanation: "The loop runs for `i = 1`, `i = 2`, and `i = 3`. When `i` becomes 4, the condition `4 <= 3` is false, and the loop terminates." },
                 { question: "Look at this <code>while</code> loop. What is the potential problem?<br><pre><code class='language-squirrel'>local timer = 10\nwhile (timer > 0)\n{\n    printl(\"Time left: \" + timer)\n}</code></pre>", options: ["There is no problem.", "It will run 10 times and stop.", "It will cause an infinite loop.", "It will not run at all."], answer: 2, explanation: "The variable `timer` is never changed inside the loop. Since it starts at 10, the condition `timer > 0` will *always* be true, and the loop will never end. You would need to add `timer--` inside the loop to fix it." }
             ]
         },
         {
-            id: 'functions-first-class', part: 'Part 0: The Language of Logic', title: 'Organizing with Functions', file: 'chapters/p0_ch6_functions.html',
+            id: 'functions-first-class', part: 'Part 0: The Language of Logic', title: 'Organizing with Functions', file: 'chapters/chapter0/ch06_functions.html',
             quiz: [
                 { question: "Which keyword is used to send a value back from a function to the code that called it?", options: [ "<code>output</code>", "<code>send</code>", "<code>return</code>", "<code>yield</code>" ], answer: 2, explanation: "`return` is the correct keyword. It immediately stops the function and sends the specified value back." },
                 { question: "Given the function below, what will be printed to the console?<br><pre><code class='language-squirrel'>function Greet(name) { printl(\"Welcome, \" + name) }\nGreet(\"Chell\")</code></pre>", options: ["Welcome, name", "Welcome, Chell", "An error will occur.", "Greet(\"Chell\")"], answer: 1, explanation: "The string \"Chell\" is passed as an argument and assigned to the 'name' parameter inside the function, which is then used by the `printl` command." },
@@ -57,43 +57,45 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'squirrel-tables', part: 'Part 1: Learning the Dialect', title: 'The Heart of Squirrel: Tables', file: 'chapters/p1_ch1_tables.html',
+            id: 'squirrel-tables', part: 'Part 1: Data Structures in Squirrel', title: 'The Heart of Squirrel: Tables', file: 'chapters/chapter1/ch01_tables.html',
             quiz: [
                 { question: "You have a table <code>local portalGun = {}</code>. Which line of code correctly adds a new slot to track that it's the `blue` portal?", options: [ "<code>portalGun.color = \"blue\"</code>", "<code>local portalGun.color <- \"blue\"</code>", "<code>portalGun.color <- \"blue\"</code>", "<code>portalGun[\"color\"] = \"blue\"</code>" ], answer: 2, explanation: "The `<-` operator is used to create a new slot. A and D use `=`, which would cause an error because the 'color' slot doesn't exist yet. B uses incorrect syntax." },
                 { question: "Given the code below, what will be printed to the console?<br><pre><code class='language-squirrel'>local frankenTurret = {}\nfrankenTurret.type <- \"Cube-Turret Hybrid\"\nfrankenTurret.type = \"Defective Turret\"\nprintl(frankenTurret.type)</code></pre>", options: ["Cube-Turret Hybrid", "Defective Turret", "An error will occur.", "null"], answer: 1, explanation: "The `<-` creates the slot. The `=` then successfully modifies the value of the existing slot." }
             ]
         },
         {
-            id: 'squirrel-arrays', part: 'Part 1: Learning the Dialect', title: 'Ordered Data: Arrays', file: 'chapters/p1_ch2_arrays.html'
+            id: 'squirrel-arrays', part: 'Part 1: Data Structures in Squirrel', title: 'Ordered Data: Arrays', file: 'chapters/chapter1/ch02_arrays.html'
         },
         {
-            id: 'connecting-logic-script', part: 'Part 2: Connecting to the World', title: 'The `logic_script` Entity', file: 'chapters/p2_ch1_logic_script.html'
+            id: 'connecting-logic-script', part: 'Part 2: Connecting to the World', title: 'The `logic_script` Entity', file: 'chapters/chapter2/ch01_logic_script.html'
         },
         {
-            id: 'connecting-scope', part: 'Part 2: Connecting to the World', title: 'Understanding Scope', file: 'chapters/p2_ch1b_scope.html',
+            id: 'connecting-scope', part: 'Part 2: Connecting to the World', title: 'Understanding Scope', file: 'chapters/chapter2/ch02_scope.html',
             quiz: [
                 { question: "Script 'a.nut' runs `myVar <- 10`. Script 'b.nut' runs `myVar <- 20`. Afterwards, what is the value of `myVar` inside script 'a.nut'?", options: ["10", "20", "null", "It will cause an error."], answer: 0, explanation: "Each script has its own separate scope. Changing `myVar` in script 'b.nut' does not affect the completely separate variable with the same name in script 'a.nut'." },
                 { question: "Script 'a.nut' runs `::globalStatus <- \"Active\"`. Script 'b.nut' then runs `printl(::globalStatus)`. What will be printed?", options: ["null", "\"Active\"", "An error will occur.", "globalStatus"], answer: 1, explanation: "The `::` operator places the variable in the global root table, which is a shared space. Script 'b.nut' can correctly access it using the same `::` operator." }
             ]
         },
         {
-            id: 'connecting-entity-scripts', part: 'Part 2: Connecting to the World', title: 'Entity Scripts & `self`', file: 'chapters/p2_ch2_entity_scripts.html'
+            id: 'connecting-entity-scripts', part: 'Part 2: Connecting to the World', title: 'Entity Scripts', file: 'chapters/chapter2/ch03_entity_scripts.html'
         },
         {
-            id: 'connecting-entity-io', part: 'Part 2: Connecting to the World', title: 'Running Code with Entity I/O', file: 'chapters/p2_ch3_entity_io.html',
+            id: 'connecting-entity-io', part: 'Part 2: Connecting to the World', title: 'Entity I/O & The Actors', file: 'chapters/chapter2/ch04_entity_io.html',
             quiz: [
-                { question: "You want a script named `init.nut` to run once, right when your map begins. What entity should you use?", options: ["<code>logic_relay</code>", "<code>logic_script</code>", "<code>info_player_start</code>", "<code>prop_dynamic</code>"], answer: 1, explanation: "The `logic_script` entity's entire purpose is to run VScript files for map-wide logic at startup." },
-                { question: "Inside an entity script attached to a <code>prop_button</code>, what special variable do you use to refer to the button itself?", options: ["<code>this</code>", "<code>button</code>", "<code>entity</code>", "<code>self</code>"], answer: 3, explanation: "`self` is always the script handle to the entity the script is attached to in Portal 2's VScript." }
+                { question: "A player presses a button, which fires an input to a door with a script. Inside the door's script function, what does the `caller` variable refer to?", options: ["The door", "The player", "The button", "null"], answer: 2, explanation: "`self` is the door, `activator` is the player, and `caller` is the entity that fired the input directly, which is the button." }
             ]
         },
         {
-            id: 'interacting-vectors', part: 'Part 3: Becoming a Creator', title: 'Navigating 3D Space: Vectors', file: 'chapters/p3_ch1_vectors.html'
+            id: 'connecting-timers', part: 'Part 2: Connecting to the World', title: 'Controlling Time', file: 'chapters/chapter2/ch05_timers.html'
         },
         {
-            id: 'interacting-finding-advanced', part: 'Part 3: Becoming a Creator', title: 'Finding Entities (Advanced)', file: 'chapters/p3_ch2_finding.html'
+            id: 'creator-vectors', part: 'Part 3: Becoming a Creator', title: 'Math & Vectors', file: 'chapters/chapter3/ch01_vectors.html'
         },
         {
-            id: 'interacting-hooks-example', part: 'Part 3: Becoming a Creator', title: 'Hooks & Think Functions', file: 'chapters/p3_ch3_hooks.html',
+            id: 'creator-finding-advanced', part: 'Part 3: Becoming a Creator', title: 'Finding Entities', file: 'chapters/chapter3/ch02_finding.html'
+        },
+        {
+            id: 'creator-hooks-example', part: 'Part 3: Becoming a Creator', title: 'Hooks & Think Functions', file: 'chapters/chapter3/ch03_hooks.html',
             quiz: [
                 { question: "What is the primary purpose of a Think function in VScript?", options: ["To run code in response to a specific player input.", "To run code repeatedly at a regular interval.", "To run code only once when the map starts.", "To stop an entity from moving."], answer: 1, explanation: "Think functions are designed for continuous or periodic checks and actions, like a security camera constantly watching an area or a hazard damaging a player over time." },
                 { question: "Inside a Think function named `MyThink`, how do you make it run again in exactly 0.5 seconds?", options: ["<code>self.ThinkNext(0.5)</code>", "<code>yield 0.5</code>", "<code>return 0.5</code>", "<code>return false</code>"], answer: 2, explanation: "Returning a positive float value from a Think function tells the engine to schedule the next think for that many seconds in the future. `yield` is for PCapture-Lib's scheduler, and returning `false` or a negative number would disable the think." },
@@ -101,38 +103,50 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'connecting-console', part: 'Part 3: Becoming a Creator', title: 'The Debugging', file: 'chapters/p3_ch4_debug.html'
+            id: 'creator-debug', part: 'Part 3: Becoming a Creator', title: 'Debugging Your Scripts', file: 'chapters/chapter3/ch04_debug.html'
         },
         {
-            id: 'pcap-intro', part: 'Part 4: Advanced Techniques', title: 'Intro to PCapture-Lib', file: 'chapters/p4_ch1_pcap_intro.html'
+            id: 'organizing-tables-as-objects', part: 'Part 4: Writing Clean & Creative Code', title: 'Organizing with Tables', file: 'chapters/chapter4/ch01_data_organization.html'
         },
         {
-            id: 'pcap-smarter-entities', part: 'Part 4: Advanced Techniques', title: 'Smarter Entities: pcapEntity', file: 'chapters/p4_ch2_pcap_entity.html'
+            id: 'organizing-libraries', part: 'Part 4: Writing Clean & Creative Code', title: 'Reusable Code: Libraries', file: 'chapters/chapter4/ch02_libraries.html'
         },
         {
-            id: 'pcap-scheduler', part: 'Part 4: Advanced Techniques', title: 'Perfect Timing: ActionScheduler', file: 'chapters/p4_ch3_pcap_scheduler.html'
+            id: 'organizing-traceline', part: 'Part 4: Writing Clean & Creative Code', title: 'Seeing the World: TraceLine', file: 'chapters/chapter4/ch03_traceline.html'
         },
         {
-            id: 'pcap-traceplus', part: 'Part 4: Advanced Techniques', title: 'The Ultimate Tool: TracePlus', file: 'chapters/p4_ch4_pcap_traceplus.html'
+            id: 'organizing-hacks', part: 'Part 4: Writing Clean & Creative Code', title: 'Hacking the Engine', file: 'chapters/chapter4/ch04_engine_hacks.html'
         },
         {
-            id: 'pcap-animations', part: 'Part 4: Advanced Techniques', title: 'The Animations Module', file: 'chapters/p4_ch5_pcap_animations.html'
+            id: 'pcap-intro', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Intro to PCapture-Lib', file: 'chapters/chapter5/ch01_pcap_intro.html'
         },
         {
-            id: 'pcap-hud', part: 'Part 4: Advanced Techniques', title: 'The HUD Module', file: 'chapters/p4_ch6_pcap_hud.html'
+            id: 'pcap-smarter-entities', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Smarter Entities: pcapEntity', file: 'chapters/chapter5/ch02_pcap_entity.html'
         },
         {
-            id: 'pcap-scriptevents', part: 'Part 4: Advanced Techniques', title: 'The ScriptEvents Module', file: 'chapters/p4_ch7_pcap_scriptevents.html',
+            id: 'pcap-scheduler', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Perfect Timing: ActionScheduler', file: 'chapters/chapter5/ch03_pcap_scheduler.html'
+        },
+        {
+            id: 'pcap-traceplus', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Ultimate Tool: TracePlus', file: 'chapters/chapter5/ch04_pcap_traceplus.html'
+        },
+        {
+            id: 'pcap-animations', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Animations Module', file: 'chapters/chapter5/ch05_pcap_animations.html'
+        },
+        {
+            id: 'pcap-hud', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The HUD Module', file: 'chapters/chapter5/ch06_pcap_hud.html'
+        },
+        {
+            id: 'pcap-scriptevents', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The ScriptEvents Module', file: 'chapters/chapter5/ch07_pcap_scriptevents.html',
             quiz: [
                 { question: "You need a script to perform a sequence: 1. A panel moves up. 2. Wait 2 seconds. 3. A sound plays. Which PCapture-Lib module is *best* for managing this timing?", options: [ "<code>Animations</code>", "<code>TracePlus</code>", "<code>ActionScheduler</code>", "<code>HUD</code>" ], answer: 2, explanation: "The `ActionScheduler` with `yield 2.0` is the perfect tool for creating timed sequences of events in a clean, readable way." },
                 { question: "You want to make a cube slowly move from its current position to a point 256 units above it over 4 seconds. Which function is ideal for this?", options: [ "<code>pcapEntity.SetOrigin()</code> inside a <code>for</code> loop.", "<code>animate.PositionTransitionByTime()</code>", "<code>ScheduleEvent.Add()</code> with a <code>yield</code>.", "<code>TracePlus.PortalBbox()</code>" ], answer: 1, explanation: "The `animate.PositionTransitionByTime()` function from the Animations module is specifically designed to handle smooth movement between two points over a set duration." }
             ]
         },
         {
-            id: 'conclusion', part: 'Conclusion', title: 'Congratulations!', file: 'chapters/conclusion.html'
+            id: 'conclusion', part: 'Conclusion', title: 'Where to Go From Here', file: 'chapters/conclusion.html'
         }
     ];
-
+    
     // =================================================================================
     // SITE LOGIC
     // =================================================================================
