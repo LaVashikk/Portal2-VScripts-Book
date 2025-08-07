@@ -1,0 +1,83 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.10: The Utility Belt: A Tour of PCapture-Lib's Helpers</h2>
+<p>Beyond the major systems like `TracePlus` and `ActionScheduler`, PCapture-Lib is packed with hundreds of utility functions and improvements. These are the everyday tools that save you time, reduce bugs, and make your code cleaner and more powerful.</p>
+<p>This chapter serves as a reference guide to the most important of these utilities. You don't need to memorize them all, but knowing they exist will make you a far more efficient scripter.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Core Engine Improvements</h3>
+<p>PCapture-Lib directly upgrades several standard VScript functions to be more robust and useful.</p>
+<ul class="list-disc list-inside space-y-4">
+    <li>
+        <code>GetPlayerEx()</code><br>
+        <strong>This is the new standard.</strong> While the original <code>GetPlayer()</code> returns a basic handle, <code>GetPlayerEx()</code> returns a powerful <code>pcapEntity</code> object, giving you immediate access to all the smart methods you learned about in Chapter 5.2.
+    </li>
+    <li>
+        <code>FrameTime()</code><br>
+        The original function could sometimes return 0, which can cause errors in physics calculations (like division by zero). The library's version ensures it never returns zero, preventing these rare but frustrating bugs.
+    </li>
+    <li>
+        <code>UniqueString(prefix)</code><br>
+        Improves the standard function by allowing you to add a prefix (e.g., <code>"my_prop_"</code>). This is great for creating unique, but readable, entity names for debugging.
+    </li>
+    <li>
+        <code>EntFireByHandle(...)</code><br>
+        The library's version is upgraded to seamlessly accept <code>pcapEntity</code> objects as targets, activators, and callers, removing the need to manually handle different object types.
+    </li>
+</ul>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Player Event System</h3>
+<p><strong>Problem:</strong> How do you reliably know when a player dies, joins the server, or respawns? Standard VScript has no built-in way to track these events.</p>
+<p><strong>Solution:</strong> PCapture-Lib runs a system in the background that monitors players and provides "hooks"—empty functions that you can override to run your own code when these events happen.</p>
+<pre><code class="language-squirrel">// In your logic_script, you can simply define this function.
+// PCapture-Lib will automatically call it whenever a player dies.
+function OnPlayerDeath(player) {
+    local playerName = player.GetName()
+    dev.warning(playerName + " has been eliminated!")
+    
+    // Maybe trigger a failure state for a puzzle.
+    EntFire("puzzle_manager", "FailPuzzle", "", 0)
+}
+
+// Another example: Welcome players when they join.
+function OnPlayerJoined(player) {
+    HUD.ScreenText(Vector(0.5, 0.5, 0), "Welcome, " + player.GetName(), 5.0).Enable()
+}
+</code></pre>
+<p>The available hooks are: <code>OnPlayerJoined(player)</code>, <code>OnPlayerLeft(player)</code>, <code>OnPlayerDeath(player)</code>, and <code>OnPlayerRespawn(player)</code>. You can also get a list of all current players at any time with <code>GetPlayers()</code>.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Portal-Specific Utilities</h3>
+<p>These are specialized helpers for maps that heavily feature portals.</p>
+<ul class="list-disc list-inside space-y-2">
+    <li><code>FindPartnerForPropPortal(portal_handle)</code>: Given a handle to a `prop_portal` entity, this function will find and return the handle to its linked partner portal.</li>
+    <li><code>IsBluePortal(portal_handle)</code>: A simple check that returns `true` if the given portal is the blue one.</li>
+    <li><code>InitPortalPair(id)</code>: An advanced function needed for `TracePlus.PortalBbox` to work correctly with custom portal pairs (e.g., in multiplayer or with more than two portals).</li>
+</ul>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The `macros` Library: Your Everyday Toolkit</h3>
+<p>This is a large collection of helper functions, grouped under the global table `macros`.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Sound & Console</h4>
+<ul class="list-disc list-inside">
+    <li><code>Precache(sound_or_array)</code>: Precaches sounds to prevent in-game stuttering the first time they are played.</li>
+    <li><code>GetSoundDuration(soundName)</code>: Returns the length of a sound in seconds. Perfect for timing events.</li>
+    <li><code>CreateAlias(key, action)</code> / <code>CreateCommand(key, command)</code>: Lets you create custom console commands for easy debugging.</li>
+</ul>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Data Handling & Conversion</h4>
+<ul class="list-disc list-inside">
+    <li><code>StrToVec(string)</code> / <code>VecToStr(vector)</code>: Essential for converting between string and Vector formats, especially for the "Model Keyvalue Hack" from Chapter 4.4.</li>
+    <li><code>DeepCopy(table_or_array)</code>: Creates a true, independent copy of a table or array.</li>
+    <li><code>GetFromTable(table, key, defaultValue)</code>: Safely gets a value from a table. If the key doesn't exist, it returns the `defaultValue` instead of an error.</li>
+    <li><code>GetKeys(table)</code> / <code>GetValues(table)</code>: Return an array of a table's keys or values, respectively.</li>
+    <li><code>PrintIter(table_or_array)</code>: Prints the full contents of a table or array to the console for easy debugging.</li>
+</ul>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Math & Geometry Helpers</h4>
+<ul class="list-disc list-inside">
+    <li><code>GetDist(vec1, vec2)</code>: A shortcut for `(vec1 - vec2).Length()` to get the distance between two points.</li>
+    <li><code>PointInBBox(point, bbox_min, bbox_max)</code>: Returns `true` if a Vector point is inside a bounding box defined by two other Vectors.</li>
+    <li><code>PointInBounds(point)</code>: A quick check to see if a point is within the playable map area (not in the void).</li>
+</ul>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Player & Entity Helpers</h4>
+<ul class="list-disc list-inside">
+    <li><code>GetEyeEndpos(player, distance)</code>: Calculates the world-space position `distance` units directly in front of where the player is looking.</li>
+</ul>

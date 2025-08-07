@@ -1,0 +1,31 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.6: Debugging 303: Visualizing Your Logic</h2>
+<p>In Part 3, you learned that `printl` is your most valuable debugging tool. It's the detective's magnifying glass. But sometimes, you need more than just text in a console; you need to *see* what your script is thinking.</p>
+<p>PCapture-Lib enhances debugging with visual tools that draw shapes and information directly into the game world.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Drawing Bounding Boxes</h3>
+<p>Is your trace failing because an entity's collision box is bigger than you thought? Is an entity not where you expect it to be? Use <code>dev.DrawEntityBBox()</code> to find out.</p>
+<pre><code class="language-squirrel">// This think function finds the closest cube to the player and draws its box.
+function DebugClosestCube() {
+    local player = GetPlayerEx()
+    if (!player) return 1.0
+
+    local closestCube = entLib.FindByName(null, "prop_weighted_cube") // Simplified for example
+    if (closestCube) {
+        // Draw the cube's bounding box in bright magenta for 0.1 seconds.
+        // The color is an R G B vector.
+        dev.DrawEntityBBox(closestCube, Vector(255, 0, 255), 0.1)
+    }
+
+    return 0.1
+}
+</code></pre>
+<p>Running this function will show you the exact collision boundaries of the entity in real-time, instantly revealing any spatial or collision-related bugs.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Better Logging</h3>
+<p>PCapture-Lib also provides an improved logging system. Instead of just `printl`, you can use functions that automatically format your messages and color-code them by importance.</p>
+<ul class="list-disc list-inside">
+    <li><code>dev.info("Player score is now {}", score)</code>: For general information.</li>
+    <li><code>dev.warning("Turret ammo is low: {}", ammo)</code>: For non-critical problems.</li>
+    <li><code>dev.error("Player handle is null! Cannot continue.")</code>: For critical, script-breaking errors.</li>
+</ul>
+<p>This makes your console output much cleaner and helps you spot important messages in a sea of text.</p>

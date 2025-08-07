@@ -1,22 +1,28 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 4.1: Introduction to PCapture-Lib</h2>
-<p>You now have a solid grasp of vanilla VScript. Now, we introduce a tool that makes all of this faster, easier, and more powerful: <strong>PCapture-Lib</strong>.</p>
-<p>PCapture-Lib is a community-made library of pre-written code that you can include in your projects. It simplifies common tasks and adds brand new functionality that is impossible with standard VScript.</p>
+<h2 class="text-3xl font-bold mb-4">Chapter 5.1: Intro to PCapture-Lib</h2>
+<p>Congratulations! You have mastered the fundamentals of VScript. You can manipulate entities, manage logic, and even bend the engine to your will with creative hacks. You've reached the limits of what Portal 2's standard scripting tools can offer.</p>
+<p>Now, it's time to break those limits.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Why You Need a Library</h3>
+<p>Think of the standard VScript API as a basic toolbox. It has a hammer, a screwdriver, and a wrench. You can build a lot, but some tasks are incredibly difficult:</p>
+<ul class="list-disc list-inside space-y-2">
+    <li>Your "laser beam" (<code>TraceLine</code>) is blind to players and cubes.</li>
+    <li>Creating timed sequences is a mess of manual delay calculations.</li>
+    <li>Making an object move smoothly from A to B requires complex math in a Think function.</li>
+    <li>Inter-script communication often relies on cluttering the global scope.</li>
+</ul>
+<p><strong>PCapture-Lib</strong> is a professional-grade power tool kit. It's a massive, community-built library that gives you new, powerful, and intuitive functions to solve these problems and many more. It is the "super-tool" that nearly all modern, complex Portal 2 maps use.</p>
+<p class="p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg">
+    While its size might seem intimidating, PCapture-Lib is designed to be user-friendly, stable, and predictable. Its functions have clear names and behave exactly as you'd expect, making your code cleaner and more powerful.
+</p>
+
 <h3 class="text-2xl font-bold mt-8 mb-4">Installation</h3>
+<p>Using the library is incredibly simple. It's just another script you include in your project.</p>
 <ol class="list-decimal list-inside space-y-2">
-    <li>Download <code>PCapture-Lib.nut</code> from its release page.</li>
-    <li>Place it in your <code>portal 2/portal2/scripts/vscripts/</code> folder.</li>
-    <li>Add this line to the very top of your script file: <code>DoIncludeScript("PCapture-Lib", getroottable())</code>.</li>
+    <li><strong>Download:</strong> Get the latest <code>PCapture-Lib.nut</code> file from the official repository.</li>
+    <li><strong>Place:</strong> Put the file in your <code>portal 2/portal2/scripts/vscripts/</code> folder alongside your other map scripts.</li>
+    <li><strong>Include:</strong> At the very top of your main <code>logic_script</code> file, add this single line:</li>
 </ol>
-<div class="flowchart not-prose my-8 p-4 border rounded-lg">
-    <div class="flow-node">[Your Script]</div>
-    <div class="flow-arrow"></div>
-    <div class="flow-node">[PCapture-Lib]
-        <br><span class="text-sm text-gray-500">(Provides simpler, more powerful functions)</span>
-    </div>
-    <div class="flow-arrow"></div>
-    <div class="flow-node">[Vanilla VScript API]
-        <br><span class="text-sm text-gray-500">(The basic game functions)</span>
-    </div>
-     <div class="flow-arrow"></div>
-    <div class="flow-node">[Portal 2 Engine]</div>
-</div>
+<pre><code class="language-squirrel">// This must be the first line of your script to make all library functions available.
+DoIncludeScript("PCapture-Lib.nut", getroottable())
+</code></pre>
+<p>That's it. You are now ready to use the most powerful VScript toolset ever created for Portal 2.</p>

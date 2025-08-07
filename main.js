@@ -64,10 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'squirrel-arrays', part: 'Part 1: Data Structures in Squirrel', title: 'Ordered Data: Arrays', file: 'chapters/chapter1/ch02_arrays.html'
+            id: 'squirrel-arrays', part: 'Part 1: Data Structures in Squirrel', title: 'Ordered Data: Arrays', file: 'chapters/chapter1/ch02_arrays.html',
+            quiz: [
+                 { question: "An array is defined as <code>local panels = [\"A\", \"B\", \"C\"]</code>. What is the correct way to access the value \"B\"?", options: ["<code>panels[0]</code>", "<code>panels[1]</code>", "<code>panels[2]</code>", "<code>panels.B</code>"], answer: 1, explanation: "Array indexing starts at 0. Therefore, \"A\" is at index 0, \"B\" is at index 1, and \"C\" is at index 2." },
+                 { question: "How would you add the string \"D\" to the very end of the array <code>local panels = [\"A\", \"B\", \"C\"]</code>?", options: ["<code>panels.add(\"D\")</code>", "<code>panels[3] <- \"D\"</code>", "<code>panels.append(\"D\")</code>", "<code>panels.push(\"D\")</code>"], answer: 2, explanation: "The `.append()` method is the standard Squirrel function for adding an element to the end of an array. While other options might seem plausible, `.append()` is the correct VScript implementation." }
+            ]
         },
         {
-            id: 'connecting-logic-script', part: 'Part 2: Connecting to the World', title: 'The `logic_script` Entity', file: 'chapters/chapter2/ch01_logic_script.html'
+            id: 'connecting-logic-script', part: 'Part 2: Connecting to the World', title: 'The `logic_script` Entity', file: 'chapters/chapter2/ch01_logic_script.html',
+            quiz: [
+                { question: "In the Hammer editor, you set the `EntityGroup01` property on a `logic_script` to an entity named `exit_door`. How do you access this door in your script?", options: ["<code>EntityGroup[0]</code>", "<code>EntityGroup[1]</code>", "<code>EntityGroup.exit_door</code>", "<code>Entities.FindByName(null, \"exit_door\")</code>"], answer: 1, explanation: "The `EntityGroup00`, `EntityGroup01` etc. properties in Hammer directly map to the indexes `0`, `1`, etc. in the `EntityGroup` array that is automatically created for your script." }
+            ]
         },
         {
             id: 'connecting-scope', part: 'Part 2: Connecting to the World', title: 'Understanding Scope', file: 'chapters/chapter2/ch02_scope.html',
@@ -77,7 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'connecting-entity-scripts', part: 'Part 2: Connecting to the World', title: 'Entity Scripts', file: 'chapters/chapter2/ch03_entity_scripts.html'
+            id: 'connecting-entity-scripts', part: 'Part 2: Connecting to the World', title: 'Entity Scripts', file: 'chapters/chapter2/ch03_entity_scripts.html',
+            quiz: [
+                { question: "A script named `button_logic.nut` is attached to a `func_button` entity. What will the `self` variable refer to inside this script?", options: ["The player who presses the button", "The `button_logic.nut` text file", "The `func_button` entity itself", "The map's global scope"], answer: 2, explanation: "`self` is a special handle that always refers to the entity instance the script is running on." }
+            ]
         },
         {
             id: 'connecting-entity-io', part: 'Part 2: Connecting to the World', title: 'Entity I/O & The Actors', file: 'chapters/chapter2/ch04_entity_io.html',
@@ -86,10 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'connecting-timers', part: 'Part 2: Connecting to the World', title: 'Controlling Time', file: 'chapters/chapter2/ch05_timers.html'
+            id: 'connecting-timers', part: 'Part 2: Connecting to the World', title: 'Controlling Time', file: 'chapters/chapter2/ch05_timers.html',
+            quiz: [
+                { question: "You want a light to turn off exactly 3.5 seconds after a function is called. Which line of code achieves this using the standard VScript API?", options: ["<code>EntFire(\"my_light\", \"TurnOff\", \"\", 3.5)</code>", "<code>wait(3.5); EntFire(\"my_light\", \"TurnOff\")</code>", "<code>return 3.5</code>", "<code>EntFire(\"my_light\", \"TurnOff\", 3.5)</code>"], answer: 0, explanation: "The `EntFire` function (and its `EntFireByHandle` variant) takes the delay in seconds as its fourth parameter. The other options are incorrect syntax or logic." }
+            ]
         },
         {
-            id: 'creator-vectors', part: 'Part 3: Becoming a Creator', title: 'Math & Vectors', file: 'chapters/chapter3/ch01_vectors.html'
+            id: 'creator-vectors', part: 'Part 3: Becoming a Creator', title: 'Math & Vectors', file: 'chapters/chapter3/ch01_vectors.html',
+            quiz: [
+                { question: "You have two points in space: <code>posA = Vector(10, 0, 0)</code> and <code>posB = Vector(10, 5, 0)</code>. What is the most direct way to calculate the distance between them?", options: ["<code>(posA + posB).Length()</code>", "<code>posA.Length() - posB.Length()</code>", "<code>(posA - posB).Length()</code>", "<code>TraceLine(posA, posB, null)</code>"], answer: 2, explanation: "Subtracting one vector from another creates a new vector representing the direction and distance between them. Calling `.Length()` on that resulting vector gives you the straight-line distance." }
+            ]
         },
         {
             id: 'creator-finding-advanced', part: 'Part 3: Becoming a Creator', title: 'Finding Entities', file: 'chapters/chapter3/ch02_finding.html'
@@ -106,13 +122,23 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'creator-debug', part: 'Part 3: Becoming a Creator', title: 'Debugging Your Scripts', file: 'chapters/chapter3/ch04_debug.html'
         },
         {
-            id: 'organizing-tables-as-objects', part: 'Part 4: Writing Clean & Creative Code', title: 'Organizing with Tables', file: 'chapters/chapter4/ch01_data_organization.html'
+            id: 'organizing-tables-as-objects', part: 'Part 4: Writing Clean & Creative Code', title: 'Organizing with Tables', file: 'chapters/chapter4/ch01_data_organization.html',
+            quiz: [
+                { question: "A function inside a table needs to affect the entity the script is attached to. Why can't it use `self` directly?", options: ["`self` is a reserved keyword for the global scope.", "Functions in tables create their own scope where `self` is not defined.", "`self` must be capitalized as `Self` inside tables.", "Tables can only contain data, not access entity handles."], answer: 1, explanation: "When a function inside a table is called, its scope is the table itself (referenced by `this`). The entity's `self` handle from the outer script scope is not automatically visible." },
+                { question: "What is the correct way to give a function inside a table access to the entity handle `self`?", options: ["Create a global variable `::g_self = self`.", "Use `return self` at the end of the function.", "Pass `self` as a parameter to the function.", "It's not possible."], answer: 2, explanation: "Passing `self` as an argument (e.g., `MyTable.MyFunction(self)`) is the standard and cleanest way to provide the necessary context to functions organized within tables." }
+            ]
         },
         {
-            id: 'organizing-libraries', part: 'Part 4: Writing Clean & Creative Code', title: 'Reusable Code: Libraries', file: 'chapters/chapter4/ch02_libraries.html'
+            id: 'organizing-libraries', part: 'Part 4: Writing Clean & Creative Code', title: 'Reusable Code: Libraries', file: 'chapters/chapter4/ch02_libraries.html',
+            quiz: [
+                { question: "You have a library file `my_utils.nut`. What is the correct command to include it in your main script so its functions are available globally?", options: ["<code>IncludeScript(\"my_utils.nut\")</code>", "<code>DoIncludeScript(\"my_utils.nut\")</code>", "<code>DoIncludeScript(\"my_utils.nut\", getroottable())</code>", "<code>require(\"my_utils.nut\")</code>"], answer: 2, explanation: "The `DoIncludeScript` function executes the code from another file. The second parameter, `getroottable()`, is crucial as it runs the script in the global scope, making its contents accessible to all other scripts. `IncludeScript` without the scope parameter would only make the functions available locally." }
+            ]
         },
         {
-            id: 'organizing-traceline', part: 'Part 4: Writing Clean & Creative Code', title: 'Seeing the World: TraceLine', file: 'chapters/chapter4/ch03_traceline.html'
+            id: 'organizing-traceline', part: 'Part 4: Writing Clean & Creative Code', title: 'Seeing the World: TraceLine', file: 'chapters/chapter4/ch03_traceline.html',
+            quiz: [
+                { question: "You use `TraceLine` to check the path between a camera and a player. There is a `prop_dynamic` (a cube) directly in the way. What will `TraceLine` return?", options: ["A fraction less than 1.0, because it hit the cube.", "1.0, because it ignores the cube.", "An error, because it cannot trace through entities.", "The script handle of the cube."], answer: 1, explanation: "The standard `TraceLine` function's biggest limitation is that it only collides with world geometry (brushes) and ignores all entities like props, players, and NPCs." }
+            ]
         },
         {
             id: 'organizing-hacks', part: 'Part 4: Writing Clean & Creative Code', title: 'Hacking the Engine', file: 'chapters/chapter4/ch04_engine_hacks.html'
@@ -121,26 +147,47 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'pcap-intro', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Intro to PCapture-Lib', file: 'chapters/chapter5/ch01_pcap_intro.html'
         },
         {
-            id: 'pcap-smarter-entities', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Smarter Entities: pcapEntity', file: 'chapters/chapter5/ch02_pcap_entity.html'
-        },
-        {
-            id: 'pcap-scheduler', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Perfect Timing: ActionScheduler', file: 'chapters/chapter5/ch03_pcap_scheduler.html'
-        },
-        {
-            id: 'pcap-traceplus', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Ultimate Tool: TracePlus', file: 'chapters/chapter5/ch04_pcap_traceplus.html'
-        },
-        {
-            id: 'pcap-animations', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Animations Module', file: 'chapters/chapter5/ch05_pcap_animations.html'
-        },
-        {
-            id: 'pcap-hud', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The HUD Module', file: 'chapters/chapter5/ch06_pcap_hud.html'
-        },
-        {
-            id: 'pcap-scriptevents', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The ScriptEvents Module', file: 'chapters/chapter5/ch07_pcap_scriptevents.html',
+            id: 'pcap-smarter-entities', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Smarter Entities: pcapEntity', file: 'chapters/chapter5/ch02_pcap_entity.html',
             quiz: [
-                { question: "You need a script to perform a sequence: 1. A panel moves up. 2. Wait 2 seconds. 3. A sound plays. Which PCapture-Lib module is *best* for managing this timing?", options: [ "<code>Animations</code>", "<code>TracePlus</code>", "<code>ActionScheduler</code>", "<code>HUD</code>" ], answer: 2, explanation: "The `ActionScheduler` with `yield 2.0` is the perfect tool for creating timed sequences of events in a clean, readable way." },
-                { question: "You want to make a cube slowly move from its current position to a point 256 units above it over 4 seconds. Which function is ideal for this?", options: [ "<code>pcapEntity.SetOrigin()</code> inside a <code>for</code> loop.", "<code>animate.PositionTransitionByTime()</code>", "<code>ScheduleEvent.Add()</code> with a <code>yield</code>.", "<code>TracePlus.PortalBbox()</code>" ], answer: 1, explanation: "The `animate.PositionTransitionByTime()` function from the Animations module is specifically designed to handle smooth movement between two points over a set duration." }
+                { question: "With PCapture-Lib, what is the modern, preferred way to change an entity's color to red?", options: ["<code>EntFireByHandle(ent, \"Color\", \"255 0 0\", 0, null, null)</code>", "<code>ent.SetColor(\"255 0 0\")</code>", "<code>ent.color <- \"255 0 0\"</code>", "<code>pcapEntity.SetColor(ent, \"255 0 0\")</code>"], answer: 1, explanation: "PCapture-Lib upgrades entity handles to `pcapEntity` objects, which have direct methods like `.SetColor()`. This is much cleaner and more readable than using the old `EntFireByHandle` system." }
             ]
+        },
+        {
+            id: 'pcap-scheduler', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Perfect Timing: ActionScheduler', file: 'chapters/chapter5/ch03_pcap_scheduler.html',
+            quiz: [
+                { question: "In a function started by `ScheduleEvent.Add()`, what does the line `yield 2.5` do?", options: ["It ends the function and returns the value 2.5.", "It pauses the function for 2.5 seconds, then resumes execution from the next line.", "It causes a game crash.", "It runs the function 2.5 times."], answer: 1, explanation: "`yield` is the core of the ActionScheduler's asynchronous power, allowing you to create timed sequences in a simple, linear fashion without complex callbacks or manual delay calculations." },
+                { question: "What is the biggest risk of using a long `yield` pause (e.g., `yield 30.0`) in your map?", options: ["It might slow down the server.", "The game will crash if a player loads a save made during the pause.", "It will prevent other scripts from running.", "There is no risk."], answer: 1, explanation: "This is a critical limitation of the Source Engine's save system. Asynchronous functions are not saved correctly, making long yields unsafe for critical gameplay logic where players might save and load." }
+            ]
+        },
+        {
+            id: 'pcap-traceplus', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Ultimate Tool: TracePlus', file: 'chapters/chapter5/ch04_pcap_traceplus.html',
+            quiz: [
+                { question: "What is the primary advantage of `TracePlus.Bbox` over the standard `TraceLine` function?", options: ["It is faster for world geometry.", "It can see and collide with entities like players and cubes.", "It can only be used on players.", "It returns the color of the surface it hits."], answer: 1, explanation: "`TracePlus.Bbox` solves the single biggest flaw of `TraceLine` for gameplay scripting: its inability to detect entities. This makes it an essential tool for almost any interactive mechanic." }
+            ]
+        },
+        {
+            id: 'pcap-files', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Saving Data with Files', file: 'chapters/chapter5/ch05_pcap_files.html'
+        },
+        {
+            id: 'pcap-debug', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Debugging 303: Visualizing Logic', file: 'chapters/chapter5/ch06_pcap_debug.html'
+        },
+        {
+            id: 'pcap-animations', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Animations Module', file: 'chapters/chapter5/ch07_pcap_animations.html',
+            quiz: [
+                { question: "You want a prop named `my_prop` to smoothly fade from fully visible to fully invisible over 3 seconds. Which PCapture-Lib function is best for this?", options: ["<code>animate.AlphaTransition(prop, 255, 0, 3.0)</code>", "<code>prop.SetAlpha(0)</code>", "<code>ScheduleEvent.Add(function() { prop.SetAlpha(0) }, 3.0)</code>", "<code>dev.DrawEntityBBox(prop, Vector(255,0,0), 3.0)</code>"], answer: 0, explanation: "The `animate.AlphaTransition()` function is specifically designed for this purpose. The other options would make the prop disappear instantly (either immediately or after a delay) or are for debugging." }
+            ]
+        },
+        {
+            id: 'pcap-hud', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The HUD Module', file: 'chapters/chapter5/ch08_pcap_hud.html'
+        },
+        {
+            id: 'pcap-scriptevents', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The ScriptEvents Module', file: 'chapters/chapter5/ch09_pcap_scriptevents.html',
+            quiz: [
+                { question: "A script broadcasts a message using `EventListener.Notify(\"PuzzleComplete\")`. How do other scripts react to this?", options: ["They don't, only the global scope can hear it.", "The engine automatically finds and runs functions named `OnPuzzleComplete`.", "Any script that has previously added an action to the 'PuzzleComplete' event will run its action.", "It will cause an error if no script is listening."], answer: 2, explanation: "The ScriptEvents module uses a publish-subscribe model. One script publishes (`Notify`), and other scripts must explicitly subscribe (`AddAction`) to that specific event name to react." }
+            ]
+        },
+        {
+            id: 'pcap-utils', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Utility Belt', file: 'chapters/chapter5/ch10_pcap_utils.html'
         },
         {
             id: 'conclusion', part: 'Conclusion', title: 'Where to Go From Here', file: 'chapters/conclusion.html'
