@@ -13,9 +13,8 @@
 <p>To get the actual coordinates of the hit, you need to do a little bit of vector math:</p>
 <pre><code class="language-squirrel">local startPos = Vector(0, 0, 0)
 local endPos = Vector(100, 0, 0)
-local ignoreEnt = null // We don't want to ignore anything.
 
-local traceFraction = TraceLine(startPos, endPos, ignoreEnt)
+local traceFraction = TraceLine(startPos, endPos, null)
 
 if (traceFraction < 1.0) {
     // The trace hit something! Let's find out where.
@@ -41,15 +40,12 @@ function CheckSecurityBeam() {
         local startPos = startEnt.GetOrigin()
         local endPos = endEnt.GetOrigin()
 
-        // Get the player to ignore them in the trace.
-        local player = GetPlayer() 
-
-        local fraction = TraceLine(startPos, endPos, player)
+        local fraction = TraceLine(startPos, endPos, null)
 
         if (fraction < 1.0) {
             printl("SECURITY BEAM BLOCKED BY A WALL!")
         } else {
-            // The beam is not blocked by a wall, but is the player in the way?
+            // The beam is not blocked by a wall, but is the entities like func_brush in the way?
             // This is where TraceLine fails. We would need more advanced techniques
             // to check for entities blocking the path.
         }

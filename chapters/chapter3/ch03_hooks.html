@@ -41,8 +41,8 @@ function FollowPlayer() {
     // Calculate the direction from the camera to the player.
     local directionVector = playerPos - selfPos
 
-    // Convert that direction vector into aiming angles (pitch, yaw, roll).
-    local newAngles = VectorToAngles(directionVector)
+    // "Magic" custom function, just for example
+    local newAngles = VectorToAngles(directionVector) 
 
     // Set the camera's angles to look at the player.
     self.SetAngles(newAngles.x, newAngles.y, newAngles.z)

@@ -30,4 +30,3 @@ foreach(index, doorEnt in EntityGroup) {
 }
 </code></pre>
 <p>This is much more efficient than writing separate <code>Entities.FindByName()</code> calls for every single door.</p>
-<p class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg"><strong>Note:</strong> Even a <code>logic_script</code> has a <code>self</code> handle. Inside a script run by a <code>logic_script</code>, <code>self</code> refers to the <code>logic_script</code> entity itself.</p>

@@ -1,4 +1,4 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 2.3: Running Code with Entity I/O</h2>
+<h2 class="text-3xl font-bold mb-4">Chapter 2.4: Running Code with Entity I/O</h2>
 <p>Your scripts don't have to just run once. You can trigger code to run at any time using the game's built-in <strong>Input/Output (I/O)</strong> system.</p>
 <p>All entities have these special VScript <strong>Inputs</strong>:</p>
 <ul class="list-disc list-inside">
@@ -11,17 +11,17 @@
 <pre><code class="language-squirrel">// Define a function inside the door's script scope.
 function OpenTheDoor() {
     printl("The OpenTheDoor function was called!")
-    self.SetAnimation("open") // An example of what you might do.
+    EntFireByHandle(self, "Open", "", 0, null, null) // An example of what you might do.
 }
 
-function SetMessage(text) {
-    printl("The door received a message: " + text)
+function OpenTheDoorDelay(delay) {
+    EntFireByHandle(self, "Open", "", delay, null, null) 
 }
 </code></pre>
 <p><strong>In Hammer</strong>, you would create an output on the button's <code>OnPressed</code> event. You have two options:</p>
 <ol class="list-decimal list-inside">
     <li>Target the door and use the input <code>CallScriptFunction</code> with a parameter of <code>OpenTheDoor</code>. This is clean and simple.</li>
-    <li>Target the door and use the input <code>RunScriptCode</code> with a parameter of <code>SetMessage("You pressed the button!")</code>. This allows you to pass data directly into a function.</li>
+    <li>Target the door and use the input <code>RunScriptCode</code> with a parameter of <code>OpenTheDoorDelay(3)</code>. This allows you to pass data directly into a function.</li>
 </ol>
 <p>When the player presses the button, the corresponding function in your script runs.</p>
 

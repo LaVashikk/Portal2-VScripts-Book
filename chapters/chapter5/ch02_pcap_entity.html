@@ -18,9 +18,10 @@ cube.SetColor("255 0 0")
         <pre><code class="language-squirrel">local prop = Entities.FindByName(null, "my_prop")
 local parent = Entities.FindByName(null, "prop_parent")
 
-EntFireByHandle(prop, "SetParent", "prop_parent", 0, null, null)
-EntFireByHandle(prop, "SetHealth", "50", 0, null, null)
-EntFireByHandle(prop, "addoutput", "OnHealthChanged,my_script,MyFunction", 0, null, null)
+EntFireByHandle(prop, "SetParent", parent.GetName(), 0, null, null)
+local ang = parent.GetAngles()
+prop.SetAngles(ang.x, ang.y, ang.z)
+EntFireByHandle(prop, "addoutput", "OnHealthChanged,my_script,MyFunction", 0, null, null) // todo
 </code></pre>
     </div>
     <div>
@@ -29,7 +30,7 @@ EntFireByHandle(prop, "addoutput", "OnHealthChanged,my_script,MyFunction", 0, nu
 local parent = entLib.FindByName("prop_parent")
 
 prop.SetParent(parent)
-prop.SetKeyValue("health", 50)
+prop.SetAbsAngles(parent.GetAngles())
 prop.ConnectOutput("OnHealthChanged", MyFunction)
 </code></pre>
     </div>

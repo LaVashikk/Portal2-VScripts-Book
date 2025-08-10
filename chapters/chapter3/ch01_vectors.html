@@ -12,8 +12,9 @@ printl("X coordinate: " + position.x) // Prints 128</code></pre>
 <p>You can perform math operations directly on vectors. This is incredibly useful for calculating new positions.</p>
 <ul class="list-disc list-inside">
     <li><strong>Addition/Subtraction:</strong> Adds or subtracts each component. <code>Vector(10, 20, 30) + Vector(1, 2, 3)</code> results in <code>Vector(11, 22, 33)</code>.</li>
-    <li><strong>Multiplication/Division by a number:</strong> Scales the vector. <code>Vector(10, 20, 30) * 2</code> results in <code>Vector(20, 40, 60)</code>.</li>
+    <li><strong>Multiplication by a number:</strong> Scales the vector. <code>Vector(10, 20, 30) * 2</code> results in <code>Vector(20, 40, 60)</code>.</li>
 </ul>
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg"><strong>Note:</strong> Squirrel's Vector type doesn't support direct division by a number (e.g., <code>myVector / 2</code> will cause an error). To achieve division, you must multiply by a fraction instead. For example, to halve a vector, you would write <code>myVector * 0.5</code> or <code>myVector * (1.0 / 2)</code>.</p>
 <pre><code class="language-squirrel">// Example: Moving a Cube
 local cube = Entities.FindByName(null, "my_cube")
 local startPos = cube.GetOrigin()
@@ -82,15 +83,29 @@ if (distance < 100) { // 100 is our activation range
     <li><code>atan2(y, x)</code>: A very useful function that returns the angle in radians between the positive X-axis and the point (x, y).</li>
 </ul>
 <h4 class="text-xl font-bold mt-6 mb-2">Random Numbers</h4>
-<p>To add unpredictability to your maps, you can use random number generators.</p>
+<p>To add unpredictability to your maps, you can use random number generators. While old methods exist, the modern and recommended way is to use the built-in <code>RandomInt()</code> and <code>RandomFloat()</code> functions.</p>
 <ul class="list-disc list-inside">
-    <li><code>rand()</code>: Returns a random integer between 0 and 32767.</li>
-    <li><code>srand(seed)</code>: "Seeds" the random number generator. If you always use the same seed, `rand()` will always produce the same sequence of numbers. Use `Time()` to get a different seed each time the map loads.</li>
+    <li><code>RandomInt(min, max)</code>: Returns a random whole number between <code>min</code> and <code>max</code>, including both of those values.</li>
+    <li><code>RandomFloat(min, max)</code>: Returns a random decimal number between <code>min</code> and <code>max</code>.</li>
 </ul>
-<pre><code class="language-squirrel">// Seed the generator once at the start of your script.
-srand(Time())
 
-// Get a random number between 0 and 100.
-local randomNumber = rand() % 101
-printl("My random number is: " + randomNumber)
+<!-- <p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg"><strong>Important:</strong> The random number generator needs to be "seeded" once when your script starts. A seed is a starting value. If you always use the same seed, you will always get the same sequence of "random" numbers. To ensure true randomness every time the map is played, we seed it with the current time.</p> -->
+<pre><code class="language-squirrel">// Seed the generator ONCE at the very top of your script.
+// Example 1: Choose a random announcement to play.
+local choice = RandomInt(1, 3)
+if (choice == 1) {
+    printl("Playing announcement A...")
+}
+else if (choice == 2) {
+    printl("Playing announcement B...")
+}
+else {
+    printl("Playing announcement C...")
+}
+
+// Example 2: Drop a cube at a random horizontal position.
+local randomX = RandomFloat(-200.0, 200.0)
+local randomY = RandomFloat(-200.0, 200.0)
+local spawnPosition = Vector(randomX, randomY, 512)
+// Code to spawn a cube at spawnPosition...
 </code></pre>

@@ -1,4 +1,4 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 2.2: Entity Scripts and <code>self</code></h2>
+<h2 class="text-3xl font-bold mb-4">Chapter 2.3: Entity Scripts and <code>self</code></h2>
 <p>The real power of VScript comes from attaching scripts <em>directly to other entities</em>. Almost any entity in Hammer (a <code>prop_dynamic</code>, a <code>func_button</code>) can have a script attached to it via its <code>vscripts</code> keyvalue.</p>
 <p>If you have ten turrets, you can give each one the same script, and each will run its own independent version of that script.</p>
 <h3 class="text-2xl font-bold mt-8 mb-4"><code>self</code>: The Most Important Variable</h3>
@@ -15,7 +15,7 @@
 </div>
 <h3 class="text-2xl font-bold mt-8 mb-4">Using <code>self</code> to Act</h3>
 <p>You use <code>self</code> to call methods (functions) that affect the entity. Think of it as telling the entity to do something to itself.</p>
-<pre><code class="language-squirrel">// This script is attached to a cube (prop_dynamic).
+<pre><code class="language-squirrel">// This script is attached to a cube (prop_physics).
 // It defines a function that can be called to change the cube's color.
 
 function TurnRed() {
