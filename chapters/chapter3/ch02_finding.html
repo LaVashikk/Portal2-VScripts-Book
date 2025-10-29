@@ -11,5 +11,5 @@ local activationRadius = 512.0
 
 local turret = null
 while(turret = Entities.FindByClassnameWithin(turret, "npc_portal_turret_floor", activationPoint, activationRadius)) {
-    turret.Fire("Enable", "", 0)
+    EntFireByHandle(turret, "Enable", "", 0, null, null)
 }</code></pre>

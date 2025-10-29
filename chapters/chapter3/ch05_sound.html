@@ -1,0 +1,39 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 3.6: Sound and Synchronization</h2>
+<p>Sounds bring a map to life, but their real power in scripting comes from synchronization. Playing an announcement is easy; making a door open the exact moment the announcement finishes requires precise timing. This chapter covers how to play sounds and schedule events based on their duration.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Step 1: Precaching Sounds (Mandatory)</h3>
+<p>Before any sound can be played from a script, it must be loaded into memory when the map starts. This is called <strong>precaching</strong>, and it prevents the game from stuttering or crashing when it tries to play the sound for the first time. Precaching must be done inside the special `Precache()` hook function.</p>
+<pre><code class="language-squirrel">// This script is on a logic_script or any other entity.
+// This function is automatically called by the engine during map load.
+
+function Precache() {
+    // Use self.PrecacheSoundScript for each sound file you intend to use.
+    self.PrecacheSoundScript("Portal.room1_TickTock");
+    self.PrecacheSoundScript("GLaDOS.critical_error01");
+}
+</code></pre>
+<p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg">
+    <strong>Critical:</strong> Attempting to play a sound that has not been precached will either fail silently. Always precache your sounds.
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Step 2: Playing Sounds and Scheduling Events</h3>
+<p>Once precached, you can play a sound on any entity using `EmitSound()`. To synchronize events, you can then use `GetSoundDuration()` to find out how long the sound is and use that value as a delay for your next `EntFire` call.</p>
+<pre><code class="language-squirrel">// This function plays an announcement and triggers an event exactly when it ends.
+function PlayAnnouncementAndTriggerEvent() {
+    local player = GetPlayer();
+    if (player == null) return;
+
+    // 1. Play the sound on the player entity.
+    player.EmitSound("Portal.room1_TickTock");
+    
+    // 2. Get the duration of that sound in seconds.
+    // The second parameter is for context, but is usually an empty string.
+    local duration = player.GetSoundDuration("Portal.room1_TickTock", "");
+    
+    printl("Sound is " + duration + " seconds long. Scheduling next event.");
+    
+    // 3. Fire the 'Trigger' input on the 'next_event' entity after the sound finishes.
+    EntFire("next_event", "Trigger", "", duration);
+}
+</code></pre>
+<p>This pattern is the foundation of creating professionally timed sequences, ensuring your visual effects, entity movements, and gameplay events are perfectly aligned with your audio cues.</p>

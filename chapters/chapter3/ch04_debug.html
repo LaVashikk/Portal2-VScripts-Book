@@ -50,6 +50,48 @@ script { door <- Entities.FindByName(null, "my_door") } { EntFireByHandle(door, 
 <br>
 <p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><strong>Warning:</strong> Do not use <code>local</code> to declare variables you want to use in a later command. To create a persistent variable from the console, you must use <code>&lt;-</code>. Be aware that this creates the variable in the <strong>global scope</strong> (the root table).<br><code>script p &lt;- GetPlayer()</code> is the same as writing <code>script ::p &lt;- GetPlayer()</code>.</p>
 
+<h3 class="text-2xl font-bold mt-8 mb-4">Visual Debugging: Drawing in the World</h3>
+<p>Sometimes, printing text is not enough. To debug spatial problems—like checking an entity's boundaries or visualizing a path—you need to see your logic in the game world. VScript provides several `DebugDraw` functions for this purpose.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Drawing Bounding Boxes and Lines</h4>
+<p>These functions draw simple shapes that are only visible when `developer` is set to 1 or higher in the console. They are perfect for temporarily visualizing positions and areas.</p>
+<pre><code class="language-squirrel">// A function to visualize an entity's collision box.
+function DebugShowEntityBounds(entity) {
+    if (entity == null || !entity.IsValid()) return;
+    
+    local origin = entity.GetOrigin();
+    local mins = entity.GetBoundingMins();
+    local maxs = entity.GetBoundingMaxs();
+    
+    // Draw a red box around the entity that lasts for 10 seconds.
+    // Color is R, G, B, Alpha. Duration is in seconds.
+    DebugDrawBox(origin, mins, maxs, 255, 0, 0, 100, 10.0);
+}
+
+// A function to visualize a path between two points.
+function DebugShowPath(startPos, endPos) {
+    // Draw a green line that lasts for 10 seconds and is not depth-tested.
+    DebugDrawLine(startPos, endPos, 0, 255, 0, true, 10.0);
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Controlling the Console from a Script</h4>
+<p>You can also send commands directly to the console from your script using `SendToConsole()`. This is useful for enabling debug modes or changing cvars for testing purposes.</p>
+<pre><code class="language-squirrel">function EnableDebugMode() {
+    // Enables developer mode to see debug overlays.
+    SendToConsole("developer 1");
+    
+    // Enables god mode for the player for testing.
+    SendToConsole("god");
+
+    printl("Debug mode enabled!");
+}
+
+// 'developer 1' shows basic debug info.
+// 'developer 2' shows more verbose info, including entity I/O events.
+</code></pre>
+<p>By combining `printl`, console commands, and debug drawing, you have a complete toolkit for diagnosing almost any bug in your scripts.</p>
+
+
 <h3 class="text-2xl font-bold mt-8 mb-4">Advanced: The Real-Time Debugger</h3>
 <p>What if you could pause time inside your script? That's what a full-fledged debugger lets you do. For really complex scenarios, like when you're creating a large library of code or tracking down a very tricky bug, you can connect the game directly to your code editor.</p>
 <p>This is made possible by a Visual Studio Code extension called <a href="https://marketplace.visualstudio.com/items?itemName=LionDoge.vscript-debug" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">VScript Debugger</a>. It allows you to:</p>

@@ -22,6 +22,93 @@ function InputUnlock() {
     }
 }</code></pre>
 
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Precache Hook: Loading Resources</h3>
+<p>Some resources—like sounds, models, or particle effects—must be <strong>precached</strong> before they can be used. Precaching loads the resource into memory when the map starts, preventing stuttering or crashes when the resource is first accessed during gameplay.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">The Two Precache Hooks</h4>
+<p>VScript gives you two ways to define a precache hook in your entity script:</p>
+<pre><code class="language-squirrel">// Option 1: Standard hook (runs if DispatchPrecache is not defined)
+function Precache() {
+    self.PrecacheSoundScript("Portal.room1_TickTock")
+    printl("Precache() was called")
+}
+
+// Option 2: Dispatch version (has PRIORITY over Precache)
+function DispatchPrecache() {
+    self.PrecacheSoundScript("Portal.room1_TickTock")
+    printl("DispatchPrecache() was called instead")
+}</code></pre>
+
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>Priority Rule:</strong> If <strong>both</strong> <code>Precache()</code> and <code>DispatchPrecache()</code> are defined in the same script, only <code>DispatchPrecache()</code> will run. The standard <code>Precache()</code> is ignored. This dispatch pattern is an internal VScript system for chaining multiple precache functions, but for most use cases, simply defining <code>Precache()</code> is sufficient.
+</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">When Does It Run?</h4>
+<p>The precache hook is called <em>during map load</em>, before any entities spawn. This is the <strong>only</strong> safe time to precache resources.</p>
+<pre><code class="language-squirrel">// Example: Precaching multiple resources
+function Precache() {
+    // Precache sounds
+    self.PrecacheSoundScript("Weapon_Portalgun.fire_blue")
+    self.PrecacheSoundScript("Weapon_Portalgun.fire_red")
+    
+    // Note: Model precaching is usually automatic when entities
+    // reference them, but sounds must be explicitly precached.
+    
+    printl("Resources precached successfully.")
+}</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Post-Spawn Hook: Initialization</h3>
+<p>After an entity spawns and its script executes, you often need to perform initialization—like finding other entities, connecting outputs, or setting up variables. This is the job of the post-spawn hook.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">The Two Post-Spawn Hooks</h4>
+<pre><code class="language-squirrel">// Option 1: Standard hook (runs if DispatchOnPostSpawn is not defined)
+function OnPostSpawn() {
+    printl("OnPostSpawn() - Entity is fully ready")
+    
+    // Safe to find other entities now
+    targetDoor <- Entities.FindByName(null, "exit_door")
+}
+
+// Option 2: Dispatch version (has PRIORITY over OnPostSpawn)
+function DispatchOnPostSpawn() {
+    printl("DispatchOnPostSpawn() - Has priority")
+    
+    // This will run instead if both are defined
+    targetDoor <- Entities.FindByName(null, "exit_door")
+}</code></pre>
+
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>Priority Rule:</strong> Just like with precaching, if <strong>both</strong> <code>OnPostSpawn()</code> and <code>DispatchOnPostSpawn()</code> are defined, only <code>DispatchOnPostSpawn()</code> will run.
+</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">OnPostSpawn vs. Top-Level Code</h4>
+<p>What's the difference between writing code at the top level of your script versus inside <code>OnPostSpawn()</code>?</p>
+<pre><code class="language-squirrel">// Top-level code: Runs IMMEDIATELY when the script loads
+printl("This runs first, during script execution")
+myVariable <- 100
+
+// OnPostSpawn: Runs AFTER the entity and other entities have spawned
+function OnPostSpawn() {
+    printl("This runs later, after the entity is fully initialized")
+    
+    // It's safer to find other entities here, as they are guaranteed to exist
+    local door = Entities.FindByName(null, "exit_door")
+}</code></pre>
+<p><strong>Best Practice:</strong> Use top-level code to define variables and functions. Use <code>OnPostSpawn()</code> for initialization that depends on other entities or the game state.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Hook Execution Order Summary</h3>
+<div class="p-4 bg-gray-100 dark:bg-gray-800 border rounded-lg">
+    <ol class="list-decimal list-inside space-y-2">
+        <li><strong>Map Load Begins</strong></li>
+        <li><strong>Precache Hooks Run</strong> (DispatchPrecache OR Precache)</li>
+        <li><strong>Entities Spawn</strong></li>
+        <li><strong>Entity Scripts Execute</strong> (top-level code runs)</li>
+        <li><strong>Post-Spawn Hooks Run</strong> (DispatchOnPostSpawn OR OnPostSpawn)</li>
+        <li><strong>Map Is Fully Loaded</strong></li>
+    </ol>
+</div>
+
 <h3 class="text-2xl font-bold mt-8 mb-4">Think Functions</h3>
 <p>A <strong>Think Function</strong> is a function that you can make an entity run repeatedly, like a heartbeat. This is essential for any logic that needs to constantly check something—for example, a security camera constantly watching for a player, or poison goo that needs to damage a player every second they stand in it.</p>
 <p>You assign a Think Function in Hammer by setting the entity's <code>thinkfunction</code> keyvalue to the name of the function in its script. By default, the function will run every 0.1 seconds.</p>
@@ -49,4 +136,12 @@ function FollowPlayer() {
 
     // Tell the game to run this function again in 0.05 seconds for smooth tracking.
     return 0.05
-}</code></pre>
+}
+
+// Example of VectorToAngles func
+function VectorToAngles(forward) {
+    local yaw = atan2(forward.y, forward.x) * 180 / 3.14
+    local pitch = atan2(-forward.z, sqrt(forward.x*forward.x + forward.y*forward.y)) * 180 / 3.14
+    return Vector(pitch, yaw, 0)
+}
+</code></pre>

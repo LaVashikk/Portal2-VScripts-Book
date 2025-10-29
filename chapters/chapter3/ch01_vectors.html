@@ -14,7 +14,11 @@ printl("X coordinate: " + position.x) // Prints 128</code></pre>
     <li><strong>Addition/Subtraction:</strong> Adds or subtracts each component. <code>Vector(10, 20, 30) + Vector(1, 2, 3)</code> results in <code>Vector(11, 22, 33)</code>.</li>
     <li><strong>Multiplication by a number:</strong> Scales the vector. <code>Vector(10, 20, 30) * 2</code> results in <code>Vector(20, 40, 60)</code>.</li>
 </ul>
-<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg"><strong>Note:</strong> Squirrel's Vector type doesn't support direct division by a number (e.g., <code>myVector / 2</code> will cause an error). To achieve division, you must multiply by a fraction instead. For example, to halve a vector, you would write <code>myVector * 0.5</code> or <code>myVector * (1.0 / 2)</code>.</p>
+
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>Note:</strong> VSquirrel's Vector type does not support direct division by a number (e.g., <code>myVector / 2</code> will cause a script error). To achieve division, you must multiply by a fraction instead. For example, to halve a vector, you would write <code>myVector * 0.5</code> or <code>myVector * (1.0 / 2)</code>.
+</p>
+
 <pre><code class="language-squirrel">// Example: Moving a Cube
 local cube = Entities.FindByName(null, "my_cube")
 local startPos = cube.GetOrigin()
@@ -89,7 +93,6 @@ if (distance < 100) { // 100 is our activation range
     <li><code>RandomFloat(min, max)</code>: Returns a random decimal number between <code>min</code> and <code>max</code>.</li>
 </ul>
 
-<!-- <p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg"><strong>Important:</strong> The random number generator needs to be "seeded" once when your script starts. A seed is a starting value. If you always use the same seed, you will always get the same sequence of "random" numbers. To ensure true randomness every time the map is played, we seed it with the current time.</p> -->
 <pre><code class="language-squirrel">// Seed the generator ONCE at the very top of your script.
 // Example 1: Choose a random announcement to play.
 local choice = RandomInt(1, 3)
