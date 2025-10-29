@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'pcap-intro', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Intro to PCapture-Lib', file: 'chapters/chapter5/ch01_pcap_intro.html'
+            id: 'pcapture-lib', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Intro to PCapture-Lib', file: 'chapters/chapter5/ch01_pcap_intro.html'
         },
         {
             id: 'pcap-smarter-types', 
