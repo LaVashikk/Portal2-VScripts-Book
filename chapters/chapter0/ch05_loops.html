@@ -48,3 +48,15 @@ while (playerIsInPoisonGoo == true) {
 }
 printl("Player has escaped the goo!")</code></pre>
 <p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg"><strong>Beware of infinite loops!</strong> If the condition in a <code>while</code> loop <em>never</em> becomes false, it will freeze the script's execution, leading to a potential game hang or crash.</p>
+
+<div class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>A Critical VScript Concept: No "Waiting" in Loops</strong><br><br>
+    The poison goo example works because the condition to stop the loop (<code>playerHealth <= 70</code>) is <em>inside the loop itself</em>. It's crucial to understand that VScript code is <strong>synchronous</strong>—it has a one-track mind and can only do one thing at a time.<br><br>
+    While your <code>while</code> loop is running, the entire script execution is paused on that loop. This means you <strong>cannot</strong> use a <code>while</code> loop to wait for an external event, like a player pressing a button or leaving a trigger zone. The code that checks if the player has left the zone will never get a chance to run!<br><br>
+    If you need to wait for a change in game state, use these event-driven patterns instead:
+    <ul class="list-disc list-inside ml-4 mt-2">
+        <li><strong>Think Functions:</strong> To check something at a regular interval.</li>
+        <li><strong>Delayed <code>EntFire</code> calls or logic_timer:</strong> To schedule a single action in the future.</li>
+        <li><strong>ActionScheduler:</strong> (PCapture-Lib) For complex timed sequences.</li>
+    </ul>
+</div>

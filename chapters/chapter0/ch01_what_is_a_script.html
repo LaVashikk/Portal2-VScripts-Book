@@ -2,3 +2,48 @@
 <p>At its heart, a video game is a simulation running on a set of rules. A Companion Cube falls due to the rule of gravity. A button, when pressed, sends a signal because of a rule. A door opens when it receives that signal.</p>
 <p>A <strong>script</strong> is a file containing a list of instructions that you, the creator, write for the game to follow. It's your way of adding new rules to the simulation.</p>
 <p>VScript is the system within Portal 2 that reads your instruction files. The language we use to write these instructions is called <strong>Squirrel</strong>. Learning to script is like learning a new language to communicate your ideas directly to the game engine.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Chapter 0.1.5: Setting Up Your Environment</h3>
+<p>Before we write any real logic, let’s get your tools ready and make sure you can run scripts in-game.</p>
+<h4 class="text-xl font-bold mt-6 mb-2">Enabling the Developer Console</h4>
+<p>Before you can test your scripts, you need to enable Portal 2's developer console:</p>
+<ol class="list-decimal list-inside space-y-2">
+    <li>Launch Portal 2</li>
+    <li>Go to <strong>Options → Keyboard → Advanced...</strong></li>
+    <li>Check the box for <strong>"Enable developer console (~)"</strong></li>
+    <li>Press the <code>~</code> key (tilde) to open the console in-game</li>
+</ol>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Where Scripts Live: The vscripts Folder</h4>
+<p>All VScript files must be placed in a specific folder for Portal 2 to find them:</p>
+<pre><code class="language-plaintext">Portal 2/portal2/scripts/vscripts/</code></pre>
+<p>Create this folder path if it doesn't already exist. Any <code>.nut</code> file you place here can be loaded by entities in your map.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Your First Script: "Hello, Aperture"</h4>
+<p>Let's create your first working VScript:</p>
+<ol class="list-decimal list-inside space-y-2">
+    <li>Create a new text file in the <code>vscripts</code> folder</li>
+    <li>Name it <code>hello_world.nut</code></li>
+    <li>Open it in any text editor and add this single line:</li>
+</ol>
+<pre><code class="language-squirrel">printl("Hello, Aperture Science!")</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Testing Your Script</h4>
+<p><strong>Method 1: From the Console (Quickest)</strong></p>
+<p>Load any Portal 2 map, open the console, and type:</p>
+<pre><code class="language-plaintext">script_execute hello_world</code></pre>
+<p>You should see "Hello, Aperture Science!" printed in the console. The <code>.nut</code> extension is optional when using <code>script_execute</code>.</p>
+
+<p><strong>Method 2: In Hammer Editor</strong></p>
+<ol class="list-decimal list-inside space-y-2">
+    <li>Open Hammer and create a new map (or load an existing one)</li>
+    <li>Place a <strong>logic_script</strong> entity anywhere in your map</li>
+    <li>Select it and open its properties</li>
+    <li>Set the <strong>"VScript File"</strong> keyvalue to <code>hello_world.nut</code></li>
+    <li>Compile and run your map</li>
+</ol>
+<p>When the map loads, your script will automatically run, and the message will appear in the console.</p>
+
+<p class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg">
+    <strong>Developer Levels:</strong> The <code>developer</code> console variable controls how much debug information the game shows. Set it with <code>developer 1</code> (basic info) or <code>developer 2</code> (verbose info) in the console. This is essential for debugging.
+</p>

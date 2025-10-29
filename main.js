@@ -80,7 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'part1-final-exam', part: 'Part 1: Data Structures in Squirrel', title: 'Part 1 Final Exam', file: 'chapters/chapter1/ch03_part1_exam.html',
+            id: 'squirrel-strings', part: 'Part 1: Data Structures in Squirrel', title: 'Strings', file: 'chapters/chapter1/ch03_strings.html',
+        },
+        {
+            id: 'part1-final-exam', part: 'Part 1: Data Structures in Squirrel', title: 'Part 1 Final Exam', file: 'chapters/chapter1/part1_exam.html',
             quiz: [
                 { question: "Given the table <code>`local settings = { power = 100, status = \"active\" }`</code>, what does the expression <code>`100 in settings`</code> evaluate to?", options: ["<code>true</code>", "<code>false</code>", "It will cause an error.", "<code>100</code>"], answer: 1, explanation: "The `in` operator checks for the existence of a **key**, not a value. Since there is no key named `100` in the table (the keys are `\"power\"` and `\"status\"`), the expression is false." },
                 { question: "Under the hood, a Squirrel array like <code>local panels = [10, 20, 30]</code> is actually a special type of what?", options: ["String", "Function", "Table", "Class"], answer: 2, explanation: "This is a key concept in Squirrel. An array is 'syntactic sugar' for a table where the keys are automatically assigned as sequential integers starting from 0 (e.g., `panels[0]`, `panels[1]`, etc.)." },
@@ -120,7 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            id: 'part2-final-exam', part: 'Part 2: Connecting to the World', title: 'Part 2 Final Exam', file: 'chapters/chapter2/ch06_part2_exam.html',
+            id: 'entity-manipulation', part: 'Part 2: Connecting to the World', title: 'Entity Manipulation', file: 'chapters/chapter2/ch06_advanced_manipulation.html',
+        },
+        {
+            id: 'part2-final-exam', part: 'Part 2: Connecting to the World', title: 'Part 2 Final Exam', file: 'chapters/chapter2/part2_exam.html',
             quiz: [
                 { question: "A player (`activator`) stands on a `trigger_once` (`caller`) which fires an `Open` input to a door with a script (`self`). Inside the door's script function that runs, which special variable holds the script handle to the `trigger_once`?", options: ["<code>self</code>", "<code>activator</code>", "<code>caller</code>", "<code>this</code>"], answer: 2, explanation: "`self` is the entity whose script is running (the door). `activator` is the entity that started the entire chain (the player). `caller` is the entity that fired the direct input to `self`, which in this case is the `trigger_once`." },
                 { question: "You want a script running on a `logic_script` to modify a variable in another `logic_script`'s scope. How is this accomplished?", options: ["It's not possible; scopes are always completely isolated.", "By creating a local variable in the first script, which the second script can then read.", "By using the `::` operator to create and access a variable in the shared global scope (root table).", "By using `EntFire` to send the variable's value to the other script."], answer: 2, explanation: "By default, script scopes are isolated. The global scope, accessed with `::`, is the designated 'public square' for scripts to share information with each other when necessary." },
@@ -149,7 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'creator-debug', part: 'Part 3: Becoming a Creator', title: 'Debugging Your Scripts', file: 'chapters/chapter3/ch04_debug.html'
         },
         {
-            id: 'part3-final-exam', part: 'Part 3: Becoming a Creator', title: 'Part 3 Final Exam', file: 'chapters/chapter3/ch05_part3_exam.html',
+            id: 'sounds', part: 'Part 3: Becoming a Creator', title: 'Sound and Synchronization', file: 'chapters/chapter3/ch05_sound.html'
+        },
+        {
+            id: 'part3-final-exam', part: 'Part 3: Becoming a Creator', title: 'Part 3 Final Exam', file: 'chapters/chapter3/part3_exam.html',
             quiz: [
                 { question: "How do you move an entity 50 units forward in the direction it is currently facing?", options: ["<code>ent.SetOrigin(ent.GetOrigin() + 50)</code>", "<code>ent.SetOrigin(ent.GetOrigin() + Vector(50, 0, 0))</code>", "<code>ent.SetOrigin(ent.GetOrigin() + ent.GetForwardVector() * 50)</code>", "<code>ent.SetForwardVector(Vector(50, 0, 0))</code>"], answer: 2, explanation: "`ent.GetForwardVector()` returns a directional vector of length 1 pointing where the entity is facing. Multiplying this by 50 creates a new vector representing that direction and distance. Adding this result to the entity's current origin calculates the correct destination point." },
                 { question: "You have an Input Hook function <code>InputLock()</code> on a door. What must this function do to PREVENT the original \"Lock\" input from working?", options: ["<code>return true</code>", "<code>return null</code>", "<code>return false</code>", "Nothing, the function just needs to exist to block the input."], answer: 2, explanation: "Input Hook functions can intercept I/O. If the hook function returns `false`, it signals to the engine to cancel the original input, effectively blocking it. Returning `true` or `null` allows the input to proceed as normal." },
@@ -180,7 +189,13 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'organizing-hacks', part: 'Part 4: Writing Clean & Creative Code', title: 'Hacking the Engine', file: 'chapters/chapter4/ch04_engine_hacks.html'
         },
         {
-            id: 'part4-final-exam', part: 'Part 4: Writing Clean & Creative Code', title: 'Part 4 Final Exam', file: 'chapters/chapter4/ch05_part4_exam.html',
+            id: 'error-handling', part: 'Part 4: Writing Clean & Creative Code', title: 'Error Handling', file: 'chapters/chapter4/ch05_error_handling.html'
+        },
+        {
+            id: 'performance', part: 'Part 4: Writing Clean & Creative Code', title: 'Performance & Optimization', file: 'chapters/chapter4/ch06_performance.html'
+        },
+        {
+            id: 'part4-final-exam', part: 'Part 4: Writing Clean & Creative Code', title: 'Part 4 Final Exam', file: 'chapters/chapter4/part4_exam.html',
             quiz: [
                 { question: "You use the standard `TraceLine` function to check for line of sight between two points. A `prop_weighted_cube` is directly in the path, but there are no walls. What will the function return?", options: ["A fraction less than 1.0, because it hit the cube.", "A fraction of 1.0, because it ignored the cube.", "The script handle of the cube.", "An error."], answer: 1, explanation: "This question tests the single most important limitation of the standard `TraceLine` function. It *only* collides with world geometry (brushes) and completely ignores all entities. Since there was no wall in the way, the trace will complete successfully and return 1.0." },
                 { question: "When organizing functions within a table in an entity script, why can't those functions directly use the `self` variable?", options: ["Because `self` is a reserved keyword only for the global scope.", "Because when called, the function's scope is the table itself (referenced by `this`), where `self` is not defined.", "Because `self` must be capitalized as `Self` inside tables.", "Because tables can only contain data, not access entity handles."], answer: 1, explanation: "This is a crucial concept for code organization. The function's immediate scope is the table it belongs to. The entity's `self` handle from the outer script scope is not automatically visible. The correct pattern is to pass `self` into the function as a parameter." },
@@ -192,56 +207,286 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'pcap-intro', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Intro to PCapture-Lib', file: 'chapters/chapter5/ch01_pcap_intro.html'
         },
         {
-            id: 'pcap-smarter-entities', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Smarter Entities: pcapEntity', file: 'chapters/chapter5/ch02_pcap_entity.html',
+            id: 'pcap-smarter-types', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'Arrays & Lists', 
+            file: 'chapters/chapter5/ch02_idt_arrays_lists.html',
             quiz: [
-                { question: "With PCapture-Lib, what is the modern, preferred way to change an entity's color to red?", options: ["<code>EntFireByHandle(ent, \"Color\", \"255 0 0\", 0, null, null)</code>", "<code>ent.SetColor(\"255 0 0\")</code>", "<code>ent.color <- \"255 0 0\"</code>", "<code>pcapEntity.SetColor(ent, \"255 0 0\")</code>"], answer: 1, explanation: "PCapture-Lib upgrades entity handles to `pcapEntity` objects, which have direct methods like `.SetColor()`. This is much cleaner and more readable than using the old `EntFireByHandle` system." }
+                { 
+                    question: "You have an ArrayEx containing player scores: <code>[100, 25, 80, 15, 90]</code>. You need to create a new array containing only scores above 50. Which method should you use?", 
+                    options: [
+                        "<code>scores.map(function(val, idx) { return val > 50 })</code>", 
+                        "<code>scores.filter(function(idx, val) { return val > 50 })</code>", 
+                        "<code>scores.reduce(function(acc, val) { return val > 50 })</code>", 
+                        "<code>scores.search(function(val) { return val > 50 })</code>"
+                    ], 
+                    answer: 1, 
+                    explanation: "<code>.filter()</code> creates a new array containing only elements that satisfy the predicate function. Note the parameter order: index first, then value. <code>map()</code> transforms elements, <code>reduce()</code> collapses to a single value, and <code>search()</code> returns an index." 
+                },
+                { 
+                    question: "When should you use a <code>List</code> instead of an <code>ArrayEx</code>?", 
+                    options: [
+                        "When you need to access elements by index frequently", 
+                        "When you need frequent insertions/deletions at the beginning or middle", 
+                        "When you need functional methods like filter() and map()", 
+                        "Lists are always better than ArrayEx"
+                    ], 
+                    answer: 1, 
+                    explanation: "Lists excel at insertion/deletion operations, especially at the beginning or middle, because they only need to update node references. ArrayEx is better for random access by index (O(1) vs O(n) for Lists). Both support functional methods." 
+                },
+                { 
+                    question: "You have an array with duplicate values: <code>[1, 2, 2, 3, 4, 4, 5]</code>. What's the simplest way to get only unique values?", 
+                    options: [
+                        "<code>myArray.filter(function(idx, val) { return val != val })</code>", 
+                        "<code>myArray.unique()</code>", 
+                        "<code>myArray.reduce(function(acc, val) { return acc })</code>", 
+                        "<code>myArray.search(1)</code>"
+                    ], 
+                    answer: 1, 
+                    explanation: "Both ArrayEx and List provide a <code>.unique()</code> method that returns a new collection with only unique elements. This is much simpler than writing a custom filter or reduce function." 
+                },
+                { 
+                    question: "What must you do to avoid memory leaks when using a <code>List</code>?", 
+                    options: [
+                        "Nothing, Lists are automatically garbage collected", 
+                        "Call <code>.clear()</code> when done or let it go out of scope naturally", 
+                        "Convert it to an array with <code>.toarray()</code> before deleting", 
+                        "Use <code>delete myList</code>"
+                    ], 
+                    answer: 1, 
+                    explanation: "Lists use references between nodes. If you create circular references or don't properly clean up, the garbage collector may not free the memory. Always call <code>.clear()</code> when finished, or ensure the List goes out of scope naturally." 
+                }
             ]
         },
         {
-            id: 'pcap-scheduler', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Perfect Timing: ActionScheduler', file: 'chapters/chapter5/ch03_pcap_scheduler.html',
+            id: 'pcap-smarter-entities', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'Enhanced Entities', 
+            file: 'chapters/chapter5/ch03_idt_entities.html',
             quiz: [
-                { question: "In a function started by `ScheduleEvent.Add()`, what does the line `yield 2.5` do?", options: ["It ends the function and returns the value 2.5.", "It pauses the function for 2.5 seconds, then resumes execution from the next line.", "It causes a game crash.", "It runs the function 2.5 times."], answer: 1, explanation: "`yield` is the core of the ActionScheduler's asynchronous power, allowing you to create timed sequences in a simple, linear fashion without complex callbacks or manual delay calculations." },
-                { question: "What is the biggest risk of using a long `yield` pause (e.g., `yield 30.0`) in your map?", options: ["It might slow down the server.", "The game will crash if a player loads a save made during the pause.", "It will prevent other scripts from running.", "There is no risk."], answer: 1, explanation: "This is a critical limitation of the Source Engine's save system. Asynchronous functions are not saved correctly, making long yields unsafe for critical gameplay logic where players might save and load." }
+                { 
+                    question: "With PCapture-Lib, what is the modern, preferred way to change an entity's color to red?", 
+                    options: [
+                        "<code>EntFireByHandle(ent, \"Color\", \"255 0 0\", 0, null, null)</code>", 
+                        "<code>ent.SetColor(\"255 0 0\")</code>", 
+                        "<code>ent.color <- \"255 0 0\"</code>", 
+                        "<code>pcapEntity.SetColor(ent, \"255 0 0\")</code>"
+                    ], 
+                    answer: 1, 
+                    explanation: "PCapture-Lib upgrades entity handles to <code>pcapEntity</code> objects, which have direct methods like <code>.SetColor()</code>. This is much cleaner and more readable than using the old <code>EntFireByHandle</code> system." 
+                },
+                { 
+                    question: "You want to make an entity invisible AND non-solid with one function call. Which method should you use?", 
+                    options: [
+                        "<code>entity.SetAlpha(0)</code>", 
+                        "<code>entity.SetDrawEnabled(false)</code>", 
+                        "<code>entity.Disable()</code>", 
+                        "<code>entity.SetCollision(0)</code>"
+                    ], 
+                    answer: 2, 
+                    explanation: "<code>Disable()</code> is equivalent to calling both <code>SetDrawEnabled(false)</code> and <code>SetTraceIgnore(true)</code>, making the entity invisible and non-interactive in one call. <code>Enable()</code> reverses this." 
+                }
             ]
         },
         {
-            id: 'pcap-traceplus', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Ultimate Tool: TracePlus', file: 'chapters/chapter5/ch04_pcap_traceplus.html',
+            id: 'pcap-entlib', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'Safe Entity Creation/Finding', 
+            file: 'chapters/chapter5/ch04_entity_utilities.html',
             quiz: [
-                { question: "What is the primary advantage of `TracePlus.Bbox` over the standard `TraceLine` function?", options: ["It is faster for world geometry.", "It can see and collide with entities like players and cubes.", "It can only be used on players.", "It returns the color of the surface it hits."], answer: 1, explanation: "`TracePlus.Bbox` solves the single biggest flaw of `TraceLine` for gameplay scripting: its inability to detect entities. This makes it an essential tool for almost any interactive mechanic." }
+                { 
+                    question: "You have two variables: <code>door1 = entLib.FindByName(\"exit_door\")</code> and <code>door2 = entLib.FindByName(\"exit_door\")</code>. How do you correctly check if they refer to the same entity?", 
+                    options: [
+                        "<code>door1 == door2</code>", 
+                        "<code>door1.GetName() == door2.GetName()</code>", 
+                        "<code>macros.IsEqual(door1, door2)</code>", 
+                        "<code>door1.entindex() == door2.entindex()</code>"
+                    ], 
+                    answer: 2, 
+                    explanation: "Entity handles are reference objects - direct comparison with <code>==</code> doesn't work reliably. <code>macros.IsEqual()</code> (or <code>entity.IsEqual(other)</code>) compares entities by their entity index, which is a guaranteed unique identifier. While checking entindex manually works, <code>macros.IsEqual()</code> is the recommended approach." 
+                },
+                { 
+                    question: "What's the difference between <code>entLib.FindByName(\"button\")</code> and <code>entLib.FindByNameWithin(\"button\", playerPos, 100)</code>?", 
+                    options: [
+                        "They are identical", 
+                        "FindByNameWithin only searches within 100 units of playerPos", 
+                        "FindByNameWithin is faster", 
+                        "FindByName returns an array, FindByNameWithin returns a single entity"
+                    ], 
+                    answer: 1, 
+                    explanation: "<code>FindByNameWithin</code> adds spatial filtering - it only finds entities with the matching name that are also within the specified radius of the origin point. This is useful for proximity-based interactions." 
+                },
+                { 
+                    question: "You're writing a Think function that runs every 0.1 seconds. It needs to access an entity called \"exit_door\". What's the most performant approach?", 
+                    options: [
+                        "Call <code>entLib.FindByName(\"exit_door\")</code> inside the Think function every time", 
+                        "Cache the entity once outside the Think function: <code>exitDoor <- entLib.FindByName(\"exit_door\")</code>", 
+                        "Use <code>Entities.FindByName()</code> instead of <code>entLib</code>", 
+                        "There's no performance difference"
+                    ], 
+                    answer: 1, 
+                    explanation: "Entity searches are relatively expensive. If you need to reference an entity multiple times, cache the result once and reuse it. This is especially important in Think functions that run frequently. Just remember to validate cached entities with <code>.IsValid()</code> before use." 
+                },
             ]
         },
         {
-            id: 'pcap-files', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Saving Data with Files', file: 'chapters/chapter5/ch05_pcap_files.html'
-        },
-        {
-            id: 'pcap-debug', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Debugging 303: Visualizing Logic', file: 'chapters/chapter5/ch06_pcap_debug.html'
-        },
-        {
-            id: 'pcap-animations', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Animations Module', file: 'chapters/chapter5/ch07_pcap_animations.html',
+            id: 'pcap-scheduler', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'Perfect Timing: ActionScheduler', 
+            file: 'chapters/chapter5/ch05_action_scheduler.html',
             quiz: [
-                { question: "You want a prop named `my_prop` to smoothly fade from fully visible to fully invisible over 3 seconds. Which PCapture-Lib function is best for this?", options: ["<code>animate.AlphaTransition(prop, 255, 0, 3.0)</code>", "<code>prop.SetAlpha(0)</code>", "<code>ScheduleEvent.Add(function() { prop.SetAlpha(0) }, 3.0)</code>", "<code>dev.DrawEntityBBox(prop, Vector(255,0,0), 3.0)</code>"], answer: 0, explanation: "The `animate.AlphaTransition()` function is specifically designed for this purpose. The other options would make the prop disappear instantly (either immediately or after a delay) or are for debugging." }
+                { 
+                    question: "What is the MAIN advantage of <code>ScheduleEvent</code> over vanilla <code>EntFire</code> delayed inputs?", 
+                    options: [
+                        "It's faster", 
+                        "You can cancel scheduled events at any time", 
+                        "It works without PCapture-Lib", 
+                        "It can fire entity inputs"
+                    ], 
+                    answer: 1, 
+                    explanation: "The killer feature of <code>ScheduleEvent</code> is the ability to <strong>cancel</strong> scheduled actions and entire event groups. Once you use <code>EntFire</code> with a delay, those inputs are locked in and will execute no matter what. With <code>ScheduleEvent.Cancel()</code>, you have full control over timed sequences." 
+                },
+                { 
+                    question: "You write this code: <code>local door = entLib.FindByName(\"exit\"); ScheduleEvent.Add(\"test\", function() { door.SetColor(\"255 0 0\") }, 2)</code>. What happens?", 
+                    options: [
+                        "The door turns red after 2 seconds", 
+                        "The game crashes after 2 seconds because 'door' doesn't exist in the function's scope", 
+                        "The door turns red immediately", 
+                        "Nothing happens"
+                    ], 
+                    answer: 1, 
+                    explanation: "This is the scope problem! When the scheduled function runs, the local variable <code>door</code> no longer exists. You must pass it explicitly: either as an argument (<code>function(door) {...}, 2, [door]</code>), with closure capture (<code>function():(door) {...}</code>), or as scope (<code>function() {...}, 2, null, door</code>)." 
+                },
+                { 
+                    question: "In a function started by <code>ScheduleEvent.Add()</code>, what does the line <code>yield 2.5</code> do?", 
+                    options: [
+                        "It ends the function and returns the value 2.5", 
+                        "It pauses the function for 2.5 seconds, then resumes execution from the next line", 
+                        "It causes a game crash", 
+                        "It runs the function 2.5 times"
+                    ], 
+                    answer: 1, 
+                    explanation: "<code>yield</code> is the core of the ActionScheduler's asynchronous power, allowing you to create timed sequences in a simple, linear fashion without complex callbacks or manual delay calculations. However, be aware of the save/load crash risk!" 
+                },
+                { 
+                    question: "What is the biggest risk of using a long <code>yield</code> pause (e.g., <code>yield 30.0</code>) in your map?", 
+                    options: [
+                        "It might slow down the server", 
+                        "The game will crash if a player loads a save made during the pause", 
+                        "It will prevent other scripts from running", 
+                        "There is no risk"
+                    ], 
+                    answer: 1, 
+                    explanation: "This is a critical limitation of the Source Engine's save system. Asynchronous functions are not saved correctly, making long yields unsafe for critical gameplay logic where players might save and load. Only use <code>yield</code> for short cosmetic sequences or debugging." 
+                }
             ]
         },
         {
-            id: 'pcap-hud', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The HUD Module', file: 'chapters/chapter5/ch08_pcap_hud.html'
-        },
-        {
-            id: 'pcap-scriptevents', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The ScriptEvents Module', file: 'chapters/chapter5/ch09_pcap_scriptevents.html',
+            id: 'pcap-traceplus', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'The Ultimate Tool: TracePlus', 
+            file: 'chapters/chapter5/ch06_pcap_traceplus.html',
             quiz: [
-                { question: "A script broadcasts a message using `EventListener.Notify(\"PuzzleComplete\")`. How do other scripts react to this?", options: ["They don't, only the global scope can hear it.", "The engine automatically finds and runs functions named `OnPuzzleComplete`.", "Any script that has previously added an action to the 'PuzzleComplete' event will run its action.", "It will cause an error if no script is listening."], answer: 2, explanation: "The ScriptEvents module uses a publish-subscribe model. One script publishes (`Notify`), and other scripts must explicitly subscribe (`AddAction`) to that specific event name to react." }
+                { 
+                    question: "What is the primary advantage of <code>TracePlus.Bbox</code> over the standard <code>TraceLine</code> function?", 
+                    options: [
+                        "It is faster for world geometry", 
+                        "It can see and collide with entities like players and cubes", 
+                        "It can only be used on players", 
+                        "It returns the color of the surface it hits"
+                    ], 
+                    answer: 1, 
+                    explanation: "<code>TracePlus.Bbox</code> solves the single biggest flaw of <code>TraceLine</code> for gameplay scripting: its inability to detect entities. Standard <code>TraceLine</code> only sees world geometry, making it almost useless for interactive mechanics." 
+                },
+                { 
+                    question: "When should you use <code>TracePlus.Cheap</code> instead of <code>TracePlus.Bbox</code>?", 
+                    options: [
+                        "When you need to detect entities", 
+                        "When you only need to detect world geometry and want better performance", 
+                        "When you need portal support", 
+                        "Never - Bbox is always better"
+                    ], 
+                    answer: 1, 
+                    explanation: "<code>TracePlus.Cheap</code> is a thin wrapper around vanilla <code>TraceLine</code> - it only detects world geometry but is faster. Use it when you're certain you don't need entity detection. For anything involving players, props, or NPCs, use <code>Bbox</code>." 
+                },
+                { 
+                    question: "You want a trace to ignore all trigger entities. How do you do this?", 
+                    options: [
+                        "<code>local trace = TracePlus.Bbox(start, end, \"trigger_multiple\")</code>", 
+                        "<code>local settings = TracePlus.Settings.new().SetIgnoredClasses([\"trigger_\"]); local trace = TracePlus.Bbox(start, end, null, settings)</code>", 
+                        "<code>local trace = TracePlus.Bbox(start, end); trace.IgnoreTriggers()</code>", 
+                        "This is not possible"
+                    ], 
+                    answer: 1, 
+                    explanation: "Use <code>TracePlus.Settings</code> to create custom filtering rules. <code>SetIgnoredClasses()</code> accepts an array of classname patterns (e.g., <code>[\"trigger_\"]</code> ignores all classes starting with \"trigger_\"). Pass this settings object as the 4th parameter to <code>TracePlus.Bbox()</code>." 
+                },
+                { 
+                    question: "What makes <code>TracePlus.PortalBbox</code> different from regular <code>TracePlus.Bbox</code>?", 
+                    options: [
+                        "It's faster", 
+                        "It only works on portals", 
+                        "It can trace through portals, correctly transforming position and direction", 
+                        "It returns portal entities instead of world hits"
+                    ], 
+                    answer: 2, 
+                    explanation: "Portal tracing is one of PCapture-Lib's most legendary features. <code>PortalBbox</code> lets rays pass through portals, correctly calculating the transformed path. This enables advanced mechanics like lasers that bounce through portals or AI that can \"see\" through them." 
+                }
             ]
         },
         {
-            id: 'pcap-utils', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The Utility Belt', file: 'chapters/chapter5/ch10_pcap_utils.html'
+            id: 'pcap-files', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'Saving Data with Files', 
+            file: 'chapters/chapter5/ch07_pcap_files.html'
         },
         {
-            id: 'part5-final-exam', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Part 5 Final Exam', file: 'chapters/chapter5/ch11_part5_exam.html',
+            id: 'pcap-debug', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'Debugging 303: Visualizing Logic', 
+            file: 'chapters/chapter5/ch08_pcap_debug.html'
+        },
+        {
+            id: 'pcap-animations', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'The Animations Module', 
+            file: 'chapters/chapter5/ch09_pcap_animations.html',
             quiz: [
-                { question: "Using PCapture-Lib, you want a prop to glow red, wait exactly 2 seconds, and then dissolve. Which code snippet best achieves this in a single, readable function that is started with the scheduler?", options: ["<code>prop.SetColor(\"255 0 0\"); EntFireByHandle(prop, \"Dissolve\", \"\", 2.0, null, null)</code>", "<code>prop.SetColor(\"255 0 0\"); ScheduleEvent.Add(\"dissolve_prop\", function() { prop.Dissolve() }, 2.0)</code>", "<code>prop.SetColor(\"255 0 0\"); yield 2.0; prop.Dissolve()</code>", "<code>prop.SetColor(\"255 0 0\"); local timer = 2.0; while (timer > 0) { timer -= FrameTime() } prop.Dissolve()</code>"], answer: 2, explanation: "This showcases the primary strength of the `ActionScheduler`. The `yield` keyword allows you to write timed, sequential logic in a clean, linear fashion. While B would work, C is more readable for a single sequence. A is standard VScript, and D is a not super cursed way." },
-                { question: "A laser beam needs to detect if a player is blocking its path, even if the path goes through a set of linked portals. Which PCapture-Lib function is specifically designed for this complex task?", options: ["<code>TracePlus.Bbox</code>", "<code>TraceLine</code>", "<code>TracePlus.PortalCheap</code>", "<code>TracePlus.PortalBbox</code>"], answer: 3, explanation: "This is the library's killer feature. `TracePlus.Bbox` can see entities, but not go through portals. `TracePlus.PortalCheap` can go through portals, but can't see entities. `TracePlus.PortalBbox` is the ultimate tool that does both, making it the correct choice for this scenario." },
-                { question: "Your goal is to have multiple, separate scripts (on a door, a light, and a sound emitter) all perform an action when a puzzle is solved. What is the most decoupled, modular way to achieve this using PCapture-Lib?", options: ["The puzzle script sets a global variable `::g_PuzzleSolved = true`, which all other scripts check in a think function.", "The puzzle script uses `entLib.FindByClassname` to find every entity and call a specific function on each one.", "The puzzle script calls `EventListener.Notify(\"PuzzleSolved\")`. The other scripts have each used `AddAction` on that event to register their own unique response.", "Write all the door, light, and sound logic inside the single puzzle script."], answer: 2, explanation: "This demonstrates the power of the `ScriptEvents` module. It allows for a 'publish-subscribe' model where the puzzle script (the publisher) doesn't need to know anything about the door, light, or sound scripts (the subscribers). This makes the code incredibly modular and easy to expand later." }
+                { 
+                    question: "You want a prop named <code>my_prop</code> to smoothly fade from fully visible to fully invisible over 3 seconds. Which PCapture-Lib function is best for this?", 
+                    options: [
+                        "<code>animate.AlphaTransition(prop, 255, 0, 3.0)</code>", 
+                        "<code>prop.SetAlpha(0)</code>", 
+                        "<code>ScheduleEvent.Add(function() { prop.SetAlpha(0) }, 3.0)</code>", 
+                        "<code>dev.DrawEntityBBox(prop, Vector(255,0,0), 3.0)</code>"
+                    ], 
+                    answer: 0, 
+                    explanation: "The <code>animate.AlphaTransition()</code> function is specifically designed for this purpose. The other options would make the prop disappear instantly (either immediately or after a delay) or are for debugging." 
+                }
             ]
         },
+        {
+            id: 'pcap-utils', 
+            part: 'Part 5: Advanced Techniques with PCapture-Lib', 
+            title: 'The Utility Belt', 
+            file: 'chapters/chapter5/ch10_pcap_utils.html'
+        },
+        // {
+        //     id: 'pcap-hud', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The HUD Module', file: 'chapters/chapter5/ch08_pcap_hud.html'
+        // },
+        // {
+        //     id: 'pcap-scriptevents', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'The ScriptEvents Module', file: 'chapters/chapter5/ch09_pcap_scriptevents.html',
+        //     quiz: [
+        //         { question: "A script broadcasts a message using `EventListener.Notify(\"PuzzleComplete\")`. How do other scripts react to this?", options: ["They don't, only the global scope can hear it.", "The engine automatically finds and runs functions named `OnPuzzleComplete`.", "Any script that has previously added an action to the 'PuzzleComplete' event will run its action.", "It will cause an error if no script is listening."], answer: 2, explanation: "The ScriptEvents module uses a publish-subscribe model. One script publishes (`Notify`), and other scripts must explicitly subscribe (`AddAction`) to that specific event name to react." }
+        //     ]
+        // },
+        // {
+        //     id: 'part5-final-exam', part: 'Part 5: Advanced Techniques with PCapture-Lib', title: 'Part 5 Final Exam', file: 'chapters/chapter5/ch11_part5_exam.html',
+        //     quiz: [
+        //         { question: "Using PCapture-Lib, you want a prop to glow red, wait exactly 2 seconds, and then dissolve. Which code snippet best achieves this in a single, readable function that is started with the scheduler?", options: ["<code>prop.SetColor(\"255 0 0\"); EntFireByHandle(prop, \"Dissolve\", \"\", 2.0, null, null)</code>", "<code>prop.SetColor(\"255 0 0\"); ScheduleEvent.Add(\"dissolve_prop\", function() { prop.Dissolve() }, 2.0)</code>", "<code>prop.SetColor(\"255 0 0\"); yield 2.0; prop.Dissolve()</code>", "<code>prop.SetColor(\"255 0 0\"); local timer = 2.0; while (timer > 0) { timer -= FrameTime() } prop.Dissolve()</code>"], answer: 2, explanation: "This showcases the primary strength of the `ActionScheduler`. The `yield` keyword allows you to write timed, sequential logic in a clean, linear fashion. While B would work, C is more readable for a single sequence. A is standard VScript, and D is a not super cursed way." },
+        //         { question: "A laser beam needs to detect if a player is blocking its path, even if the path goes through a set of linked portals. Which PCapture-Lib function is specifically designed for this complex task?", options: ["<code>TracePlus.Bbox</code>", "<code>TraceLine</code>", "<code>TracePlus.PortalCheap</code>", "<code>TracePlus.PortalBbox</code>"], answer: 3, explanation: "This is the library's killer feature. `TracePlus.Bbox` can see entities, but not go through portals. `TracePlus.PortalCheap` can go through portals, but can't see entities. `TracePlus.PortalBbox` is the ultimate tool that does both, making it the correct choice for this scenario." },
+        //         { question: "Your goal is to have multiple, separate scripts (on a door, a light, and a sound emitter) all perform an action when a puzzle is solved. What is the most decoupled, modular way to achieve this using PCapture-Lib?", options: ["The puzzle script sets a global variable `::g_PuzzleSolved = true`, which all other scripts check in a think function.", "The puzzle script uses `entLib.FindByClassname` to find every entity and call a specific function on each one.", "The puzzle script calls `EventListener.Notify(\"PuzzleSolved\")`. The other scripts have each used `AddAction` on that event to register their own unique response.", "Write all the door, light, and sound logic inside the single puzzle script."], answer: 2, explanation: "This demonstrates the power of the `ScriptEvents` module. It allows for a 'publish-subscribe' model where the puzzle script (the publisher) doesn't need to know anything about the door, light, or sound scripts (the subscribers). This makes the code incredibly modular and easy to expand later." }
+        //     ]
+        // },
         {
             id: 'conclusion', part: 'Conclusion', title: 'Where to Go From Here', file: 'chapters/conclusion.html'
         }
