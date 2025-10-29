@@ -1,0 +1,29 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 2.6: Entity Manipulation</h2>
+<p>While the Entity I/O system (`EntFire`) is the standard, safest way to interact with entities, VScript provides a more direct and powerful—but also more dangerous—method for changing an entity's properties.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Directly Setting KeyValues: `__KeyValueFrom*`</h3>
+<p>Every entity in Hammer has a list of "KeyValues" (e.g., `targetname`, `_light`, `spawnflags`). VScript provides a family of functions, like `__KeyValueFromString()`, `__KeyValueFromInt()`, and `__KeyValueFromVector()`, to modify these values directly in memory.</p>
+<pre><code class="language-squirrel">// Find a dynamic light entity
+local myLight = Entities.FindByName(null, "dynamic_light_prop");
+
+if (myLight) {
+    // --- The Standard Way (using I/O) ---
+    // This sends a message to the entity, which then processes the color change.
+    EntFireByHandle(myLight, "Color", "0 255 0", 0, null, null);
+
+    // --- The Direct Way (using __KeyValueFrom) ---
+    // This reaches directly into the entity's memory and changes the value.
+    myLight.__KeyValueFromString("_light", "0 255 0");
+}
+</code></pre>
+<p>At first glance, the direct method seems like a simple shortcut. However, it comes with a critical caveat.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Danger of Bypassing Logic</h3>
+<p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg">
+    <strong>⚠️ CRITICAL: `__KeyValueFrom*` does NOT trigger updates!</strong><br><br>
+    When you use `EntFire`, you are sending a message to the entity. The entity receives this message and runs its internal code to handle the change—updating its visuals, notifying the physics engine, synchronizing with the network, etc.<br><br>
+    The `__KeyValueFrom*` functions <strong>bypass all of this logic</strong>. They change the data, but the entity doesn't "know" it has been changed. This can lead to desynchronization, where the visual state does not match the internal data. Effects may be delayed, partial, or simply not appear at all until another input forces the entity to refresh itself.
+</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">When to Use It (Carefully)</h4>
+<p>Despite the danger, this method has a key use case: setting up entities <strong>before they are spawned</strong>, typically via a `point_template`. By intercepting the pre-spawn logic, you can use `__KeyValueFrom*` to configure an entity with precise values before it ever exists in the world, ensuring it spawns in the exact state you want. For entities that are already active in the world, it is almost always better and safer to use `EntFire` or the high-level functions provided by libraries like PCapture-Lib.</p>
