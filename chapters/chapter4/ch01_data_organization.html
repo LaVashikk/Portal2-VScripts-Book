@@ -56,4 +56,28 @@ Turret <- {
 }
 </code></pre>
 <p>This pattern of grouping logic into tables and passing <code>self</code> is fundamental to writing organized, large-scale VScripts.</p>
-<p class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg"><strong>What about Classes?</strong> Squirrel has a <code>class</code> keyword which is a more formal way to create these kinds of objects. They behave very similarly to tables but have stricter rules and concepts like inheritance. For most VScripting needs, using tables as objects is simpler and more flexible... For someone :p</p>
+
+
+<h3 class="text-2xl font-bold mt-8 mb-4">What about Classes?</h3>
+<p>Squirrel has a <code>class</code> keyword which is a more formal way to create these kinds of objects. They behave very similarly to tables but have stricter rules and concepts like inheritance. For most VScripting needs, using tables as objects is simpler and more flexible... For someone :p</p>
+<pre><code class="language-squirrel">class Turret {
+    hp = 100
+    target = null
+    
+    constructor(health) {
+        hp = health
+    }
+    
+    function Fire() {
+        printl("Firing at " + target.GetName())
+    }
+}
+
+local myTurret = Turret(150)
+</code></pre>
+
+<p class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg">
+    <strong>⚠️ CRITICAL: Do NOT Use Class Inheritance in Portal 2!</strong><br><br>
+    Squirrel supports object-oriented programming with the <code>class inheritance</code>. <strong>However, Portal 2's save/load system does not support these features.</strong> If your script uses class inheritance, the game <strong>will crash</strong> when a player tries to save or load the game.<br><br>
+    <strong>Safe Alternative:</strong> Use tables to organize your code instead. Tables work perfectly with save/load and offer all the functionality you need for most scripting tasks.
+</p>

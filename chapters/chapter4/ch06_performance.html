@@ -1,0 +1,53 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.6: Performance & Optimization</h2>
+<p>While modern computers are fast, inefficient VScript code can still cause noticeable lag or "stutter" in your map, especially if the code runs frequently. Writing optimized code is crucial for a smooth player experience. The most common performance bottleneck in VScript is entity searching.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Golden Rule: Avoid Searching in `Think` Functions</h3>
+<p>A `Think` function runs repeatedly, often many times per second. An entity search function like `Entities.FindByName()` is computationally expensive—it has to iterate through the game's list of entities and perform string comparisons. Placing a search inside a `Think` function is the #1 cause of script-related performance issues.</p>
+<pre><code class="language-squirrel">// ❌ BAD: Searching every 0.1 seconds!
+function BadThink() {
+    local door = Entities.FindByName(null, "main_exit_door"); // Expensive search!
+    if (door) {
+        // ... do something with the door
+    }
+    return 0.1;
+}
+
+// ✅ GOOD: Cache the handle once, then reuse it.
+// This code runs in the main script scope, only one time.
+doorHandle <- Entities.FindByName(null, "main_exit_door");
+
+function GoodThink() {
+    if (doorHandle) { // Just a quick check, very fast.
+        EntFireByHandle(doorHandle, "Open", "", 0, null, null)
+    }
+    return 0.1;
+}
+</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Robust Caching Patterns</h3>
+<p>Storing the handle in a global-like variable is a good start. A more robust and cleaner pattern is to use a "getter" function that handles the caching for you. The first time you ask for the entity, it finds it and saves the handle. Every subsequent time, it instantly returns the saved handle.</p>
+<pre><code class="language-squirrel">// A variable to hold our cached handle. It starts as null.
+_cachedDoor <- null;
+
+// A "getter" function to safely retrieve the door handle.
+function GetMainDoor() {
+    // If we haven't found the door yet...
+    if (_cachedDoor == null || !_cachedDoor.IsValid()) {
+        printl("Searching for main_exit_door for the first time...");
+        _cachedDoor = Entities.FindByName(null, "main_exit_door");
+    }
+    // Return the handle (either newly found or from the cache).
+    return _cachedDoor;
+}
+
+// --- USAGE ---
+// In a think function or any other function:
+function CheckDoorStatus() {
+    local door = GetMainDoor(); // This is always fast after the first call.
+    if (door) {
+        // ...
+    }
+    return 1.0;
+}
+</code></pre>
+<p>This pattern combines performance with safety. By checking `!_cachedDoor.IsValid()`, you also protect against the entity being removed during the game, allowing the script to try finding it again if necessary.</p>

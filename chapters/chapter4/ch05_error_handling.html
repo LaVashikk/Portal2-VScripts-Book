@@ -1,0 +1,100 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 4.5: Error Handling & Defensive Programming</h2>
+<p>In a perfect world, every entity you search for would exist, every function would receive valid parameters, and nothing would ever go wrong. In reality, scripts must be prepared for the unexpected. A missing entity, a null reference, or an invalid operation can crash your script—or worse, crash the entire game.</p>
+<p>This chapter teaches you how to write <strong>defensive code</strong> that anticipates and handles errors gracefully.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The <code>try/catch</code> Block: Catching Errors</h3>
+<p>Squirrel provides <code>try/catch</code> blocks, which let you attempt potentially dangerous code and recover if it fails.</p>
+<pre><code class="language-squirrel">// Attempt to execute risky code
+try {
+    local door = Entities.FindByName(null, "exit_door")
+    door.SetOrigin(Vector(0, 0, 100)) // If 'door' is null, this will throw an error
+}
+catch (error) {
+    // If an error occurs, this block runs instead of crashing
+    printl("ERROR: " + error)
+    printl("The door entity was not found or is invalid.")
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">When to Use Try/Catch</h4>
+<p><code>try/catch</code> is useful when:</p>
+<ul class="list-disc list-inside space-y-2">
+    <li>You're working with user input or dynamically generated data</li>
+    <li>You're executing code from a string (e.g., <code>compilestring()</code>)</li>
+    <li>You want to gracefully handle errors in non-critical systems (like optional cosmetic effects)</li>
+</ul>
+
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>Warning:</strong> <code>try/catch</code> adds overhead. Don't wrap every line of code in it. Use it strategically for truly unpredictable situations. For most cases, <strong>defensive checks</strong> (see below) are faster and clearer.
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Defensive Programming: Validate Before You Act</h3>
+<p>The best way to avoid errors is to <strong>check your assumptions</strong> before performing dangerous operations. This is called defensive programming.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Always Validate Entity Handles</h4>
+<p>The most common source of errors is trying to use a null or invalid entity handle.</p>
+<pre><code class="language-squirrel">// ❌ UNSAFE: No validation
+function TeleportDoor() {
+    local door = Entities.FindByName(null, "exit_door")
+    door.SetOrigin(Vector(0, 0, 100)) // CRASH if door is null!
+}
+
+// ✅ SAFE: Validate first
+function TeleportDoorSafe() {
+    local door = Entities.FindByName(null, "exit_door")
+    
+    if (door == null) {
+        printl("ERROR: exit_door not found!")
+        return // Exit the function early
+    }
+    
+    if (!door.IsValid()) {
+        printl("ERROR: exit_door is not valid!")
+        return
+    }
+    
+    door.SetOrigin(Vector(0, 0, 100)) // Safe to use now
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Create Wrapper Functions</h4>
+<p>To avoid repeating validation logic, create reusable "safe" wrapper functions.</p>
+<pre><code class="language-squirrel">// A safe version of GetOrigin that never crashes
+function SafeGetOrigin(entity) {
+    if (entity == null || !entity.IsValid()) {
+        return Vector(0, 0, 0) // Return a safe default
+    }
+    return entity.GetOrigin()
+}
+
+// Usage
+local door = Entities.FindByName(null, "maybe_missing_door")
+local doorPos = SafeGetOrigin(door) // Always safe, even if door is null
+printl("Door position: " + doorPos)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Practical Example: Robust Entity Finder</h3>
+<p>Let's combine these techniques into a production-ready helper function:</p>
+<pre><code class="language-squirrel">// A smart entity finder with built-in error handling
+function FindEntitySafe(targetname, required = false) {
+    local entity = Entities.FindByName(null, targetname)
+    
+    if (entity == null) {
+        local msg = "Entity '" + targetname + "' not found."
+        
+        if (required) {
+            // For required entities, throw an error
+            throw(msg)
+        } else {
+            // For optional entities, just log a warning
+            printl("WARNING: " + msg)
+        }
+    }
+    
+    return entity
+}
+
+// Usage
+local criticalDoor = FindEntitySafe("exit_door", true)  // Will throw error if missing
+local optionalLight = FindEntitySafe("fancy_light", false) // Will log warning if missing
+
+if (optionalLight) {
+    EntFireByHandle(optionalLight, "TurnOn", "", 0, null, null)
+}</code></pre>
