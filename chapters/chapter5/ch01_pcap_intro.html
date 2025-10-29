@@ -1,28 +1,213 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 5.1: Intro to PCapture-Lib</h2>
+<h2 class="text-3xl font-bold mb-4">Chapter 5.1: Introduction to PCapture-Lib</h2>
 <p>Congratulations! You have mastered the fundamentals of VScript. You can manipulate entities, manage logic, and even bend the engine to your will with creative hacks. You've reached the limits of what Portal 2's standard scripting tools can offer.</p>
 <p>Now, it's time to break those limits.</p>
 
-<h3 class="text-2xl font-bold mt-8 mb-4">Why You Need a Library</h3>
-<p>Think of the standard VScript API as a basic toolbox. It has a hammer, a screwdriver, and a wrench. You can build a lot, but some tasks are incredibly difficult:</p>
+<h3 class="text-2xl font-bold mt-8 mb-4">The Problem with Vanilla VScript</h3>
+<p>The standard VScript API is functional, but it has significant limitations that become frustrating as your scripts grow in complexity:</p>
+
 <ul class="list-disc list-inside space-y-2">
-    <li>Your "laser beam" (<code>TraceLine</code>) is blind to players and cubes.</li>
-    <li>Creating timed sequences is a mess of manual delay calculations.</li>
-    <li>Making an object move smoothly from A to B requires complex math in a Think function.</li>
-    <li>Inter-script communication often relies on cluttering the global scope.</li>
+    <li><strong>Verbose entity manipulation:</strong> Changing a simple property requires the long <code>EntFireByHandle()</code> function.</li>
+    <li><strong>Missing array methods:</strong> Standard arrays lack <code>.filter()</code>, <code>.reduce()</code>, and <code>.unique()</code>.</li>
+    <li><strong>No entity tracing:</strong> The <code>TraceLine()</code> function is blind to all entities—only world geometry.</li>
+    <li><strong>Clumsy timing:</strong> Creating timed sequences requires manual delay calculations that become unreadable.</li>
+    <li><strong>No file I/O:</strong> You can't save persistent data between map loads.</li>
 </ul>
-<p><strong>PCapture-Lib</strong> is a professional-grade power tool kit. It's a massive, community-built library that gives you new, powerful, and intuitive functions to solve these problems and many more. It is the "super-tool" that nearly all modern, complex Portal 2 maps use.</p>
-<p class="p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg">
-    While its size might seem intimidating, PCapture-Lib is designed to be user-friendly, stable, and predictable. Its functions have clear names and behave exactly as you'd expect, making your code cleaner and more powerful.
+
+<p class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>Think of it this way:</strong> Standard VScript is like building a house with only a hammer and a screwdriver. You <em>can</em> do it, but it's slow, painful, and error-prone. PCapture-Lib is a full power tool workshop.
 </p>
 
+<h3 class="text-2xl font-bold mt-8 mb-4">What is PCapture-Lib?</h3>
+<p><strong>PCapture-Lib</strong> is a comprehensive, battle-tested VScript library created specifically for Portal 2. It was born out of necessity during the development of <strong>Project Capture</strong>, a mod so technically complex it required over 10,000 lines of custom VScript code.</p>
+
+<p>The library provides:</p>
+<ul class="list-disc list-inside space-y-2">
+    <li><strong>Improved Data Types (IDT):</strong> Enhanced arrays, lists, and entity wrappers with dozens of new methods</li>
+    <li><strong>Advanced Entity Tracing:</strong> Raycasting that can see entities and trace through portals</li>
+    <li><strong>Smooth Animations:</strong> Built-in tweening for movement, rotation, and visual effects</li>
+    <li><strong>Action Scheduler:</strong> Clean, readable timed sequences with <code>yield</code> support</li>
+    <li><strong>File I/O:</strong> Save and load data to persist across map changes</li>
+    <li><strong>Visual Debugging:</strong> Draw shapes and text directly in the game world</li>
+    <li><strong>HUD System:</strong> Display text and hints on the player's screen</li>
+    <li><strong>Event System:</strong> Decoupled communication between scripts</li>
+</ul>
+
 <h3 class="text-2xl font-bold mt-8 mb-4">Installation</h3>
-<p>Using the library is incredibly simple. It's just another script you include in your project.</p>
+<p>Using PCapture-Lib is incredibly simple:</p>
+
 <ol class="list-decimal list-inside space-y-2">
-    <li><strong>Download:</strong> Get the latest <code>PCapture-Lib.nut</code> file <a href="https://github.com/LaVashikk/PCapture-LIB/">from the official repository.</a></li>
-    <li><strong>Place:</strong> Put the file in your <code>portal 2/portal2/scripts/vscripts/</code> folder alongside your other map scripts.</li>
-    <li><strong>Include:</strong> At the very top of your main <code>logic_script</code> file, add this single line:</li>
+    <li>
+        <strong>Download:</strong> Get the latest <code>PCapture-Lib.nut</code> file from the 
+        <a href="https://github.com/LaVashikk/PCapture-LIB" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">official GitHub repository</a>
+    </li>
+    <li>
+        <strong>Place:</strong> Put the file in your <code>portal2/scripts/vscripts/</code> folder alongside your other scripts
+    </li>
+    <li>
+        <strong>Include:</strong> At the very top of your main <code>logic_script</code> file, add this single line:
+    </li>
 </ol>
-<pre><code class="language-squirrel">// This must be the first line of your script to make all library functions available.
+
+<pre><code class="language-squirrel">// This must be the FIRST line of your script
 DoIncludeScript("PCapture-Lib.nut", getroottable())
 </code></pre>
-<p>That's it. You are now ready to use the most powerful VScript toolset ever created for Portal 2.</p>
+
+<p class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg">
+    <strong>Note:</strong> The <code>.nut</code> extension is optional when using <code>IncludeScript</code>. The library will automatically execute in the calling script's scope, making all its functions and classes immediately available.
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">A Quick Taste: Before and After</h3>
+<p>Let's see the real difference PCapture-Lib makes. Imagine you want to create a simple alarm sequence: turn on a red light, wait 2 seconds, flash it 3 times, then turn it off. And you need to be able to cancel it if the player solves the puzzle early.</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <div>
+        <h4 class="font-bold text-lg mb-2">Without PCapture-Lib (Vanilla VScript)</h4>
+        <pre><code class="language-squirrel">// Find the light
+local light = Entities.FindByName(null, "alarm_light")
+
+if (light) {
+    // Turn red and on
+    EntFireByHandle(light, "Color", "255 0 0", 0, null, null)
+    EntFireByHandle(light, "TurnOn", "", 0, null, null)
+    
+    // Flash sequence - manually calculate delays
+    EntFireByHandle(light, "TurnOff", "", 2.0, null, null)
+    EntFireByHandle(light, "TurnOn", "", 2.5, null, null)
+    EntFireByHandle(light, "TurnOff", "", 3.0, null, null)
+    EntFireByHandle(light, "TurnOn", "", 3.5, null, null)
+    EntFireByHandle(light, "TurnOff", "", 4.0, null, null)
+    EntFireByHandle(light, "TurnOn", "", 4.5, null, null)
+    
+    // Final off
+    EntFireByHandle(light, "TurnOff", "", 5.0, null, null)
+}
+
+// ❌ PROBLEM: Cannot cancel this sequence!
+// Once scheduled, it WILL run for 5 seconds</code></pre>
+    </div>
+    <div>
+        <h4 class="font-bold text-lg mb-2">With PCapture-Lib</h4>
+        <pre><code class="language-squirrel">// Find the light
+local light = entLib.FindByName("alarm_light")
+
+if (light) {
+    ScheduleEvent.Add("alarm", function():(light) {
+        light.SetColor("255 0 0")
+        EntFire(light.GetName(), "TurnOn")
+        
+        yield 2.0  // Wait 2 seconds
+        
+        // Flash 3 times
+        for (local i = 0; i < 3; i++) {
+            EntFire(light.GetName(), "TurnOff")
+            yield 0.5
+            EntFire(light.GetName(), "TurnOn")
+            yield 0.5
+        }
+        
+        EntFire(light.GetName(), "TurnOff")
+    }, 0)
+}
+
+// ✅ Can cancel anytime!
+ScheduleEvent.Cancel("alarm")</code></pre>
+    </div>
+</div>
+
+<p class="mt-4"><strong>Result:</strong> 15+ lines of confusing, manual delay calculations → 10 lines of clear, linear code. Plus, the PCapture version can be <strong>cancelled</strong> mid-execution, which is <em>impossible</em> with vanilla <code>EntFire</code>.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Another Example: Entity Detection</h4>
+<p>Let's say you want to check if a laser beam is blocked by the player or a cube.</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <div>
+        <h4 class="font-bold text-lg mb-2">Without PCapture-Lib</h4>
+        <pre><code class="language-squirrel">local startPos = laserEmitter.GetOrigin()
+local endPos = laserReceiver.GetOrigin()
+
+// TraceLine can ONLY see walls
+local fraction = TraceLine(startPos, endPos, null)
+
+if (fraction < 1.0) {
+    printl("Laser blocked by... wall? entity?")
+    printl("No way to know what blocked it!")
+    printl("Can't detect player or cubes!")
+}
+
+// ❌ Completely useless for gameplay!</code></pre>
+    </div>
+    <div>
+        <h4 class="font-bold text-lg mb-2">With PCapture-Lib</h4>
+        <pre><code class="language-squirrel">local startPos = laserEmitter.GetOrigin()
+local endPos = laserReceiver.GetOrigin()
+
+// TracePlus can see everything
+local trace = TracePlus.Bbox(startPos, endPos)
+
+if (trace.DidHit()) {
+    local hitEnt = trace.GetEntity()
+    
+    if (hitEnt && hitEnt.IsPlayer()) {
+        printl("Player blocking laser!")
+        TriggerAlarm()
+    } else if (hitEnt) {
+        printl("Blocked by: " + hitEnt.GetClassname())
+    } else {
+        printl("Blocked by wall")
+    }
+}
+
+// ✅ Actually works for gameplay!</code></pre>
+    </div>
+</div>
+
+<p class="mt-4">Vanilla <code>TraceLine</code> is blind to all entities. PCapture's <code>TracePlus.Bbox</code> can actually detect players, cubes, and props—making interactive mechanics possible.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">One More: Array Processing</h4>
+<p>Filter an array of enemy health values to find weak targets.</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <div>
+        <h4 class="font-bold text-lg mb-2">Without PCapture-Lib</h4>
+        <pre><code class="language-squirrel">local healthValues = [100, 25, 80, 15, 90]
+local weakEnemies = []
+
+// Manual loop for filtering
+foreach (health in healthValues) {
+    if (health < 30) {
+        weakEnemies.append(health)
+    }
+}
+
+// Result: [25, 15]</code></pre>
+    </div>
+    <div>
+        <h4 class="font-bold text-lg mb-2">With PCapture-Lib</h4>
+        <pre><code class="language-squirrel">local healthValues = ArrayEx(100, 25, 80, 15, 90)
+
+// One-liner with filter
+local weakEnemies = healthValues.filter(
+    function(idx, val) { return val < 30 }
+)
+
+// Result: ArrayEx(25, 15)</code></pre>
+    </div>
+</div>
+
+<p class="mt-4">6 lines of manual looping → 1 line of declarative filtering. PCapture's <code>ArrayEx</code> provides modern functional methods like <code>.filter()</code>, <code>.map()</code>, and <code>.reduce()</code>.</p>
+
+<p class="mt-6 text-lg font-bold">The PCapture versions are not just shorter—they're <strong>more readable</strong>, <strong>more powerful</strong>, and reveal your <em>intent</em> clearly. This difference compounds dramatically as your scripts grow.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">How This Section is Organized</h3>
+<p>Learning PCapture-Lib is learning an entirely new layer on top of VScript. We'll introduce its features systematically:</p>
+
+<ul class="list-disc list-inside space-y-2">
+    <li><strong>Chapter 5.2:</strong> Improved Data Types - Arrays & Lists (smart collections)</li>
+    <li><strong>Chapter 5.3:</strong> Improved Data Types - Enhanced Entities (the pcapEntity wrapper)</li>
+    <li><strong>Chapter 5.4:</strong> Entity Utilities (safe creation and searching)</li>
+    <li><strong>Chapter 5.5:</strong> Action Scheduler (clean timing and sequences)</li>
+    <li><strong>Chapter 5.6:</strong> TracePlus (raycasting that actually works)</li>
+    <li><strong>Chapter 5.7-5.10:</strong> Advanced Features (Files, Debug, Animations, HUD, Events, Utils)</li>
+</ul>
+
+<p class="mt-4">Let's begin with the foundation: improved data types.</p>

@@ -1,0 +1,265 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.3: Improved Data Types - Enhanced Entities</h2>
+<p>Every entity you interact with in Portal 2—doors, cubes, buttons, the player—is represented by a <code>CBaseEntity</code> handle. Vanilla VScript provides basic methods, but manipulating entities often requires verbose, error-prone code. PCapture-Lib's <strong>pcapEntity</strong> wrapper transforms entity handles into powerful, easy-to-use objects.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Problem: Vanilla Entity Code is Clumsy</h3>
+<p>Let's look at a simple task: make a cube invisible, red, and disable its collision.</p>
+
+<pre><code class="language-squirrel">// Vanilla VScript
+local cube = Entities.FindByName(null, "my_cube")
+
+if (cube) {
+    EntFireByHandle(cube, "Alpha", "0", 0, null, null)          // Make invisible
+    EntFireByHandle(cube, "Color", "255 0 0", 0, null, null)    // Make red
+    EntFireByHandle(cube, "DisableDraw", "", 0, null, null)     // Disable rendering
+    EntFireByHandle(cube, "SetSolidType", "0", 0, null, null)   // Disable collision
+}</code></pre>
+
+<p>This works, but it's hard to read, hard to remember, and easy to get wrong. What if <code>cube</code> is null? What if you typo an input name? Errors only appear at runtime, often cryptically.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Solution: pcapEntity</h3>
+<p><strong>pcapEntity</strong> is a wrapper that extends <code>CBaseEntity</code> with intuitive methods, built-in validation, and chaining support.</p>
+
+<pre><code class="language-squirrel">// With PCapture-Lib
+local cube = entLib.FindByName("my_cube")
+
+if (cube) {
+    cube.SetAlpha(0)           // Make invisible
+    cube.SetColor("255 0 0")   // Make red
+    cube.SetDrawEnabled(false) // Disable rendering
+    cube.SetCollision(0)       // Disable collision
+}</code></pre>
+
+<p>Not only is this shorter, but each method is <strong>self-documenting</strong>. You immediately understand what's happening without consulting documentation.</p>
+
+<p class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg">
+    <strong>All Vanilla Methods Still Work:</strong> <code>pcapEntity</code> is a <em>wrapper</em>, not a replacement. You can still call standard <code>CBaseEntity</code> methods like <code>GetOrigin()</code>, <code>GetAngles()</code>, and <code>GetClassname()</code>. PCapture simply adds more.
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">How to Get a pcapEntity</h3>
+<p>PCapture-Lib provides the <code>entLib</code> class for finding and creating entities. All <code>entLib</code> methods return <code>pcapEntity</code> objects.</p>
+
+<pre><code class="language-squirrel">// Finding entities (covered in detail in Chapter 5.4)
+local door = entLib.FindByName("exit_door")
+local cube = entLib.FindByClassname("prop_weighted_cube")
+local nearbyButton = entLib.FindByNameWithin("button", playerPos, 100)
+
+// Wrapping an existing CBaseEntity
+local vanillaEntity = Entities.FindByName(null, "something")
+local wrapped = entLib.FromEntity(vanillaEntity)
+
+// GetPlayerEx returns a pcapEntity
+local player = GetPlayerEx()  // Enhanced player handle</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Categories of pcapEntity Methods</h3>
+<p>The <code>pcapEntity</code> class has over 80 methods. They're organized into logical categories:</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">1. Appearance</h4>
+<pre><code class="language-squirrel">cube.SetColor("0 255 0")          // Green
+cube.SetAlpha(128)                // Semi-transparent
+cube.SetSkin(2)                   // Change texture variant
+cube.SetModelScale(2.0)           // Double size
+cube.SetDrawEnabled(false)        // Make invisible
+
+// Get current values
+local currentColor = cube.GetColor()  // Returns: "0 255 0"
+local currentAlpha = cube.GetAlpha()  // Returns: 128</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">2. Transform & Hierarchy</h4>
+<pre><code class="language-squirrel">// Position
+cube.SetOrigin(Vector(0, 0, 100))
+cube.SetCenter(Vector(0, 0, 100))      // Set by bounding box center
+cube.SetAbsCenter(Vector(0, 0, 100))   // Ignore parent hierarchy
+
+// Rotation
+cube.SetAngles(0, 90, 0)              // Pitch, Yaw, Roll
+cube.SetAngles2(Vector(0, 90, 0))     // Same, but using Vector
+
+// Parenting
+cube.SetParent(door)
+local children = door.GetChildren()                  // Direct children only
+local allDescendants = door.GetAllChildrenRecursively()  // Recursive</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">3. Lifecycle & State</h4>
+<pre><code class="language-squirrel">// Validation
+if (entity.IsValid()) {
+    // Entity exists and hasn't been destroyed
+}
+
+if (entity.IsPlayer()) {
+    // This is the player entity
+}
+
+// Destruction
+entity.Kill()            // Trigger "Kill" input
+entity.Dissolve()        // Fancy dissolve effect
+entity.Destroy()         // Immediate removal
+
+// Enable/Disable
+entity.Disable()         // Makes invisible + non-solid
+entity.Enable()          // Reverses Disable()</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">4. Collision & Physics</h4>
+<pre><code class="language-squirrel">// Collision
+entity.SetCollision(SOLID_NONE)           // No collision
+entity.SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+entity.SetTraceIgnore(true)               // Traces ignore this entity
+
+// Bounding Box
+entity.SetBBox(Vector(-10,-10,-10), Vector(10,10,10))
+local aabb = entity.GetAABB()  // { min, max, center }
+local isCube = entity.IsSquareBbox()  // Check if all sides equal</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">5. Player-Specific Methods</h4>
+<pre><code class="language-squirrel">local player = GetPlayerEx()
+
+// View information
+local eyePos = player.EyePosition()
+local eyeAngles = player.EyeAngles()
+local lookDir = player.EyeForwardVector()
+
+// Calculate where the player is looking
+local lookTarget = eyePos + (lookDir * 1000)</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">6. Sound (Enhanced)</h4>
+<pre><code class="language-squirrel">// Standard sound
+entity.EmitSound("Portal.button_down")
+
+// Enhanced sound with volume control and looping
+entity.EmitSoundEx("ambient/alarms/alarm1.wav", 5, true)  // Vol 5, looped
+
+// Stop a looped sound
+entity.StopSoundEx("ambient/alarms/alarm1.wav")</code></pre>
+
+<p class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>How EmitSoundEx Works:</strong> This method creates a hidden <code>prop_physics</code> attached to your entity and uses it as a sound emitter. Volume is controlled by adjusting the hidden prop's Z-position (distance attenuation). Looping is achieved by scheduling repeated <code>EmitSound</code> calls.
+</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">7. Outputs & Inputs</h4>
+<pre><code class="language-squirrel">// Add an output
+button.AddOutput("OnPressed", door, "Open", "", 0, -1)
+
+// Connect output to a function
+button.ConnectOutputEx("OnPressed", function() {
+    printl("Button was pressed!")
+})
+
+// Hook an input (intercept and optionally cancel)
+door.SetInputHook("Close", function() {
+    printl("Attempted to close door")
+    return false  // Cancel the close action
+})</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">8. User Data & KeyValues</h4>
+<pre><code class="language-squirrel">// Store arbitrary data on any entity
+cube.SetUserData("puzzle_id", 42)
+cube.SetUserData("custom_state", { active = true, count = 10 })
+
+// Retrieve it later
+local puzzleID = cube.GetUserData("puzzle_id")  // 42
+local state = cube.GetUserData("custom_state")   // { active = true, count = 10 }
+
+// Set entity keyvalues
+cube.SetKeyValue("health", 100)
+cube.SetKeyValue("targetname", "special_cube")</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Delayed Execution: Built-in Timing</h3>
+<p>Many <code>pcapEntity</code> methods accept optional <code>fireDelay</code> and <code>eventName</code> parameters, allowing you to schedule actions without manual <code>EntFire</code> calls.</p>
+
+<pre><code class="language-squirrel">local cube = entLib.FindByName("my_cube")
+
+// Execute immediately
+cube.SetColor("255 0 0")
+
+// Execute after 2 seconds
+cube.SetColor("0 255 0", 2)
+
+// Execute after 2 seconds, tied to a specific event scheduler
+cube.SetColor("0 0 255", 2, "puzzle_sequence")</code></pre>
+
+<p>The <code>eventName</code> parameter ties the scheduled action to PCapture's ActionScheduler (covered in Chapter 5.5), allowing for coordinated timing and cancellation.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Practical Example: Smart Door Controller</h3>
+<pre><code class="language-squirrel">SmartDoor <- class {
+    door = null
+    isLocked = true
+    openSound = "doors/door_metal_medium_open1.wav"
+    closeSound = "doors/door_metal_medium_close1.wav"
+    
+    function Init(doorName) {
+        door = entLib.FindByName(doorName)
+        if (!door) {
+            printl("ERROR: Door '" + doorName + "' not found!")
+            return false
+        }
+        
+        // Set initial state
+        door.SetColor("255 0 0")  // Red when locked
+        door.SetUserData("door_controller", this)
+        
+        // Hook the "Open" input to enforce lock
+        door.SetInputHook("Open", function() {
+            if (isLocked) {
+                printl("Door is locked!")
+                return false  // Cancel the open
+            }
+            return true  // Allow it
+        }.bindenv(this))
+        
+        return true
+    }
+    
+    function Unlock() {
+        if (!isLocked) return
+        
+        isLocked = false
+        door.SetColor("0 255 0", 0.5)  // Fade to green over 0.5s
+        door.EmitSound("buttons/button9.wav")
+        printl("Door unlocked!")
+    }
+    
+    function Open() {
+        if (isLocked) {
+            printl("Cannot open locked door!")
+            return
+        }
+        
+        door.AddOutput("OnFullyOpen", "!self", "RunScriptCode", "GetUserData('door_controller').OnFullyOpen()", 0, 1)
+        EntFireByHandle(door, "Open", "", 0, null, null)
+        door.EmitSound(openSound)
+    }
+    
+    function OnFullyOpen() {
+        printl("Door is now fully open.")
+        // Auto-close after 5 seconds
+        EntFireByHandle(door, "Close", "", 5, null, null)
+    }
+}
+
+// Usage
+local mainDoor = SmartDoor
+mainDoor.Init("exit_door")
+
+// Later, when puzzle is solved:
+mainDoor.Unlock()
+mainDoor.Open()</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Important Limitations & Warnings</h3>
+
+<p class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>Method Chaining is Not Supported:</strong> Unlike some libraries, you cannot chain <code>pcapEntity</code> methods. Each method call is a separate statement:
+    <pre class="mt-2"><code class="language-squirrel">// ❌ This will NOT work
+cube.SetColor("255 0 0").SetAlpha(128).SetOrigin(Vector(0,0,100))
+
+// ✅ Do this instead
+cube.SetColor("255 0 0")
+cube.SetAlpha(128)
+cube.SetOrigin(Vector(0,0,100))</code></pre>
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Best Practices</h3>
+<ul class="list-disc list-inside space-y-2">
+    <li>Always use <code>GetPlayerEx()</code> instead of <code>GetPlayer()</code> for the enhanced entity</li>
+    <li>Use <code>entLib</code> methods for finding entities to get <code>pcapEntity</code> objects automatically</li>
+    <li>Validate entities with <code>.IsValid()</code> before using them</li>
+    <li>⚠️ Remember that delayed methods use the ActionScheduler—understand its lifecycle</li>
+</ul>

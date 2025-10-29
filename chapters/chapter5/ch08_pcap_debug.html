@@ -1,4 +1,4 @@
-<h2 class="text-3xl font-bold mb-4">Chapter 5.6: Debugging 303: Visualizing Your Logic</h2>
+<h2 class="text-3xl font-bold mb-4">Chapter 5.8: Debugging 303: Visualizing Your Logic</h2>
 <p>In Part 3, you learned that `printl` is your most valuable debugging tool. It's the detective's magnifying glass. But sometimes, you need more than just text in a console; you need to *see* what your script is thinking.</p>
 <p>PCapture-Lib enhances debugging with visual tools that draw shapes and information directly into the game world.</p>
 
@@ -9,7 +9,7 @@ function DebugClosestCube() {
     local player = GetPlayerEx()
     if (!player) return 1.0
 
-    local closestCube = entLib.FindByName(null, "prop_weighted_cube") // Simplified for example
+    local closestCube = entLib.FindByName("prop_weighted_cube") // Simplified for example
     if (closestCube) {
         // Draw the cube's bounding box in bright magenta for 0.1 seconds.
         // The color is an R G B vector.

@@ -1,0 +1,361 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.6: Seeing Everything - TracePlus</h2>
+<p>Raycasting—shooting an invisible line to detect what it hits—is fundamental to interactive game logic. Need to know what the player is looking at? Raycast. Want a laser turret to detect targets? Raycast. Vanilla VScript's <code>TraceLine</code> function exists, but it has a fatal flaw: <strong>it only sees world geometry</strong>. It's completely blind to entities. PCapture-Lib's <strong>TracePlus</strong> fixes this, and adds portal support.</p>
+
+<center>
+    <img src="https://i.ytimg.com/vi/PjPvWJV4xK8/sddefault.jpg" alt="raycast">
+    <p>Raycasting is often used for weapon implementation to find out where the player has hit</p>
+</center>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Problem: TraceLine is Broken</h3>
+<p>Let's say you want to create a security laser that detects when the player blocks it.</p>
+
+<pre><code class="language-squirrel">// Vanilla VScript attempt
+function CheckLaserBeam() {
+    local startPos = laserEmitter.GetOrigin()
+    local endPos = laserReceiver.GetOrigin()
+    
+    local fraction = TraceLine(startPos, endPos, null)
+    
+    if (fraction < 1.0) {
+        printl("Laser blocked!")
+    }
+    return 0.1  // Think loop
+}</code></pre>
+
+<p>This code will <strong>only</strong> detect walls. If the player, a cube, or any other entity blocks the laser, <code>TraceLine</code> returns <code>1.0</code> (no hit). The laser is useless for gameplay.</p>
+
+<p class="mt-4 p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg">
+    <strong>Critical Limitation of TraceLine:</strong> The standard <code>TraceLine(startPos, endPos, ignoreEntity)</code> can <strong>only</strong> detect world geometry (walls, floors, ceilings). It <strong>completely ignores</strong> all entities: players, props, NPCs, cubes, turrets—everything. This makes it almost useless for interactive game mechanics.
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Solution: TracePlus.Bbox</h3>
+<p><strong>TracePlus</strong> provides multiple trace functions that actually work with entities.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Basic Entity Detection</h4>
+<pre><code class="language-squirrel">// With PCapture-Lib: Actually detects entities
+function CheckLaserBeam() {
+    local startPos = laserEmitter.GetOrigin()
+    local endPos = laserReceiver.GetOrigin()
+    
+    local trace = TracePlus.Bbox(startPos, endPos)
+    
+    if (trace.DidHit()) {
+        local hitEntity = trace.GetEntity()
+        
+        if (hitEntity != null) {
+            printl("Laser blocked by: " + hitEntity.GetClassname())
+            
+            if (hitEntity.IsPlayer()) {
+                TriggerAlarm()
+            }
+        } else {
+            printl("Laser blocked by world geometry")
+        }
+    }
+    
+    return 0.1
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Understanding the Result</h4>
+<p>All TracePlus functions return a result object with useful methods:</p>
+
+<pre><code class="language-squirrel">local trace = TracePlus.Bbox(startPos, endPos)
+
+// Did we hit anything?
+if (trace.DidHit()) {
+    // Get the exact hit position
+    local hitPos = trace.GetHitPos()
+    
+    // Get what we hit
+    local hitEntity = trace.GetEntity()  // null if world geometry
+    
+    // Check if we hit world vs entity
+    if (trace.DidHitWorld()) {
+        printl("Hit a wall")
+    } else {
+        printl("Hit entity: " + hitEntity.GetName())
+    }
+    
+    // Get the surface normal (direction the surface faces)
+    local normal = trace.GetImpactNormal()
+    
+    // Get how far along the ray we hit (0.0 to 1.0)
+    local fraction = trace.GetFraction()
+}</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Trace Types: Cheap vs Bbox</h3>
+<p>TracePlus offers two trace algorithms, each with different trade-offs:</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">TracePlus.Cheap: Fast, World-Only</h4>
+<p>This is a thin wrapper around vanilla <code>TraceLine</code>. It's fast but <strong>only detects world geometry</strong>. Use it when you're certain you only need to check for walls/floors.</p>
+
+<pre><code class="language-squirrel">// Fast trace for world geometry only
+local trace = TracePlus.Cheap(startPos, endPos)
+
+if (trace.DidHit()) {
+    printl("Hit world at: " + trace.GetHitPos())
+    
+    // Can still get surface normal
+    local normal = trace.GetImpactNormal()
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">TracePlus.Bbox: Full Detection</h4>
+<p>This is the real star. It detects <strong>both world geometry and entities</strong> by testing ray intersection with entity bounding boxes. Slightly slower, but actually useful.</p>
+
+<pre><code class="language-squirrel">// Full trace with entity detection
+local trace = TracePlus.Bbox(startPos, endPos)
+
+if (trace.DidHit()) {
+    if (trace.GetEntity()) {
+        printl("Hit entity: " + trace.GetEntity().GetClassname())
+    } else {
+        printl("Hit world geometry")
+    }
+}</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Ignoring Entities</h3>
+<p>Often you want to ignore certain entities (like the player when tracing from their eyes).</p>
+
+<pre><code class="language-squirrel">local player = GetPlayerEx()
+local eyePos = player.EyePosition()
+local lookDir = player.EyeForwardVector()
+local endPos = eyePos + (lookDir * 1000)
+
+// Ignore the player themselves
+local trace = TracePlus.Bbox(eyePos, endPos, player)
+
+if (trace.DidHit() && trace.GetEntity()) {
+    printl("Player is looking at: " + trace.GetEntity().GetName())
+}
+
+// Ignore multiple entities (pass an array)
+local ignoreList = [player, playerWeapon, playerAttachment]
+local trace2 = TracePlus.Bbox(eyePos, endPos, ignoreList)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">FromEyes: Convenient Player Traces</h3>
+<p>Tracing from the player's view is so common that PCapture provides shortcuts.</p>
+
+<pre><code class="language-squirrel">local player = GetPlayerEx()
+
+// Trace 500 units from where player is looking
+local trace = TracePlus.FromEyes.Bbox(500, player)
+
+if (trace.DidHit()) {
+    printl("Player is looking at: " + trace.GetHitPos())
+}
+
+// Cheap version (world-only)
+local cheapTrace = TracePlus.FromEyes.Cheap(1000, player)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Advanced Filtering: TracePlus.Settings</h3>
+<p>For complex scenarios, create custom trace settings to filter what gets detected.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Ignore by Classname</h4>
+<pre><code class="language-squirrel">// Ignore all triggers and brush entities
+local settings = TracePlus.Settings.new()
+    .SetIgnoredClasses(["trigger_", "func_brush"])
+
+local trace = TracePlus.Bbox(startPos, endPos, null, settings)
+// This trace will pass through all triggers and func_brushes</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Ignore by Model</h4>
+<pre><code class="language-squirrel">// Ignore all glass props
+local settings = TracePlus.Settings.new()
+    .SetIgnoredModels(["models/props/glass"])
+
+local trace = TracePlus.Bbox(startPos, endPos, null, settings)</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Custom Filter Functions</h4>
+<p>For ultimate control, provide custom filter functions.</p>
+
+<pre><code class="language-squirrel">// Only hit entities with health > 50
+local settings = TracePlus.Settings.new()
+    .SetCollisionFilter(function(entity, note) {
+        return entity.GetHealth() > 50
+    })
+
+// Ignore entities that are invisible
+local settings2 = TracePlus.Settings.new()
+    .SetIgnoreFilter(function(entity, note) {
+        return entity.GetAlpha() == 0
+    })
+
+local trace = TracePlus.Bbox(startPos, endPos, null, settings)</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Precision Settings</h4>
+<pre><code class="language-squirrel">// For hitting very thin objects or getting precise normals
+local preciseSettings = TracePlus.Settings.new()
+    .SetDepthAccuracy(2)        // Lower = more precise (default 5, min 0.3)
+    .SetBynaryRefinement(true)  // Extra precision for hit point
+
+local trace = TracePlus.Bbox(startPos, endPos, null, preciseSettings)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Legendary Feature: Portal Tracing</h3>
+<p>This is where PCapture-Lib becomes truly magical. Portal tracing lets rays pass <strong>through portals</strong>, correctly transforming position and direction.</p>
+
+<pre><code class="language-squirrel">// Trace that goes through portals
+local trace = TracePlus.PortalBbox(startPos, endPos)
+
+if (trace.DidHit()) {
+    printl("Final hit position: " + trace.GetHitPos())
+    
+    // Check if we went through any portals
+    local portalInfo = trace.GetAggregatedPortalEntryInfo()
+    if (portalInfo.len() > 0) {
+        printl("Trace passed through " + portalInfo.len() + " portal(s)")
+        
+        foreach (entry in portalInfo) {
+            printl("Portal entry at: " + entry.GetHitPos())
+        }
+    }
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Portal Trace Types</h4>
+<pre><code class="language-squirrel">// Cheap portal trace (world-only, but through portals)
+local cheapPortalTrace = TracePlus.PortalCheap(startPos, endPos)
+
+// Full bbox portal trace (entities + portals)
+local bboxPortalTrace = TracePlus.PortalBbox(startPos, endPos)
+
+// From player eyes through portals
+local eyeTrace = TracePlus.FromEyes.PortalBbox(1000, player)</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Portal Setup Requirements</h4>
+<p class="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>For portal tracing to work correctly:</strong>
+    <ul class="list-disc list-inside ml-4 mt-2">
+        <li>For <code>prop_portal</code>: If created manually with non-zero <code>pairId</code>, set the <code>health</code> keyvalue to match <code>pairId</code></li>
+        <li>For <code>linked_portal_door</code>: Set the <code>model</code> keyvalue to the portal's width and height (e.g., "128 64")</li>
+        <li>To disable portals for tracing, call <code>portal.SetTraceIgnore(true)</code></li>
+    </ul>
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Practical Example: Smart Laser Turret</h3>
+<pre><code class="language-squirrel">LaserTurret <- class {
+    turretEntity = null
+    targetEntity = null
+    laserBeam = null
+    settings = null
+    
+    constructor(turretName) {
+        this.turretEntity = entLib.FindByName(turretName)        
+        this.laserBeam = entLib.FindByName(turretName + "beam")   
+        // Trace settings: ignore triggers, prioritize players
+        this.settings = TracePlus.Settings.new()
+            .SetIgnoredClasses(["trigger_"])
+            .SetPriorityClasses(["player"])        
+    }
+    
+    function Think() {
+        local turretPos = turretEntity.GetOrigin()
+        local turretAngles = turretEntity.GetAngles()
+        
+        // Get forward direction from angles
+        local forward = turretEntity.GetForwardVector()
+        local endPos = turretPos + (forward * 2000)
+                
+        // Trace with portal support
+        local trace = TracePlus.PortalBbox(turretPos, endPos, turretEntity, settings)
+        
+        // Update laser visual
+        laserBeam.SetKeyValue("targetpoint", trace.GetHitPos())
+        
+        if (trace.DidHit()) {
+            local hitEnt = trace.GetEntity()
+            
+            if (hitEnt && hitEnt.IsPlayer()) {
+                if (targetEntity != hitEnt) {
+                    targetEntity = hitEnt
+                    printl("Target acquired!")
+                    // do something
+                }
+            } else {
+                targetEntity = null
+            }
+        }
+        
+        return 0.1  // Think every 0.1 seconds
+    }
+}
+
+// Usage
+local myTurret = LaserTurret("security_turret_01")
+// Connect Think to a logic_timer or entity think function. Or use ActionScheduler
+ScheduleEvent.AddInterval("TurretThink", myTurret.Think, 0.1, 0, null, myTurret)
+</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Practical Example: Interaction System</h3>
+<pre><code class="language-squirrel">InteractionSystem <- class {
+    lastHighlighted = null
+    
+    function CheckPlayerLookAt() {
+        local player = GetPlayerEx()
+        
+        // Settings: only hit interactable objects
+        local settings = TracePlus.Settings.new()
+            .SetCollisionFilter(function(ent, note) {
+                // Only hit entities with "interactable" in user data
+                return ent.GetUserData("interactable") != null
+            })
+        
+        local trace = TracePlus.FromEyes.Bbox(200, player, null, settings)
+        
+        if (trace.DidHit()) {
+            local hitEnt = trace.GetEntity()
+            
+            if (hitEnt) {
+                if (!macros.IsEqual(hitEnt, lastHighlighted)) {
+                    // Unhighlight previous
+                    if (lastHighlighted) {
+                        lastHighlighted.SetColor("255 255 255")
+                    }
+                    
+                    // Highlight new
+                    hitEnt.SetColor("255 255 0")
+                    lastHighlighted = hitEnt
+                    
+                    printl("Looking at: " + hitEnt.GetName())
+                }
+            }
+        } else {
+            // Not looking at anything
+            if (lastHighlighted) {
+                lastHighlighted.SetColor("255 255 255")
+                lastHighlighted = null
+            }
+        }
+        
+        return 0.05  // Check frequently for responsive highlighting
+    }
+}
+
+// Mark entities as interactable
+local button = entLib.FindByName("puzzle_button")
+button.SetUserData("interactable", true)
+
+local lever = entLib.FindByName("puzzle_lever")
+lever.SetUserData("interactable", true)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Performance Considerations</h3>
+<p><strong>TracePlus.Bbox</strong> is more expensive than <code>TraceLine</code> because it tests bounding box intersections for every entity near the ray path. However, it's heavily optimized with:</p>
+<ul class="list-disc list-inside space-y-2">
+    <li><strong>Spatial culling:</strong> Only tests entities within the trace's bounding region</li>
+    <li><strong>Early termination:</strong> Stops as soon as the closest hit is found</li>
+    <li><strong>Caching:</strong> Entity bounding boxes are cached and reused</li>
+    <li><strong>Segmented search:</strong> Splits long traces into segments for efficiency</li>
+</ul>
+
+<p class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 rounded-r-lg">
+    <strong>Performance Tip:</strong> If you're tracing frequently (e.g., in a Think function), use <code>TracePlus.Cheap</code> when possible and only use <code>Bbox</code> when you actually need entity detection. For laser beams that need constant checks, consider caching results or only updating when entities move.
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Best Practices</h3>
+<ul class="list-disc list-inside space-y-2">
+    <li>Use <code>TracePlus.Bbox</code> when you need entity detection</li>
+    <li>Use <code>TracePlus.Cheap</code> when you only need world geometry (it's faster)</li>
+    <li>Always ignore the entity you're tracing from (e.g., player, turret)</li>
+    <li>Use <code>FromEyes</code> shortcuts for player view traces</li>
+    <li>Use <code>Settings</code> to filter out irrelevant entities</li>
+    <li>Cache trace results when possible instead of recomputing every frame</li>
+    <li>❌ Don't use <code>Bbox</code> in performance-critical loops without caching</li>
+</ul>

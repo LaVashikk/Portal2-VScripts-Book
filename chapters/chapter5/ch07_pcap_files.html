@@ -1,0 +1,30 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.7: Saving Data with Files</h2>
+<p><strong>The Problem:</strong> What if you need to save information that persists even after a map change? For example, tracking a player's total score across a campaign, or remembering that a player has unlocked a special ability.</p>
+<p><strong>The Solution:</strong> PCapture-Lib provides a simple <code>File</code> class that lets you read from and write to text files in the game's <code>cfg</code> folder.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Writing and Reading Data</h3>
+<p>The process involves creating a file object, writing data to it, and then reading it back. Reading data requires a one-tick delay to ensure the engine has processed the file.</p>
+<pre><code class="language-squirrel">// This function demonstrates saving and loading a player's score.
+function ManagePlayerScore() {
+    // 1. Create a file object. It automatically points to "portal 2/portal2/cfg/player_stats.log"
+    local statsFile = File("player_stats")
+
+    // 2. Write the new score to the file.
+    local newScore = 1500
+    statsFile.clear() // Clear the old file contents
+    statsFile.write(newScore.tostring())
+    printl("Score saved: " + newScore)
+
+    // 3. To read, you must update and wait one tick.
+    statsFile.updateInfo()
+    yield 0.01 // This is a safe and appropriate use of 'yield'.
+
+    // 4. Now you can read the contents.
+    local savedScore = statsFile.read().tointeger()
+    printl("Score loaded: " + savedScore)
+}
+
+// Start the process
+ScheduleEvent.Add("ScoreTest", ManagePlayerScore, 0)
+</code></pre>
+<p>This allows for true persistence, enabling you to create overarching progression systems that span multiple maps.</p>

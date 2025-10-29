@@ -1,0 +1,134 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.4: Entity Utilities - Safe Creation & Finding</h2>
+<p>Finding and creating entities safely is a fundamental task in every VScript project. The vanilla <code>Entities</code> class works, but it's unforgiving: it returns <code>null</code> without warning, lacks type safety, and requires verbose setup for entity creation. PCapture-Lib's <code>entLib</code> class solves these problems.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Finding Entities: The entLib Way</h3>
+<p>All <code>entLib</code> find methods are drop-in replacements for <code>Entities</code> methods, but they return <code>pcapEntity</code> objects instead of raw <code>CBaseEntity</code> handles.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Basic Finding</h4>
+<pre><code class="language-squirrel">// By name (targetname)
+local door = entLib.FindByName("exit_door")
+
+// By classname
+local cube = entLib.FindByClassname("prop_weighted_cube")
+
+// By model
+local crate = entLib.FindByModel("models/props/metal_box.mdl")
+
+// All entities in radius
+local nearbyEnts = []
+local ent = null
+while (ent = entLib.FindInSphere(playerPos, 200, ent)) {
+    nearbyEnts.append(ent)
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Spatial Finding: Within Radius</h4>
+<p>The <code>*Within</code> methods combine name/class/model search with radius filtering.</p>
+
+<pre><code class="language-squirrel">local player = GetPlayerEx()
+local playerPos = player.GetOrigin()
+
+// Find button named "puzzle_button" within 100 units of player
+local button = entLib.FindByNameWithin("puzzle_button", playerPos, 100)
+
+// Find any turret within 500 units
+local turret = entLib.FindByClassnameWithin("npc_portal_turret_floor", playerPos, 500)
+
+// Find specific prop by model near a location
+local nearbyBarrel = entLib.FindByModelWithin(
+    "models/props/metal_box.mdl",
+    Vector(100, 200, 0),
+    150
+)</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Iteration Pattern</h4>
+<p>Just like vanilla <code>Entities</code>, you can iterate by passing the previously found entity as the <code>start_ent</code> parameter.</p>
+
+<pre><code class="language-squirrel">// Find ALL cubes in the map
+local cubes = []
+local cube = null
+while (cube = entLib.FindByClassname("prop_weighted_cube", cube)) {
+    cubes.append(cube)
+}
+printl("Found " + cubes.len() + " cubes")
+
+// Process each cube
+foreach (cube in cubes) {
+    cube.SetColor("0 255 0")  // Make all cubes green
+}</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Creating Entities: The Right Way</h3>
+<p>Creating entities dynamically is powerful but tricky. Vanilla VScript's <code>Entities.CreateByClassname()</code> exists, but it spawns entities in an incomplete state. PCapture's <code>entLib.CreateByClassname()</code> handles this properly.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Basic Creation</h4>
+<pre><code class="language-squirrel">// Create an entity with keyvalues
+local newLight = entLib.CreateByClassname("light_dynamic", {
+    targetname = "my_light",
+    _light = "255 0 0 200",  // Bright red light
+    origin = "0 0 100"
+})
+
+// The entity is fully spawned and ready to use
+EntFireByHandle(newLight, "TurnOn")</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Creating Props</h4>
+<p>Props are common enough that PCapture provides a dedicated helper.</p>
+
+<pre><code class="language-squirrel">// Create a physics prop
+local prop = entLib.CreateProp(
+    "prop_physics",                      // classname
+    Vector(100, 200, 50),                // origin
+    "models/props/metal_box.mdl",        // model
+    1,                                   // activity (usually 1 for idle)
+    { targetname = "my_prop" }           // additional keyvalues
+)
+
+// Prop is immediately usable
+prop.SetVelocity(Vector(0, 0, 500))  // Launch upward</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Wrapping Existing Entities</h3>
+<p>Sometimes you already have a <code>CBaseEntity</code> handle from vanilla code. Convert it to a <code>pcapEntity</code>:</p>
+
+<pre><code class="language-squirrel">// From vanilla Entities search
+local vanillaHandle = Entities.FindByName(null, "some_entity")
+
+// Wrap it
+local enhanced = entLib.FromEntity(vanillaHandle)
+
+// Now use pcapEntity methods
+enhanced.SetColor("255 0 0")
+
+// Check if wrapping was successful
+if (enhanced == null) {
+    printl("Entity was null or invalid")
+}</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Comparing Entities: The Golden Rule</h3>
+<p>A major pitfall for scripters is comparing entities. You might find the same player entity in two different ways, but trying to compare them with <code>==</code> will fail.</p>
+
+<pre><code class="language-squirrel">// Find the player two different ways
+local pcapPlayer = GetPlayerEx()         // This returns a pcapEntity
+local cbasePlayer = GetPlayer()          // This returns a CBaseEntity (an engine handle)
+
+// ❌ WRONG: This will always be false!
+// You are comparing a weapper class to an engine handle, which can never be equal.
+if (pcapPlayer == cbasePlayer) {
+    printl("This message will never appear.")
+}</code></pre>
+
+<p>This happens because <code>pcapPlayer</code> is a wrapper object and <code>CBaseEntity</code> is a direct engine handle. They are different data types, even if they both refer to the same player in the game.</p>
+
+<p class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 rounded-r-lg">
+    <strong>The Solution:</strong> Always use <code>macros.isEqually()</code> to compare any two variables that might be entity handles. This function intelligently compares them by their unique Entity Index, which is always the same for a specific entity, regardless of handle type.
+</p>
+
+<pre><code class="language-squirrel">// ✅ CORRECT: This works for any combination of handle types.
+if (macros.isEqually(pcapPlayer, cbasePlayer)) {
+    printl("These are the same player entity!")
+}
+
+local door1 = entLib.FindByName("exit_door")
+local door2 = entLib.FindByName("exit_door")
+
+if (macros.isEqually(door1, door2)) {
+    printl("These are the same door entity!")
+}</code></pre>

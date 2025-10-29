@@ -1,0 +1,298 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.5: Perfect Timing - ActionScheduler</h2>
+
+<p><strong>The Problem:</strong> In Chapter 2.5, we learned to create timed sequences with <code>EntFire</code>. But there's a critical limitation: <strong>you cannot cancel scheduled EntFire actions</strong>. Once you fire a delayed input, it's locked in—even if the situation changes.</p>
+
+<pre><code class="language-squirrel">// Vanilla VScript: The point of no return
+function StartAlarmSequence() {
+    EntFire("alarm_light", "TurnOn", "", 0)
+    EntFire("alarm_light", "TurnOff", "", 5)
+    EntFire("alarm_sound", "PlaySound", "", 0)
+    EntFire("alarm_sound", "StopSound", "", 5)
+}
+
+// If the player solves the puzzle at 2 seconds, the alarm STILL runs for 3 more seconds
+// There's no way to cancel it!</code></pre>
+
+<p>Additionally, you must manually calculate cumulative delays, making the code hard to read and modify.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Solution: Cancelable, Clean Scheduling</h3>
+<p>PCapture-Lib's <strong>ActionScheduler</strong> module gives you full control over timed events. You can schedule actions, organize them into named event groups, and—most importantly—<strong>cancel them</strong> at any time.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Basic Scheduling</h4>
+<pre><code class="language-squirrel">// Schedule a single action after 2 seconds
+function SayMessage() {
+    printl("This message appears after 2 seconds.")
+}
+ScheduleEvent.Add("MyMessage", SayMessage, 2.0)
+
+// The action is tied to the event name "MyMessage"
+// We can cancel it before it executes:
+ScheduleEvent.Cancel("MyMessage")  // Message will never print
+</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Named Events: The Killer Feature</h4>
+<p>Group related actions under a single event name. You can then cancel the <em>entire sequence</em> with one command.</p>
+
+<pre><code class="language-squirrel">function StartAlarmSequence() {
+    // All actions belong to the "alarm_sequence" event
+    ScheduleEvent.Add("alarm_sequence", function() {
+        EntFire("alarm_light", "TurnOn")
+        EntFire("alarm_sound", "PlaySound")
+    }, 0)
+    
+    ScheduleEvent.Add("alarm_sequence", function() {
+        EntFire("alarm_light", "TurnOff")
+        EntFire("alarm_sound", "StopSound")
+    }, 5)
+    
+    printl("Alarm sequence started. Will run for 5 seconds.")
+}
+
+function OnPuzzleSolved() {
+    // Player solved the puzzle early - cancel the entire alarm!
+    ScheduleEvent.Cancel("alarm_sequence")
+    
+    // Immediately turn everything off
+    EntFire("alarm_light", "TurnOff")
+    EntFire("alarm_sound", "StopSound")
+    
+    printl("Alarm sequence cancelled!")
+}</code></pre>
+
+<p>This is <strong>impossible</strong> with vanilla <code>EntFire</code>. Once those delayed inputs are scheduled, they will execute no matter what. With <code>ScheduleEvent</code>, you have full control.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Scope Problem and Three Solutions</h3>
+<p>When you schedule a function to run later, it doesn't automatically "remember" local variables from where you called it. You must explicitly pass them.</p>
+
+<pre><code class="language-squirrel">// ❌ BROKEN: This will crash!
+function StartSequence() {
+    local door = entLib.FindByName("exit_door")
+    
+    ScheduleEvent.Add("test", function() {
+        door.SetColor("255 0 0")  // ERROR: 'door' doesn't exist here!
+    }, 1)
+}</code></pre>
+
+<p>ActionScheduler gives you three ways to solve this:</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Solution 1: Pass as Arguments (Recommended)</h4>
+<pre><code class="language-squirrel">function StartSequence() {
+    local door = entLib.FindByName("exit_door")
+    
+    // Pass 'door' in the args array (4th parameter)
+    ScheduleEvent.Add("test", function(door) {
+        door.SetColor("255 0 0")
+    }, 1, [door])  // ← Pass variables here
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Solution 2: Capture with <code>:(variable)</code></h4>
+<pre><code class="language-squirrel">function StartSequence() {
+    local door = entLib.FindByName("exit_door")
+    
+    // Capture 'door' with :(door) syntax
+    ScheduleEvent.Add("test", function():(door) {
+        door.SetColor("255 0 0")
+    }, 1)
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Solution 3: Use <code>scope</code> Parameter (For Classes)</h4>
+<pre><code class="language-squirrel">MyController <- class {
+    door = null
+    
+    function Init() {
+        door = entLib.FindByName("exit_door")
+    }
+    
+    function StartSequence() {
+        // Pass 'this' as scope (5th parameter)
+        ScheduleEvent.Add("test", function() {
+            this.door.SetColor("255 0 0")  // 'this' = MyController
+        }, 1, null, this)  // ← Pass 'this' here
+    }
+}</code></pre>
+But you can also do it this way:
+<pre><code class="language-squirrel">function StartSequence() {
+    local door = entLib.FindByName("exit_door")
+    
+    // Pass 'door' as scope (5th parameter)
+    ScheduleEvent.Add("test", function() {
+        this.SetColor("255 0 0")
+    }, 1, null, door)  // ← Pass door scope here
+}</code></pre>
+
+
+<p class="mt-4"><strong>Use Solution 1 (args) by default.</strong> It's the clearest. Use Solution 3 (scope) when working inside classes.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Repeating Actions with Intervals</h3>
+<p>Need something to happen repeatedly? Use <code>AddInterval</code>.</p>
+
+<pre><code class="language-squirrel">// Flash a light every 0.5 seconds
+local light = entLib.FindByName("warning_light")
+
+ScheduleEvent.AddInterval("alarm_flash", function(light) {
+    if (light.GetAlpha() > 0) {
+        light.SetAlpha(0)
+    } else {
+        light.SetAlpha(255)
+    }
+}, 0.5, 0, [light])  // interval, initialDelay, args
+
+// Stop after 10 seconds
+ScheduleEvent.Add("global", function() {
+    ScheduleEvent.Cancel("alarm_flash")
+}, 10)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Power of <code>yield</code>: Sequential Code with Pauses</h3>
+<p>The most powerful feature of the scheduler is the ability to write asynchronous code. The <code>yield</code> keyword lets you pause a function's execution for a set time, then resume exactly where you left off. This allows you to write timed sequences in a natural, linear way.</p>
+
+<pre><code class="language-squirrel">// A complex sequence with pauses, written linearly
+function RunLightSequence() {
+    printl("Sequence started...")
+    
+    EntFire("light_1", "TurnOn")
+    yield 1.0  // Wait 1 second
+    
+    EntFire("light_2", "TurnOn")
+    yield 1.0  // Wait another second
+    
+    EntFire("light_3", "TurnOn")
+    yield 2.5  // Wait longer
+    
+    EntFire("light_*", "TurnOff")
+    printl("Sequence complete.")
+}
+
+// Must use ScheduleEvent to enable 'yield'
+ScheduleEvent.Add("LightSequence", RunLightSequence, 0)
+
+// Can cancel the entire sequence mid-execution!
+ScheduleEvent.Cancel("LightSequence")</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Yield with Variables</h4>
+<pre><code class="language-squirrel">function ComplexSequence() {
+    local door = entLib.FindByName("sequence_door")
+    local light = entLib.FindByName("sequence_light")
+    
+    // Turn light red
+    light.SetColor("255 0 0")
+    EntFire(light.GetName(), "TurnOn")
+    yield 1.0
+    
+    // Turn light green
+    light.SetColor("0 255 0")
+    yield 2.0
+    
+    // Open door
+    EntFire(door.GetName(), "Open")
+    yield 1.0
+    
+    printl("Sequence complete!")
+}
+
+// Capture variables with :() syntax
+ScheduleEvent.Add("complex", function():(door, light) {
+    ComplexSequence()
+}, 0)</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Asynchronous Loops</h4>
+<pre><code class="language-squirrel">function MonitorPlayer() {
+    local player = GetPlayerEx()
+    
+    while (true) {  // Infinite loop - safe with yield!
+        local health = player.GetHealth()
+        printl("Player health: " + health)
+        
+        if (health < 30) {
+            printl("WARNING: Low health!")
+        }
+        
+        yield 0.5  // Check every 0.5 seconds
+    }
+}
+
+ScheduleEvent.Add("health_monitor", MonitorPlayer, 0)
+
+// Stop monitoring
+ScheduleEvent.Cancel("health_monitor")</code></pre>
+
+<div class="p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg mt-4">
+    <strong>⚠️ CRITICAL WARNING: Save/Load and <code>yield</code></strong><br><br>
+    The Source Engine's save/load system does <strong>not</strong> support asynchronous VScript functions. If a player saves the game while a function is "paused" on a <code>yield</code> statement, <strong>loading that save will crash the game.</strong><br><br>
+    Therefore, you should only use <code>yield</code> for:
+    <ul class="list-disc list-inside ml-4 mt-2">
+        <li>Short, non-critical animations or sequences where a save is unlikely</li>
+        <li>Debugging purposes</li>
+        <li>Intro cutscenes before player gains control</li>
+        <li>Essential but extremely short pauses (e.g., <code>yield 0.01</code> for file system operations)</li>
+    </ul>
+    For important, long-running game logic, it is safer to use a chain of <code>ScheduleEvent.Add()</code> calls or <code>AddInterval</code>.
+</div>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Event Management Functions</h3>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Checking and Canceling</h4>
+<pre><code class="language-squirrel">// Check if an event exists and has scheduled actions
+if (ScheduleEvent.IsValid("my_sequence")) {
+    printl("Sequence is still running")
+}
+
+// Cancel an event (throws error if event doesn't exist)
+ScheduleEvent.Cancel("my_sequence")
+
+// Safely try to cancel (no error if event doesn't exist)
+ScheduleEvent.TryCancel("my_sequence")
+
+// Cancel all events except "global"
+ScheduleEvent.CancelAll()</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">The "global" Event</h4>
+<p>There's a special event called <code>"global"</code> that always exists and is never automatically deleted. Use it for one-off actions that don't need grouping.</p>
+
+<pre><code class="language-squirrel">// Quick one-off delay
+ScheduleEvent.Add("global", function() { // You CAN't cancel "global" manually
+    printl("This happens after 2 seconds")
+}, 2)
+</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Comparison: EntFire vs ScheduleEvent</h3>
+<div class="overflow-x-auto mt-4">
+    <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+        <thead>
+            <tr class="bg-gray-100 dark:bg-gray-800">
+                <th class="border border-gray-300 dark:border-gray-700 px-4 py-2">Feature</th>
+                <th class="border border-gray-300 dark:border-gray-700 px-4 py-2">EntFire</th>
+                <th class="border border-gray-300 dark:border-gray-700 px-4 py-2">ScheduleEvent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Cancelable?</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">❌ No</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">✅ Yes</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Group actions?</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">❌ No</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">✅ Named events</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Supports <code>yield</code>?</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">❌ No</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">✅ Yes</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Can run any code?</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">❌ Only entity inputs</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">✅ Any function</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Requires PCapture-Lib?</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">✅ No</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">❌ Yes</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Performance Notes</h3>
+<p>The ActionScheduler uses a <code>logic_timer</code> entity that ticks every `FrameTime` seconds, but this overhead is negligible. The scheduler only processes actions whose execution time has arrived, and scheduled actions are stored in a sorted list for efficient lookups. Even with hundreds of queued actions, performance impact is minimal.</p>

@@ -1,0 +1,247 @@
+<h2 class="text-3xl font-bold mb-4">Chapter 5.2: Improved Data Types - Arrays & Lists</h2>
+<p>Standard VScript arrays are functional, but primitive. They lack modern programming conveniences that you'd expect in any serious scripting environment. PCapture-Lib's <strong>Improved Data Types (IDT)</strong> module fixes this with two powerful classes: <strong>ArrayEx</strong> and <strong>List</strong>.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Problem: Vanilla Arrays Are Limited</h3>
+<p>Consider this common scenario: you have an array of enemy health values and need to find which enemies have low health.</p>
+
+<pre><code class="language-squirrel">// Vanilla VScript: Manual iteration required
+local healthValues = [100, 25, 80, 15, 90]
+local lowHealthEnemies = []
+
+foreach (health in healthValues) {
+    if (health < 30) {
+        lowHealthEnemies.append(health)
+    }
+}
+// Result: [25, 15]</code></pre>
+
+<p>This works, but it's verbose and requires manual loop management every time you need to filter data. What if you also need to find unique values? Remove duplicates? Reduce to a sum? Each requires writing another custom loop.</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">The Solution: ArrayEx</h3>
+<p><strong>ArrayEx</strong> is a drop-in replacement for standard arrays that adds functional programming methods you'd expect from modern languages.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Creating an ArrayEx</h4>
+<pre><code class="language-squirrel">// Method 1: Direct construction
+local arr = ArrayEx(1, 2, 3, 4, 5)
+
+// Method 2: From existing array
+local vanillaArray = [10, 20, 30]
+local arr2 = ArrayEx.FromArray(vanillaArray)
+
+// Method 3: Pre-sized with default values
+local arr3 = ArrayEx.WithSize(100, 0) // 100 zeros</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Functional Methods: The Game Changers</h4>
+
+<p><strong>Filter:</strong> Create a new array with only matching elements.</p>
+<pre><code class="language-squirrel">local healthValues = ArrayEx(100, 25, 80, 15, 90)
+
+// Clean, declarative filtering
+local lowHealth = healthValues.filter(function(idx, val) {
+    return val < 30
+})
+// Result: ArrayEx(25, 15)</code></pre>
+
+<p><strong>Map:</strong> Transform each element.</p>
+<pre><code class="language-squirrel">local numbers = ArrayEx(1, 2, 3, 4, 5)
+
+// Double each value
+local doubled = numbers.map(function(val, idx) {
+    return val * 2
+})
+// Result: ArrayEx(2, 4, 6, 8, 10)</code></pre>
+
+<p><strong>Reduce:</strong> Collapse to a single value.</p>
+<pre><code class="language-squirrel">local scores = ArrayEx(100, 50, 75, 200)
+
+// Calculate total score
+local total = scores.reduce(function(accumulator, currentValue) {
+    return accumulator + currentValue
+}, 0)
+// Result: 425</code></pre>
+
+<p><strong>Unique:</strong> Remove duplicates.</p>
+<pre><code class="language-squirrel">local values = ArrayEx(1, 2, 2, 3, 4, 4, 5, 2)
+local unique = values.unique()
+// Result: ArrayEx(1, 2, 3, 4, 5)</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Utility Methods</h4>
+<pre><code class="language-squirrel">local arr = ArrayEx(10, 20, 30, 40, 50)
+
+// Search for value or matching element
+arr.search(30)                    // Returns: 2 (index)
+arr.search(function(x) { return x > 35 })  // Returns: 3 (first match)
+
+// Check if contains
+arr.contains(20)                  // Returns: true
+
+// Join to string
+arr.join(", ")                    // Returns: "10, 20, 30, 40, 50"
+
+// Safe get with default
+arr.get(10, -1)                   // Returns: -1 (index 10 doesn't exist)
+
+// Apply function in-place (modifies original)
+arr.apply(function(val, idx) {
+    return val * 2
+})
+// arr is now: ArrayEx(20, 40, 60, 80, 100)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Lists: When Order and Insertion Matter</h3>
+<p>While <strong>ArrayEx</strong> is perfect for most use cases, there are scenarios where you need constant-time insertion/removal at arbitrary positions. This is where <strong>List</strong> (a doubly-linked list) excels.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">When to Use a List</h4>
+<ul class="list-disc list-inside space-y-2">
+    <li>Frequent insertions/deletions at the beginning or middle</li>
+    <li>You need to maintain order but rarely access by index</li>
+    <li>Building queues or stacks</li>
+    <li>❌ Don't use if you need fast random access by index (use ArrayEx instead)</li>
+</ul>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Creating and Using a List</h4>
+<pre><code class="language-squirrel">// Create a list
+local myList = List(1, 2, 3, 4, 5)
+
+// Or from array
+local arr = [10, 20, 30]
+local myList2 = List.FromArray(arr)
+
+// Iterate (use .iter() for efficiency)
+foreach (value in myList.iter()) {
+    printl(value)
+}
+
+// Insert at specific position
+myList.insert(2, 99)  // Insert 99 at index 2
+// List is now: [1, 2, 99, 3, 4, 5]
+
+// Remove by index
+myList.remove(0)  // Remove first element
+// List is now: [2, 99, 3, 4, 5]</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">List Has the Same Functional Methods</h4>
+<pre><code class="language-squirrel">local list = List(1, 2, 3, 4, 5)
+
+// Filter, map, reduce work identically
+local evens = list.filter(function(idx, val) { return val % 2 == 0 })
+// Result: List(2, 4)
+
+local doubled = list.map(function(val, idx) { return val * 2 })
+// Result: List(2, 4, 6, 8, 10)
+
+// Sort in-place (uses merge sort)
+local unsorted = List(5, 2, 8, 1, 9)
+unsorted.sort()
+// Result: List(1, 2, 5, 8, 9)</code></pre>
+
+<p class="mt-4 p-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 rounded-r-lg">
+    <strong>⚠️ Memory Leak Warning:</strong> Lists use references between nodes. If you create circular references or don't properly clean up, the garbage collector may not free the memory. Always call <code>.clear()</code> when you're done with a list, or let it go out of scope naturally.
+</p>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Performance Comparison</h3>
+<div class="overflow-x-auto">
+    <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+        <thead>
+            <tr class="bg-gray-100 dark:bg-gray-800">
+                <th class="border border-gray-300 dark:border-gray-700 px-4 py-2">Operation</th>
+                <th class="border border-gray-300 dark:border-gray-700 px-4 py-2">Array</th>
+                <th class="border border-gray-300 dark:border-gray-700 px-4 py-2">ArrayEx</th>
+                <th class="border border-gray-300 dark:border-gray-700 px-4 py-2">List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Access by index</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">⚡ O(1)</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">⚡ O(1)</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">🐌 O(n)</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Insert at end</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">⚡ O(1)</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">⚡ O(1)</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">⚡ O(1)</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Insert at beginning</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">🐌 O(n)</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">🐌 O(n)</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">⚡ O(1)</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">Filter/Map/Reduce</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">❌ Manual</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">✅ Built-in</td>
+                <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">✅ Built-in</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Practical Example: Enemy Manager</h3>
+<pre><code class="language-squirrel">// Manage a group of enemies with ArrayEx
+EnemyManager <- class {
+    enemies = ArrayEx()
+    
+    function AddEnemy(health, damage) {
+        enemies.append({ health = health, damage = damage })
+    }
+    
+    function GetLowHealthEnemies() {
+        return enemies.filter(function(idx, enemy) {
+            return enemy.health < 30
+        })
+    }
+    
+    function GetTotalDamage() {
+        return enemies.reduce(function(total, enemy) {
+            return total + enemy.damage
+        }, 0)
+    }
+    
+    function HealAll(amount) {
+        enemies.apply(function(enemy, idx) {
+            enemy.health = min(100, enemy.health + amount)
+            return enemy
+        })
+    }
+}
+
+// Usage
+EnemyManager.AddEnemy(100, 25)
+EnemyManager.AddEnemy(20, 15)
+EnemyManager.AddEnemy(75, 30)
+
+local weak = EnemyManager.GetLowHealthEnemies()
+printl("Weak enemies: " + weak.len())  // 1
+
+local totalDamage = EnemyManager.GetTotalDamage()
+printl("Total damage potential: " + totalDamage)  // 70
+
+EnemyManager.HealAll(10)</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Conversion Between Types</h3>
+<pre><code class="language-squirrel">local arr = ArrayEx(1, 2, 3, 4, 5)
+
+// ArrayEx → List
+local list = arr.tolist()
+
+// List → ArrayEx
+local backToArray = list.toarray()
+
+// To vanilla array (for compatibility)
+local vanillaArr = arr.arr
+
+// To table (keys are array values, all values are null)
+local table = arr.totable()
+printl(2 in table)  // true</code></pre>
+
+<h3 class="text-2xl font-bold mt-8 mb-4">Best Practices</h3>
+<ul class="list-disc list-inside space-y-2">
+    <li>Use <strong>ArrayEx</strong> as your default collection type</li>
+    <li>Use <strong>List</strong> only when you need frequent middle insertions</li>
+    <li>Chain functional methods for readable data transformations</li>
+    <li>Call <code>.clear()</code> on Lists when done to avoid memory leaks</li>
+    <li>Remember: functional methods (filter/map) create <em>new</em> collections; <code>.apply()</code> modifies in-place</li>
+    <li>❌ Don't use List if you primarily access by index</li>
+</ul>
