@@ -7,10 +7,18 @@ printl(chamberList[0]) // Prints "Chamber 01"</code></pre>
 <p>Arrays come with many built-in functions:</p>
 <ul class="list-disc list-inside space-y-2">
     <li><code>.len()</code>: Returns the number of items in the array.</li>
-    <li><code>.append(value)</code>: Adds a new item to the very end of the array.</li>
+    <li><code>.append(value)</code> or <code>.push(value)</code>: Adds a new item to the very end of the array.</li>
+    <li><code>.extend(other_array)</code>: Appends all items from another array to the end of this one.</li>
+    <li><code>.pop()</code>: Removes the last item from the array and returns it.</li>
+    <li><code>.top()</code>: Returns the last item in the array without removing it.</li>
+    <li><code>.insert(index, value)</code>: Inserts a new item at a specific index, shifting subsequent items forward.</li>
     <li><code>.remove(index)</code>: Removes the item at the specified index and shifts all following items down.</li>
-    <li><code>.map(function)</code>: Creates a new array by running a function on every element of the original.</li>
-    <li><code>.slice(start_index, [end_index])</code>: Creates a new, smaller array from a piece of the original.</li>
+    <li><code>.clear()</code>: Removes all items from the array, making it empty.</li>
+    <li><code>.resize(new_size, [fill_value])</code>: Changes the array's size. If the new size is larger, new slots are filled with <code>fill_value</code> (or <code>null</code> if not provided).</li>
+    <li><code>.sort([compare_func])</code>: Sorts the array in place. You can optionally provide a custom function to define the sort order.</li>
+    <li><code>.reverse()</code>: Reverses the order of items in the array in place.</li>
+    <li><code>.slice(start_index, [end_index])</code>: Creates a new, smaller array from a piece of the original. It copies from <code>start_index</code> up to (but not including) <code>end_index</code>.</li>
+    <li><code>.tostring()</code>: Returns a default string representation of the array, like "(array : pointer)".</li>
 </ul>
 <h3 class="text-2xl font-bold mt-8 mb-4">Looping Through Arrays: <code>foreach</code></h3>
 <p>The easiest way to go through every item in an array is the <code>foreach</code> loop.</p>

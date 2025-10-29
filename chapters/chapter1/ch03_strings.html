@@ -1,0 +1,63 @@
+<h3 class="text-2xl font-bold mt-8 mb-4">Working With Strings</h3>
+<p>Strings are more than just text containers—they have powerful built-in methods for searching, slicing, and transforming text.</p>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Finding Substrings</h4>
+<p>The <code>.find()</code> method searches for a substring and returns the index where it first appears, or <code>null</code> if not found.</p>
+<pre><code class="language-squirrel">local chamberName = "Test Chamber 19"
+
+local position = chamberName.find("Chamber")
+if (position != null) {
+    printl("Found 'Chamber' at index: " + position) // Prints: Found 'Chamber' at index: 5
+}
+
+// You can start searching from a specific index
+local secondSearch = chamberName.find("e", 6) // Start searching after index 6
+printl("Next 'e' found at: " + secondSearch) // Finds the 'e' in "Chamber"</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Extracting Substrings with Slice</h4>
+<p>The <code>.slice()</code> method creates a new string from a portion of the original. It takes a start index and an optional end index.</p>
+<pre><code class="language-squirrel">local fullText = "Test Chamber 19"
+
+// Extract "Chamber" (from index 5 to 12, not including 12)
+local word = fullText.slice(5, 12) 
+printl(word) // "Chamber"
+
+// Omit the end index to go to the end of the string
+local everythingAfter = fullText.slice(5)
+printl(everythingAfter) // "Chamber 19"
+
+// Negative indices count from the END of the string
+local lastTwo = fullText.slice(-2) 
+printl(lastTwo) // "19"
+
+local lastWord = fullText.slice(-9)
+printl(lastWord) // "Chamber 19"</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Changing Case</h4>
+<p>Convert strings to uppercase or lowercase with <code>.toupper()</code> and <code>.tolower()</code>.</p>
+<pre><code class="language-squirrel">local original = "Test Chamber 19"
+
+printl(original.toupper()) // "TEST CHAMBER 19"
+printl(original.tolower()) // "test chamber 19"
+
+// Useful for case-insensitive comparisons
+local input = "chell"
+if (input.tolower() == "chell") {
+    printl("Player name matches!")
+}</code></pre>
+
+<h4 class="text-xl font-bold mt-6 mb-2">Other Useful String Methods</h4>
+<ul class="list-disc list-inside space-y-2">
+    <li><code>.len()</code> - Returns the length (number of characters) of the string.</li>
+    <li><code>.tointeger()</code> - Converts the string to an integer. Supports hexadecimal (e.g., <code>"0xFF"</code>).</li>
+    <li><code>.tofloat()</code> - Converts the string to a floating-point number.</li>
+</ul>
+<pre><code class="language-squirrel">local numString = "42"
+local num = numString.tointeger()
+printl(num + 8) // 50
+
+local hexString = "0xFF"
+printl(hexString.tointeger()) // 255
+
+local length = "Aperture Science".len()
+printl(length) // 16</code></pre>
