@@ -1,8 +1,7 @@
 # The VScript Book: An Interactive Guide for Portal 2 Modders
 
 **[Live Version: vscripts.lavashik.dev](https://vscripts.lavashik.dev)**
-
-![The VScript Book Screenshot](https://i.ibb.co/FqsmdHsd/image.png) 
+![The VScript Book Screenshot](https://github.com/user-attachments/assets/05537bdb-6f59-4b58-bcac-943b1e362d66)
 
 ## What is this?
 
