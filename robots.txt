@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /chapters/
+Crawl-delay: 1
+
+User-agent: CCBot
+Crawl-delay: 5
+
+User-agent: Googlebot
+Allow: /
+Disallow: /chapters/
