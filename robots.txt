@@ -9,3 +9,5 @@ Crawl-delay: 5
 User-agent: Googlebot
 Allow: /
 Disallow: /chapters/
+
+Sitemap: https://vscripts.lavashik.dev/sitemap.xml
